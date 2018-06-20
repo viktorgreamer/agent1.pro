@@ -1818,7 +1818,7 @@ class Control extends \yii\db\ActiveRecord
 
     public function emptyMethods()
     {
-        return "JKHKG";
+        return "JKHcxcxKG";
     }
 
     public
