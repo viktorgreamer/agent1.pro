@@ -1,0 +1,116 @@
+(function($){
+    try {
+        var _matchInString = function(match, testString){return (match instanceof RegExp && match.test(testString)) || (typeof match === "string" && testString.indexOf(match)>-1);};
+        var _loopArray = function(args, cback){for(var i=0,item=args[0];i<args.length;item=args[++i]) if(cback(item,i)===false)break;};
+        var _loadImg = function(){for(var i=0;i<arguments.length;i++) (window.Image ? (new Image()) : document.createElement('img')).src = arguments[i];};
+        // <!-- Rating@Mail.ru counter -->
+        window._tmr = window._tmr || [];
+        _tmr.push({id: "2689346", type: "pageView", start: (new Date()).getTime()});
+        (function (d, w) {
+           var ts = d.createElement("script"); ts.type = "text/javascript"; ts.async = true;
+           ts.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//top-fwz1.mail.ru/js/code.js";
+           var f = function () {var s = d.getElementsByTagName("script")[0]; s.parentNode.insertBefore(ts, s);};
+           if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+        })(document, window);
+        var reachGoal = function(){
+            for(var i=0;i<arguments.length;i++){
+                if(/^\/\/vk\.com/.test(arguments[i]) || arguments[i].length == 172){
+                    _loadImg('//vk.com/rtrg?r='+arguments[i].replace('//vk.com/rtrg?r=',''));
+                }
+                else if(/^\/\/www\.facebook\.com/.test(arguments[i])){
+                    _loadImg(arguments[i].replace(/&amp;/g,'&'));
+                }
+                else if(window._tmr){
+                    _tmr.push({ id: '2689346', type: 'reachGoal', goal: arguments[i]});
+                }
+            }
+        };
+        (function(){
+            var AB = {
+                data:(function(arr){
+                        return (Object.prototype.toString.call(arr) === '[object Array]' && arr.slice()) || [];
+                }(window.Adblender)),
+                push: function(){
+                    for(var i=0,item=arguments[0];i<arguments.length;item=arguments[++i]){
+                        if('type' in item){
+                            if('itemView' == item['type']) AB._tmr_remarket(item);
+                        }
+                        else if(item && item.length == 2){
+                            AB.order_success(item[0],item[1]);
+                        }
+                    }
+                },
+                _tmr_remarket: function(data){
+                    data['id']="2689346";
+                    data['list']='';
+                    var _tmr = window._tmr || [];
+                    _tmr.push(data);
+                },
+                order_success: function(orderNum, orderSum){
+                   try {
+                       orderSum = parseInt(orderSum) || '0';
+                       orderNum = orderNum || '';
+
+                       var script = document.createElement('script');
+
+                       script.src = ('https:' == document.location.protocol ? 'https://' : 'http://') +
+                               unescape('bn.adblender.ru%2Fpixel.js%3Fclient%3Dirr%26cost%3D') + escape(orderSum) +
+                               unescape('%26order%3D') + escape(orderNum) + unescape('%26r%3D') + Math.random();
+
+                       document.getElementsByTagName('head')[0].appendChild(script);
+                   } catch (e) {}
+               }
+            };
+            window.Adblender = AB;
+            AB.push.apply(this, AB.data);
+        }());
+
+        var reachGoalByUrlOrCategory = (function(){
+            return function(){
+                var catString = $('.breadcrumbs:first .breadcrumbs--itemLink, ul.nav a').map(function(index, elm){ return $(elm).text();}).get().join('|');
+                _loopArray(arguments, function(item){
+                    if(_matchInString(item[0], location.pathname) || _matchInString(item[0], catString)){
+                        reachGoal.apply(this, item[1]);
+                    }
+                });
+            };
+        }());
+        reachGoal('all-pages','nmLWNdQWxUz2N*FWIQYpFL7D1adjdAD/hri6B6*G6kpTCKcNzneBuDXjoxT6Gd*EfzPxlHXnOJaX7SG4M9IANvAgwbPzvRbw0a/CgDBmzlW2h5yxSeWVdgWIw/zN9UvKk4k8zOeWdyHakalYDugSxwp01BurTWASfvSFeW7qcVc-','sbxbj*JFGJnvBshSGUtxo*6kaIePskwdiTWGHx2YwPiQB23idItrDrZ7lgZZ511fOoYe8V6yAHoI5jomc4/48NkQyYxIyIZbwRnifcWfNu*qdFh*rbLJAHM67mCGAhOqUDU4pnp0td6y6ogeeqO/6/CwlpPWZ9cQGCwPfictyCs-','KmDDKTsUWffu*/YvxmPqqVt2nOhVjaa85U7znnP1seZXsXVmXsmicZYnbHxbMEVaDEFFa90zft8MS4olrVEQ1Qs*LBgJ7K99MwphHq/W6UHjv/eteMsasCA23B2L3UlYEJbcHxoydi9RH/JCvtEAUYjdemHZ*cvXmULH9Hew15Y-','ecTUXQpw785Sgivjx6wK3VBW2NRvIxDXpcrjKMhqZBaNAZMbe4Uw/UCQrdhTvVvkBXjrmyLlRbrhJF8bIDg6cUG4wY*0J8vegO7d59chBVGbmilsVUxMVAZlKjlBcZmZW9RDiJZrrgJ9mELe9QQw8/I7I*LNvws2sWTYIEbu*cE-');
+        reachGoalByUrlOrCategory(
+            ['/real-estate/',['real-estate','qd0iTsW4Ok7PGr92RrVWw4gK/3uYDfRFw/4d3XWKzlyYR8c3JH6nFbW92YTHm8UebuS6tVj*bGjYACI1VSsgzR2PJM0Z/Mh2uOieyS3n4vgXIVagiXJmuMGGev40LqcC3lJFC55K0m*5msM8UPSsuIdco6lMAMEzHYu6hbsYVR4-','w1FBay6DBnqjZ1TCyrJf80vyM9I5KFkyHtnUV3ZvYFIE*Ro8FH7nKVKlaA8*7sehd6za1kVAWGjC8hYmjI*GOpcFJIQhuXqqO5dsAstqABEGDMpjyO4KEUL2Au6Mh5NLE1B57ciM*gStqQcRJfvcE8K/JlIBChdSm0pu6jvDlzs-','OL/03cMKc1leBNxqBjSVnfArr3cyEHbIS9q1SmgvbAfJrv5K*o92ml5rqMiH8hcYoBpul5YroIGwAT5XkUWTBdG6MdmnSpQ9rEWq916Ywtt7qA1yZUqDAMNSF3ORvD8lFP2S7U0IVA9KwgD8v2gZUjaVnvw32bO3UHuokIEhnx8-']],
+            ['/cars/',['cars','DeTqXhydn/FlgrVQTozlI2KGzMMukIh9jkLkmtivSG2IzaMRJ1POWQ0*drWFZLvTb0nlhRLt90XXP4g7Qyj9pRgie1SOlQOK0kx7j5y02tcT4qjbXv*bsI4kZGbBND1X*MC7ktCun3GBkv8u*KDA06Wy6DwMilK8X8uKjfY5DaE-','Fm9HOjItfceytTknUEY9tIoiJBt7ZS9qcpGBbj1KPZywhNvTBoFJNE/SPXVp4hRzcY58pe*52CMUh/DnHDDQOPUbZnyYsuizBwM3HvlNHkkxQPl1JpLg2fUdCKdn0AWrt*X7Fpmln3mZHTBH4awF7HomByTdYFZkZHsKQxh1dWo-','MSmrywDWszlKGwsJypYARrckHw76WW0LHhctIjVxVBZjDLM0ugdGJRFC7/2MIBRGErUp0wNVNRsnrCpEBnsrLBZ7FpUZGRwPC2VVXRHHqYjbh054rxVL/jJTDs9INR4pkxJdhMTaA7OeU/d0/0fWqRar7Ya0cs5fI4cGB5KW*lI-']],
+            ['/building/',['building','QKAjKdhy/XvyF85TR*DYZNLOTL0OnsPjRUKvofAKwJsraS8lnTkw*vMvZ5SVvbMY5UTJ5OrgpHFwIDT9PjGzsk5Sxacol7yr/0bx5VjTzFHMlGjFwNgEYNU8JjINdTZUuOqcue9KXZtbfMU2pflF5*m9o6TyJaGSRnKFRHuzcVY-','t9xRheKLur9fI1ZNbB4rUpLJMRrdsIb44vlWD6s4FltnVO68ehjB9PAyCNzF7GUgKdfmo*KCngNCK6EkWMN1E*Q1BX7pDgprY5JrLzlkziu3D4RNefA3zFAcK1VBRtPMPFnozEWraDcDsLdqpriErbPncBFZH/v0gZkhAhvaG8c-','lmsaqnBoz3PLs18RiWjKn/1RLyCEpdREN23mnvPl7dkyPbJMSxjfrocEb6kgFADgW0SJEqxZ*DTvPxkScXI3Ott3t8nzGSI6CCJ8Y72ODY2dLy69fHuT0F*JharsDi4fO35QiO0Nvk4EjXs/*0do0AcIQHOA/s5vRlb0dqIyXcg-']],
+            ['/communication/',['communication','pxdNMR0u7igj5rwiEaaUDyPD4UC51Y3bFpSm5zwmqI/sLSJDwU5vD4Lk5R5RTdeHrxv7B20VgMnNk3BFxzQGwnIMyWHwaclhWPk7AI7xPRAKgjWLVsRx/cBtl9pGE9xkIUmXq5pAAMYwdqa2XDo/q5hXp0yJrcZWdsL*BWFqHTE-','D3dqNy6EDfs4rm8LdBASQ2MG74TDCoE*GKvfxb6*8VHKzLdb5ygp5a1LjUXWnYpTOpA2mdpDJhdfBALd/jOOOiPx9jvi3wfg68ABZu8tqzSIWbRGpgymHQe5RetJJ85aPH8VmEXQFKvhjrfmP2hMZHLNFcu2p1XZKj7EowvIaus-','eimLS4es8i*XuTN9asThvL2rs8fxrMsABqcUkqy5noO*zqb*zUHzPAj7V3bTswJbbdv9u3ZbdlbC5CKDLnjvntohMeapMvRRP*zsi78ar4xdfbd7kzQu2agX15BeD7rvLNSAqh3mMj4fuYRsN8I7nLm3EmP6SmUCki2I1mEdPKE-']],
+            ['/computers-devices/',['computers-devices','ND7aD0HZ8mMxPokOqbMuGwhDTaOlrbxvpJLTweC6eGUMyptBtSrVTKHexKfNBChCsN3fdK2Jav6w5SacOyiasxQi6UN5CW9J1BzlTS9WZGUJ4jHjk/raH2HgAMo*uLmL6kU17kgFRPV5pS83CYRkW78KO8/Dd7/mgzlh5JT4zCI-','KQGCmutxTIwpcq25hz2ugLn6hbgaalM2TAHM7by2gPm5QCwAAysVb2e36zIsLUIqtSrxnELw8mx23Xlpr51rMvePme7Ok5wM5US*S8RYEA8*atbLfXbEfOGum7HRM4AWbK0GHo3bm9k1zrsaQtmdp0w9/EUkd/IVlHeZztI9KTc-','mMTMNMFCpo7EuMWcBLDf0JPVclF4MsHYgOI*Mo4bqinUZFlr5f0IqW*uz/zZOTQIxQ39e6VSQ6BA/DxZzhZ*YHrqPMBlYAmqi9UeF7nqaUAG0m*cBVnEwGKOXDcRGOAVSaQMKu6Uzq2z6vH6p8r9nzy1Qz4JVlFHQ3wxMSp9RDw-']],
+            ['/electronics-technics/',['electronics-technics','iIrLE2JaLMevluZFhqZl3ljWk7ldzFgmHgF3z6Q42HHzKNC4D2hpYInZczZJ7rLQp1gnZfM3ffYDYcJqVMWdsVTXomo/TB3HcCAg7fyol*V46SkTzGkRqID/0Rlgisjrk8O4sAQ5yBmm6uAIDNZA1uXNKBiTe7sqO5n84xPV5vY-','fReTGlPMn9MCQYE6nP8E1bcBj3sGt3jMoS*1z3x802wspkZZMLKN5pDkiXBzXiZeNUFzhTT5sXDKUWUKIVZyf*BWOZDzfr*JFyMD/1k4/gg3I9tkpFGorcy2nz0/KWBYuBgfx/d2CKUGQH*uVPRz8Nea6mUddMNWrxsgla1C5*A-']],
+            ['/photo/',['photo','kUyap5d7JoL9TbSOTCG5/OfTJEuzqjIL9*JHzHkUQvBEEgcFWRcKL2nwq6X8zAJjCCuX5cj*x1QnaJaZJ*5nKVcdoi5oi2CaNilu9QkkYzgHxDS4n3Ml5kmleEime0Bx/7YAJ6*hfJFeqDfQARJojcZzVkvQm1IKnPDJR/nxRgc-','RyCF4If3RoDCzRN1vnmivcVPZCxNrQl0g6mEhReg9AQj*tLgRGlWKgDHwEBfxbhtw1OzVsSGCHGvGu09xfDzldpqA*2JfnK*wzZNZKM/pucrEZHq6pDDcEp6zkmDvActpK8C33vulAhhpEe8htuFYZF5e*psxVFG6MKieT6NC/U-']],
+            ['/children/',['children','DA*vEWW2zbLjgdtXrrtrxwjVhG6q6wFC00dXJciUxVjhMKPovBOd23JAGZjXkh4hIjUqlG5howAWzqdaKOCCrF0r8YIEhO*V7q/mAhVRF0X4HZN2lNaTuy4VVQFOJppjKLJbGsGr6butcOlZku4pJAbiId6*RdtQwend67Q*8cc-','qiteJr7OYcYJQBvpUjkLkyeW*zLN517jiZ6m3DD*D/P8SzZozq3osv2xQDPWkRUXKsuhSO0teVBjhEYeu8nIDbYspTD76piZPhnOR9ikOyZphJMlDrsAP*1DZDiSMgIOmfeTST4XYm2nezNzCjWx5GtgYC5KdX4uIp*kY/om8YQ-']],
+            ['/furniture-interior/',['furniture-interior','cjTuK5FvRcIuDOR8E5xnsk0i5Lm9aHEYBrfSfeh0*cfN*xQzIhiexPCzaImFFcbHSmZrxviM8cx4CtRf*LkPlVkTP4XL5h01uHUGAVetTafqUbKxVPzYfEeiRk54rR2vaktFI5hLnOMka0hy8VoH/r253osGvuLYMFarcZ7yicE-','AdlV574KRluL2DDfA0k8CgxPRaAGnnan/OfBpiJnCk6TXuIGfZanzCcqgyVI8vG4bnn6kRMWLUVXcOs91wlTPlfqKCeW/fBIEZE2GuuiLlkAwhuc8exUND2dh/3IazU4i*ji9SLcYswKGnc5QS4idQwKLSjtBGq*vHtROWk0B5A-']],
+            ['/real-estate/rooms-rent/',['rooms-rent','C74*x7KxH7WbmriEEE7spkT2y8aIkuhwrSpNw355oRgjvF1MQ6791WJAlqHArXeWStDZ*YK4ZEx6BxJcBsXuboKEsFEVnGTYg1yjYGQTYfPIzUCkq1l7tnbJT8Dnc65KDxISJ4ntIr5mJKp2*6qF5rUGff*Gg1vpkCxD2RffRzo-','ipclCMPxCm0tME1yWrF5cxShq3rkupfdMFfdgB2GZ6R7xaokIPtc8vHCExPwMkucmYdtbx6LNrWknQgg/96mr7/2kRyd5qWr571/ym0GENJ9NUekL1I2ZbZ3AnqxBLabV5MsdcN2847xTWgJalavAyzCfIKHVPQJ498vMNb7KE8-']],
+            [/\/real-estate\/rent\/.+rooms=[\d,]*1\D/i,['rooms-rent-one','qyYKKRnAEyWRQede1itNU/DUb8Sp1zfR8Umpo7HTAYoiwILEJ2h55A8dVqT2k83HhfxJnDREZmEq3GPQmtcNx5cJuhS1fk1oKbWXheyZb4z62oQ3Z*J/9*EGfmMLgAUoRXAU*AbWQ4XdnYIAX6bPYJEuC8/kwGUmf52Z7K2S*mQ-','aOrjfT1IAepAyVZbidAItgLTANnKwiuVteT1*F3VSwuh4UYAUn/mytDephwBO3NNBrALR*bYVCrQlvCE77cFuzGHr/8ClTPnJAVy*vtOhM842giYDsCp8E30Mhmwdr91FqDowYXLvwR1H2mMI99NnRh8DNYoqov2*LZNGbhXiyI-']],
+            [/\/real-estate\/rent\/.+rooms=[\d,]*2\D/i,['rooms-rent-two','t*YAW7oKHEl90XSkpOSBHJQ1McLh0TEuaYKEaO778IA0RVpOQEuEKl7rYoxK2ecfRaOyQA4sMStUfLoXEdXk7/Be2iuslh/d/57YAx1pnoCV39/UNXuUw4Rk3LiGRX13bxbBT3/7jNnoXCwMkmVc4ohSvfvp8Fg2dQ8Sgig/j*Y-','uzoXp83wXjr*J2oKZYRmcQ5RbTPTle/JJLZR8S7VVb1cAIRqNVdfTyrE*PzbZn1Vk/*YjTzn01FwkGmBYO8Xtq1fXfoY0/NLWLJ3u84XvylO4k811M//7UTtYxBpX5xWNsED35T2thZwb1KwNLyeQN2CfrRzspKpCpA6RuHh4Ac-']],
+            [/\/real-estate\/rent\/.+rooms=[\d,]*3\D/i,['rooms-rent-three','b6nwwsa7zhcPQgdjUmwSFhCzKPbVSxKD4Eq7MnKChfNzXBqpo3N5Tji/PcUt3Sxoapyk3ysexJ1nBdqpt3M3vBS2lZ63FzqPfZIrmrAVslEmIpI/Jf3/RB/zx0HXeKyTaZ21888lxpUyBx0tHkVBwdSH4fJnSHwMlUh48tp3a4A-','xPAjadVmGXmfK2N9V*HdR*iJsqY7tKSfj5Pr20eDQ1Vwc9Ajv83iyyoMAri5VP14zCvTLDgeMw7pLX8YZgQr56xes54uduHRt1yiEdb/AEpIqOAEKK*cQLRozcRj9nsPCXorEtbk*xE2eNjXxspgtEZCFdIj8G8RIDQJyYJPlP8-']],
+            ['/real-estate/rooms-sale/',['rooms-sale','hXigoH96J46*iAnMoPiwZ9TOPxCD3v5xXfZV/iTI*vACjyXrQ8RFeYlTX*wuFjbjcphTmBHLGt4EFEaxt2QmyqVubCiR6P11IBvWIpBSR2OVD1UWbldj2wzMtXolKQidjuvNX4LymL409RUN30lf1/Y67WuDNSsoty5yFIdaqk0-','X8wtZMgd6S*pIm8RRr8SGzghpJt9t6M3tTGQN3qMruTzK7uNBLVTeSXvW7MPAzLTs79Mlqn1JywzpVeLFHXOOn6HyARmpzHin8gkJjn2U2VtERIynHwsbs*8s2yuU7sub8KOVPsEFlNauaCPuCs6wX7bWdUmh5b*pPtCkSAN6Ao-']],
+            [/\/real-estate\/apartments-sale\/.+rooms=[\d,]*1\D/i,['apartments-sale-one','mk2Du4kjvy02aN2q3cP9rXydqT7Hg4TXiHWgW*/k9XsiOIyFoUqn7EpKHgdn3LJWJrA95KfxF44qykJZHKcHuSi4Kh0boCW2O6EXa2M3DSsCVYt7NeL14sD83J9HcXBUPJG*LTKbUE7ipbnDJYgz8zP8TGUXOH8baM7xtLpV310-']],
+            [/\/real-estate\/apartments-sale\/.+rooms=[\d,]*2\D/i,['apartments-sale-two','kLMxv2yJ8dvSVPTzwMBhNfk2LVCHI7FZnFMUcIzvHif1wGkSgCuDLi84CKPcYtsI7O34RWbTrHCdFLoEP99rrC*JEmGpel3HIanGvChmWaojd36W/o/UpCP/6oqUqfbDEDI4NUmyCvj58AvpP2wGhDz4PXHlf*LnAnZ8*Jj020A-']],
+            [/\/real-estate\/apartments-sale\/.+rooms=[\d,]*3\D/i,['apartments-sale-three','AAVUZVPP/0pvORuX66N4JFfyNNTI8EwjRguQM4VjTcst2Q9wT7xsEag1cRNu8aI57h0EZpUjnqT7PBiO5zs7REBFVbDcaau6ZqaqLPZwoTKyCk53mjZfMnZha*kdPOD/sY0SuzJJjJlOxYOwhKnTfGJRtEYUKTkGPpIS*13DW0s-']],
+            ['/advertSubmission/step1',['add-advert','OfS3ppQUZgQbm0yE*giJrfuyTL29ect7Dz7iT2SqYhZnzzl4Lwb*u8YVb1VG1sM5spROE1QNCv8VE56dR5Jzd3oSCb5o2GT1IU*pGFdDDczv87K7yQsU1H*KhSUQsjsxZYtKa*EEco4wVO3HcLKzPBnID85JCVEy7a3S4W15Vzs-','C60d9xVrfCLXaMm*fqIiBOErP7B30GJpNAkbXnqTcGyQp9Pv6oXix*et//AQdgapfsbcX135hItkVByLOzdSn8*nY5pvI60K4zT9azXkdgmTEH8PXn/DYNQH2rwDVxhNvXdl861sHEoPjRti3hNA*YeriEHlAta450Riu6cRCdw-']]
+        );
+        $(function(){
+            reachGoalByUrlOrCategory(
+                ['Недвижимость|Аренда',['rent','Fcu/yp2uQ0CKLMK6IQzr*04mQYA/eKIn*I3AUQGIhtXmyNLtDzWC9b*HcjsYr9lhrO0j5M/5daxBLBb9pZxojOLM9KfhNqNekEDRXzZx4ZNh9e1yk9AmBFAXfUOvF/RW7i/TlWcEUP7jrMs30rXcPYWypik91Jiavw6riE53QLE-','Eh9cfVFIhUOg46sn3Sf9lZ6UEtht5W/scWgZrGUDKVoXprzuwlbdCGVkZkZorLsgPfzBQgnl1*z4IuhLH5GdtMfk*S5zOaGPpkGbccbaiHYJPnNUX6HVsYUMSc2GV6o8N3tQlguBAPXIJYTidoT2kyQcKRfeZDCzcf*h/9vmZrY-']],
+                ['Недвижимость|Продажа',['sale','l5HoqBfm*as6L3//QwFNmAmm98U1j85tibm*YbHqh/US1Iq7ugtI/qM6402m1D4cObyjCCdbsQ4*22NiZ5Amdu3qU431XXRAU/v9CfVmXuVDO*wNptZlCyCFNvIfNjhxvAxIQjdceOwZunf9j66nCAMB751VzFNbxp4R2fOkTe0-','qC9K0L5hL6PsRzWL*KhknZgTsKqQn/TKcSmeJ53PYBoA*LuqYj6kvQCWSv1sOhRu*Toru9aRVI2JwfQpBo33EP4sFRd392IUTeR4zuhpISTt/XkMGvXdIG96OfCsdw8Ut6qRgbYETlNk6gmu*mPOVGnjICP9ZLPveBDRAXi1o4U-']]
+            );
+            $('button.js-showProductPhone').click(function(){
+                reachGoal('show-phone-btn','jsjfp0SsJbq8zIZtJ/NMFK3APjwQIqx/DOM1KERLsQVpHKMl8RMq*rMwALzi6FKX8FGbUU/QZRqmXlQLhtGLESXrSvUK4ibODEMZhvx*wyxtIGWA3I**eoisX7h0fQ1kvyY8TuwvomB45YVx71euO5n1zUIuyG8gfT29MtQ8vXI-','vLvzjYrqC7PZ80CICXf2b32pwOf4ZDydq80P8TMROXBd4RtyLLn4hbwki9UDuCzR5b2Al1PVg4uquP8/nNAoCgMKLUbkPN1hvR286vnZmT6Y//z*9WpKavbychy/avR0ZZ0u/KJ97BkJNorDMGH/elKSLqRsBy9*Sf1Srlfy5B0-','DBUPpVSMHmdrcjr*4vd6aoCbGRKSeptEro1OOBlzsraag2//riDoTFYHEjU*G5USFloxuvsvdJHZm2HhMrFnheZSskxjkVGzkdmex/c1tnm21oGcee27arDQ0oNNV*yfq7hAoku5ebmgVm0Xc0bExp0moBINpmsqHApjdzxsS9g-');
+            });
+            $('a.js-addProductToFavorites').click(function(){
+                reachGoal('add-to-favorites','RtxSm/OS2PwAB6KnBy8H3RqI6OPb6ld/znR7zOk61BZmqDxkfeSpX5mkS30JeAPieKu116aXlN7uipylZtlSIkApidXW2BaRZNNZSG3zj2LOwGGhfvsAeJCOvb4u8Qtsj3XF7AJy9TaCZv9Ppx*uY5kqtaaXcwtuVH/wypsdJpo-');
+            });
+            $('button.js-productWriteMessage').click(function(){
+                reachGoal('write-message','pSd7ihLzrIIYLj6SfdJ4M2v1sqe3/Eerzk/yGYazS3Pxduoszhd79zzP5nd7ud9ooPhQdxpK73coC2DW9tZymdRzmd5YtRmIMbAOpae3AKyidhY5vpBi48WJGM6kxdJP7PJ3y68etVsV5AHiBt0XLUBeC9VazeeptSOtBJLIaVg-','Tw0nopeOyqaGZ0Ie9Hi7U92xb**WFR6njkku3uHqfkq7SxuL0X4i8Dlm1vNOZy6opon9AOIQXDUf2jZxoA/rIdrNc5l*95YJk2YrWxX8mSxO6i0GM8qw4IrXexn/qHHlM3tWhhxldS1uZzFQr*lQJb*kBBa2/G2h74PzW69CJWg-');
+            });
+        });
+    }
+    catch(e){}
+}(window.jQuery));

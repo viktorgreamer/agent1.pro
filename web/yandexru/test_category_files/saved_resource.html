@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!-- saved from url=(0072)https://realty.yandex.ru/velikiy_novgorod/kupit/kvartira/dvuhkomnatnaya/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">  <meta name="authoring-tool" content="Adobe_Animate_CC"> <title>300_300</title> <!-- write your code here --> <script src="./createjs-2015.11.26.min.js.Без названия"></script> <script src="./300x300_Putilkovo.js.Без названия"></script> <script>
+var canvas, stage, exportRoot;
+function init() {
+	canvas = document.getElementById("canvas");
+	images = images||{};
+	var loader = new createjs.LoadQueue(false);
+	loader.addEventListener("fileload", handleFileLoad);
+	loader.addEventListener("complete", handleComplete);
+	loader.loadManifest(lib.properties.manifest);
+}
+function handleFileLoad(evt) {	
+	if (evt.item.type == "image") { images[evt.item.id] = evt.result; }	
+}
+function handleComplete(evt) {
+	//This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
+	var queue = evt.target;
+	var ssMetadata = lib.ssMetadata;
+	for(i=0; i<ssMetadata.length; i++) {
+		ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
+	}
+	exportRoot = new lib._300_300();
+	stage = new createjs.Stage(canvas);
+	stage.addChild(exportRoot);
+	stage.enableMouseOver();	
+	//Registers the "tick" event listener.
+	createjs.Ticker.setFPS(lib.properties.fps);
+	createjs.Ticker.addEventListener("tick", stage);	    
+	//Code to support hidpi screens and responsive scaling.
+	(function(isResp, respDim, isScale, scaleType) {		
+		var lastW, lastH, lastS=1;		
+		window.addEventListener('resize', resizeCanvas);		
+		resizeCanvas();		
+		function resizeCanvas() {			
+			var w = lib.properties.width, h = lib.properties.height;			
+			var iw = window.innerWidth, ih=window.innerHeight;			
+			var pRatio = window.devicePixelRatio, xRatio=iw/w, yRatio=ih/h, sRatio=1;			
+			if(isResp) {                
+				if((respDim=='width'&&lastW==iw) || (respDim=='height'&&lastH==ih)) {                    
+					sRatio = lastS;                
+				}				
+				else if(!isScale) {					
+					if(iw<w || ih<h)						
+						sRatio = Math.min(xRatio, yRatio);				
+				}				
+				else if(scaleType==1) {					
+					sRatio = Math.min(xRatio, yRatio);				
+				}				
+				else if(scaleType==2) {					
+					sRatio = Math.max(xRatio, yRatio);				
+				}			
+			}			
+			canvas.width = w*pRatio*sRatio;			
+			canvas.height = h*pRatio*sRatio;
+			canvas.style.width = w*sRatio+'px';			
+			canvas.style.height = h*sRatio+'px';
+			stage.scaleX = pRatio*sRatio;			
+			stage.scaleY = pRatio*sRatio;			
+			lastW = iw; lastH = ih; lastS = sRatio;		
+		}
+	})(false,'both',false,1);	
+}
+</script> <!-- write your code here --> </head> <body onload="init();" style="margin:0px;" marginwidth="0" marginheight="0"> 	<a href="https://ads.adfox.ru/243420/goLink?ylv=0.845&amp;hash=cf8d8c422612775f&amp;ad-session-id=214571527876531590&amp;ybv=0.845&amp;p2=fhwz&amp;ytt=1573&amp;pr=dqrekhg&amp;p1=bvxyp&amp;p5=ejwin&amp;rand=gihyoui&amp;rqs=AAAAAAAAAAC7ixFbtmzkyOjlLrx3Ip1B" target="_blank"><canvas id="canvas" width="675" height="675" style="display: block; background-color: rgb(255, 255, 255); width: 300px; height: 300px;"></canvas></a>  
+</body></html>

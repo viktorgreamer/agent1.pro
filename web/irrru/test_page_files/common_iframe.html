@@ -1,0 +1,58 @@
+
+<!-- saved from url=(0037)https://irr.ru/ajax/common_iframe.php -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	</head>
+	<body>
+		<script>
+			document.domain = 'irr.ru';
+			window.onmessage = function(e) {
+				var data;
+
+				try {
+					data = JSON.parse(e.data);
+				} catch(error) {
+					console.error(error.name);
+					return;
+				}
+
+				var parent = window.parent;
+				var regexpUrl = new RegExp('https?:\/\/([^\/]*\.)?' + document.location.host.replace(/\./g, '\\.') + '(\/|$)');
+
+				if (!regexpUrl.test(e.origin)) {
+					return;
+				}
+
+				switch(data.method) {
+					case 'set':
+						localStorage.setItem(data.key, data.value);
+						parent.postMessage(JSON.stringify({
+							method: 'set',
+							key: data.key,
+							success: true,
+							id: data.id
+						}), "*");
+						break;
+					case 'get':
+						var value = localStorage.getItem(data.key);
+						parent.postMessage(JSON.stringify({
+							method: 'get',
+							key: data.key,
+							success: true,
+							value: value,
+							id: data.id
+						}), "*");
+						break;
+					case 'remove':
+						localStorage.removeItem(data.key);
+						parent.postMessage(JSON.stringify({
+							method: 'remove',
+							key: data.key,
+							success: true,
+							id: data.id
+						}), "*");
+						break;
+				}
+			};
+		</script>
+	
+</body></html>

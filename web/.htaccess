@@ -1,0 +1,10 @@
+RewriteEngine On RewriteBase /
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule . index.php
+<FilesMatch "\.(css|otf|eot|woff|woff2|ttf|svg)$|^$">
+Order deny,allow
+Allow from all
+</FilesMatch>

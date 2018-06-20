@@ -1,0 +1,84 @@
+.popover {
+    max-width: 600px;
+    width: auto;
+}
+.clickable {
+    cursor: pointer;
+}
+.dropdown-icons {
+    min-width: 4rem;
+}
+.dropdown-icons2 {
+    min-width: 12rem;
+}
+
+.check-tags {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.no-margin-botton {
+    margin-bottom: 1px;
+    padding-left: 5px;
+    padding-right: 5px;
+
+}
+.no-padding-table {
+
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.no-margin-top {
+    margin-top: 1px;
+}
+
+.mdb-select-small-height {
+    height: 50px;
+}
+
+my-icons-action {
+
+    margin-left: 5px;
+
+    margin-right: 5px;
+}
+
+img.sold {
+    position: absolute;
+    right: 30px;
+    bottom: 10px;
+
+}
+
+
+ul.horizontal {
+    list-style-type: none;
+    margin: 2px;
+    padding: 2px;
+    overflow: hidden;
+
+}
+
+.tag-panel {
+
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+
+}
+.searching_tags_div {
+    height: 40px;
+}
+
+
+li.horizontal {
+    float: left;
+}
+
+div.no-padding-right-left {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+

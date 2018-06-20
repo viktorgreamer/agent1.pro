@@ -1,0 +1,1 @@
+var detailsCount = 21; var detailsCode = 9;

@@ -1,0 +1,139 @@
+<?php
+
+use yii\helpers\Html;
+use yii\grid\GridView;
+use app\models\Sale;
+
+/* @var $this yii\web\View */
+/* @var $searchModel app\models\SynchronizationSearch */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $model app\models\Synchronization */
+/* @var $item app\models\Synchronization */
+
+$this->title = 'Synchronizations';
+$this->params['breadcrumbs'][] = $this->title;
+// $array_of_status =
+?>
+<div class="synchronization-index">
+
+    <h1><?= Html::encode($this->title) ?></h1>
+    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php   echo $this->render('_counts', ['dataProvider' => $dataProvider]); ?>
+
+
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        // 'filterModel' => $searchModel,
+        'columns' => [
+            //['class' => 'yii\grid\SerialColumn'],
+
+            'id',
+            [
+                'label' => 'Источник',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return " <a href='" . $model->url . "' target='_blank'> " . \app\models\Sale::ID_SOURCES[$model->id_sources] . "</a> <br> id=" . $model->id_in_source;
+                }
+            ],
+
+            [
+                'label' => 'время',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return "<i class=\"fa fa-hourglass-start\" aria-hidden=\"true\"></i>" . date("d.m.y H:i:s", $model->date_start) .
+                        "<br> <i class=\"fa fa-check\" aria-hidden=\"true\"></i>" . date("d.m.y H:i:s", $model->date_of_check)
+                        . "<br> <i class=\"fa fa-trash-o\" aria-hidden=\"true\"></i>" . date("d.m.y H:i:s", $model->date_of_die);
+                }
+            ],
+            [
+                'label' => 'addresses',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $area_string = $model->grossarea;
+                    if ($model->living_area != 0) $area_string .= "/" . $model->living_area;
+                    if ($model->kitchen_area != 0) $area_string .= "/" . $model->kitchen_area;
+                    $area_string .= "м2";
+                    if ($model->id_address == null) $id_address = 'no id_address';
+                    else {
+                        $id_address = "<br>" . \yii\helpers\Html::a("id_address=" . $model->id_address,
+                                Yii::$app->getUrlManager()->createUrl(['addresses/view', 'id' => $model->id_address]),
+                                ['title' => Yii::t('yii', 'Fix'),
+                                    'data-pjax' => '0',
+                                    'target' => '_blank']);
+                    }
+                    return $model->title . "<br>" . $area_string . "<br>" . $model->address_line . "<br>" . $model->address . $id_address . " year=" . $model->year . "<br>" .
+                        \app\models\Renders::Price($model->price). $model->renderPhone();
+
+
+                }
+            ],
+            [
+                'label' => 'Координаты',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $customurl = "https://yandex.ru/maps/?mode=search&text=" . $model->coords_x.", ".$model->coords_y; //$model->id для AR
+                    return \yii\helpers\Html::a('<i class="fa fa-map-marker fa-2x" aria-hidden="true"></i>', $customurl,
+                        ['title' => Yii::t('yii', 'yandex maps'),
+                            'data-pjax' => '0',
+                            'target' => '_blank']);
+
+                }
+            ],
+            [
+                'label' => 'статус',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return " STATUS: " . \app\models\Sale::DISACTIVE_CONDITIONS_ARRAY[$model->disactive] .
+                        " <hr>parsed: " . \app\models\Sale::TYPE_OF_PARSED[$model->parsed] .
+                        " <hr>geocodated: " . \app\models\Geocodetion::GEOCODATED_STATUS_ARRAY[$model->geocodated] .
+                        " <hr>processed: " . \app\models\Sale::TYPE_OF_PROCCESSED[$model->processed] .
+                        " <hr>load_analized: " . \app\models\Sale::TYPE_OF_ANALIZED[$model->load_analized] .
+                        " <hr>sync: " . \app\models\Sale::TYPE_OF_SYNC[$model->sync];
+
+                }
+            ],
+
+
+            [
+                'label' => 'log',
+                'format' => 'raw',
+                'value' => function ($model) {
+
+                    return $model->RenderLog();
+
+                }
+            ],
+
+            [
+                'label' => "admin",
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $buttons = '';
+                    $buttons .= "<a class='change-status' data-status_name='geocodated' data-id_item=" . $model->id . "><i class='fa fa-map-marker fa-2x' aria-hidden='true'></i></a>";
+                    $buttons .= "<hr><a class='change-status' data-status_name='load_analized' data-id_item=" . $model->id . "><i class='fa fa-area-chart fa-2x' aria-hidden='true'></i></a>";
+                    $buttons .= "<hr><a class='change-status' data-status_name='parsed' data-id_item=" . $model->id . "><i class='fa fa-clone fa-2x' aria-hidden='true'></i></a>";
+                    $buttons .= "<hr><a class='change-status' data-status_name='processed' data-id_item=" . $model->id . "><i class='fa fa-spinner fa-2x' aria-hidden='true'></i></a>";
+                    $buttons .= "<hr><a class='change-status' data-status_name='sync' data-id_item=" . $model->id . "><i class='fa fa-link fa-2x' aria-hidden='true'></i></a>";
+                    $buttons .= "<hr><a class='change-statuses' data-model='sync' data-value='6' data-attrname='disactive' data-id=" . $model->id . "><i class='fa fa-play fa-2x' aria-hidden='true'></i></a>";
+                    $buttons .= "<hr><a class='change-statuses' data-model='sync' data-value='' data-attrname='phone1' data-id=" . $model->id . "><i class='fa fa-phone fa-2x' aria-hidden='true'></i></a>";
+
+                    return $buttons;
+                }
+            ],
+        ],
+        'pager' => [
+            'options' => ['class' => 'pagination pagination-circle pg-blue mb-0'],
+            'linkOptions' => ['class' => 'page-link'],
+            'firstPageCssClass' => 'page-item first',
+            'prevPageCssClass' => 'page-item last',
+            'nextPageCssClass' => 'page-item next',
+            'activePageCssClass' => 'page-item active',
+            'disabledPageCssClass' => 'page-item invisible'
+        ],
+    ]); ?>
+
+
+</div>
+
+
+

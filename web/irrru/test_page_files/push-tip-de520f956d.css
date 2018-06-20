@@ -1,0 +1,100 @@
+* {
+  box-sizing: border-box;
+  outline: none; }
+
+html {
+  height: 100%; }
+
+body {
+  position: relative;
+  width: 370px;
+  height: 470px;
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 18px;
+  margin: 0; }
+  body.is-preview {
+    height: auto; }
+    body.is-preview .PushTip-ImageTitle {
+      font-size: 14px;
+      color: #ccc;
+      margin: 5px 0;
+      display: block; }
+    body.is-preview .PushTip {
+      height: auto; }
+
+.PushTip {
+  position: relative;
+  width: 333px;
+  height: 428px;
+  background: #fff;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+  margin: 20px auto; }
+  .PushTip-ImageTitle {
+    display: none; }
+  .PushTip-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer; }
+  .PushTip-title {
+    width: 100%;
+    padding: 27px 0 21px 0;
+    height: 63px;
+    text-align: center;
+    box-sizing: content-box; }
+  .PushTip-titleItem {
+    color: #363833;
+    width: 80%;
+    font-size: 18px;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-weight: 100;
+    margin: 0 auto; }
+  .PushTip-imageWrap {
+    text-align: center; }
+  .PushTip-image {
+    width: 234px;
+    height: 234px; }
+  .PushTip-button {
+    text-align: center;
+    padding: 18px 0 27px 0; }
+  .PushTip-buttonItem {
+    text-align: center;
+    min-width: 99px;
+    max-width: 150px;
+    height: 33px;
+    border: 1px solid #363833;
+    font-size: 14px;
+    background-color: #fff;
+    cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap; }
+
+.is-windows-chrome-img,
+.is-mac-chrome-img,
+.is-windows-firefox-img,
+.is-mac-firefox-img,
+.is-opera-img,
+.is-mac-safari-img,
+.is-windows-yandex-img,
+.is-mac-yandex-img {
+  display: none; }
+
+.is-preview .is-windows-chrome-img,
+.is-preview .is-mac-chrome-img,
+.is-preview .is-windows-firefox-img,
+.is-preview .is-mac-firefox-img,
+.is-preview .is-opera-img,
+.is-preview .is-mac-safari-img,
+.is-preview .is-windows-yandex-img,
+.is-preview .is-mac-yandex-img {
+  display: block; }
+
+.is-chrome.is-win .is-windows-chrome-img,
+.is-chrome.is-mac .is-mac-chrome-img,
+.is-firefox.is-mac .is-mac-firefox-img,
+.is-firefox.is-win .is-windows-firefox-img,
+.is-opera .is-opera-img,
+.is-safari .is-mac-safari-img,
+.is-yandex.is-win .is-windows-yandex-img,
+.is-yandex.is-mac .is-mac-yandex-img {
+  display: block; }

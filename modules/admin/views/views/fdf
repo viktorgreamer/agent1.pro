@@ -1,0 +1,9 @@
+6480018
+https://oauth.vk.com/authorize?client_id=6480018&display=page&redirect_uri=https://oauth.vk.com/blank.html&scope=friends,messages&response_type=token&v=5.52
+
+https://oauth.vk.com/authorize?client_id=6480018&scope=messages&response_type=token
+
+9c0879fbbb64127d6084ef76f01722dad0edb7ac6962147a1bd8e25243385053e78908fd5ac970ed9444d
+
+
+https://oauth.vk.com/authorize?client_id=6480018&redirect_uri=http://api.vk.com/blank.html&display=page&scope=messages&response_type=code&v=5.74

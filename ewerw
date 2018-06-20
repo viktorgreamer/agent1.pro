@@ -1,0 +1,7 @@
+SELECT COUNT(*)
+FROM (SELECT `s`.* FROM `CITY_sale` `s`
+LEFT JOIN `CITY_agents` `agent` ON `s`.`phone1` = `agent`.`phone`
+LEFT JOIN `CITY_addresses` `address` ON `s`.`id_address` = `address`.`id`
+LEFT JOIN `CITY_tags` `tags` ON `s`.`id` = `tags`.`sale_id`
+LEFT JOIN `CITY_tags` `atags` ON `s`.`id_address` = `atags`.`id_address_tag`
+WHERE (`s`.`date_start` >= 1506897849) AND (`s`.`disactive` <> 1) GROUP BY `s`.`id`) `c`
