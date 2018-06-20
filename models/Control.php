@@ -1786,6 +1786,7 @@ class Control extends \yii\db\ActiveRecord
 
             } else {
                 if (!$sale->phone1) {
+                    $counterERROR++;
                     // если оно только что пригло и уже устарело то удалаем его т.к. всеравно нет телефона и цены
 
                     if (!Synchronization::findOne($sale->id)->delete()) info("CANNOT DELETE ITEMS", DANGER);
@@ -1793,6 +1794,7 @@ class Control extends \yii\db\ActiveRecord
 
                 } else {
                     $sale->disactive = 1;
+                    $counterSUCCESS++;
 
                 }
             }
@@ -1803,7 +1805,12 @@ class Control extends \yii\db\ActiveRecord
             ControlParsing::updatingTime($id_parsingController);
         }
 
-        ControlParsing::updating($id_parsingController);
+        $counts_array = [
+            'AVITO_PHONES_ERROR' => $counterERROR,
+            'AVITO_PHONES_SUCCESS' => $counterSUCCESS,
+
+        ];
+        ControlParsing::updating($id_parsingController, 2, serialize($counts_array));
         //  $driver->quit();
         return true;
 
