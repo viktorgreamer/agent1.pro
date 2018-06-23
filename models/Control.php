@@ -1722,6 +1722,8 @@ class Control extends \yii\db\ActiveRecord
             Notifications::VKMessage(" ONE SERVER SESSIONS LIMIT");
             return false;
         }
+        $counterERROR = 0;
+        $counterSUCCESS = 0;
         //  $driver->get('https://irr.ru/');
         //  $driver->manage()->deleteAllCookies();
         //  $cookie = new Cookie('cookie_name', 'cookie_value');
@@ -1780,8 +1782,26 @@ class Control extends \yii\db\ActiveRecord
                 if ($phone) {
                     info("AVITO PHONE FOUND BY NEW SYSTEM ", SUCCESS);
                     $sale->phone1 = preg_replace("/\+7/", "8", $phone);
+                    if (preg_match("/\d{9,11}/", $sale->phone1)) {
+                        $sale->disactive = 1;
+                        $counterSUCCESS++;
+                    } else {
+                        $counterERROR++;
+                        $sale->phone1 = '';
+                    }
+
                     info($sale->phone1);
-                } else  $sale->phone1 = ParsingExtractionMethods::ExtractPhoneFromMAvito($driver->getPageSource());
+                } else  {
+                    $sale->phone1 = ParsingExtractionMethods::ExtractPhoneFromMAvito($driver->getPageSource());
+                    if (preg_match("/\d{9,11}/", $sale->phone1)) {
+                        $sale->disactive = 1;
+                        $counterSUCCESS++;
+                    } else {
+                        $counterERROR++;
+                        $sale->phone1 = '';
+                    }
+
+                }
 
             } else {
                 if (!$sale->phone1) {
@@ -1790,16 +1810,6 @@ class Control extends \yii\db\ActiveRecord
 
                     if (!Synchronization::findOne($sale->id)->delete()) info("CANNOT DELETE ITEMS", DANGER);
                     else  info(" удалили <a href='" . $sale->url . "' > " . $sale->id_in_source . "</a>", SUCCESS);
-
-                } else {
-                    if (preg_match("/\d{9,11}/", $sale->phone)) {
-                        $sale->disactive = 1;
-                        $counterSUCCESS++;
-                    } else {
-                        $counterERROR++;
-                        $sale->phone1 = '';
-                    }
-
 
                 }
             }
