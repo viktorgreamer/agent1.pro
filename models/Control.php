@@ -1211,10 +1211,10 @@ class Control extends \yii\db\ActiveRecord
         $type = 'PARSING_NEW';
         $configs = $this->getREADY($type);
         if (!$configs) return false;
+        $id_parsingController = ControlParsing::create($type, $configs, $driver->ip);
 
         $driver = MyChromeDriver::Open(MyChromeDriver::CURRENT_PROXY);
-     //   $driver->getMyIp();
-        $id_parsingController = ControlParsing::create($type, $configs, $driver->ip);
+        //   $driver->getMyIp();
         $time_start = time();
 
         // обнуление счетчиков
@@ -1778,11 +1778,10 @@ class Control extends \yii\db\ActiveRecord
             if (!$break) {
                 sleep(rand(3, 5));
                 if ($phone) {
-                    info("AVITO PHONE FOUND BY NEW SYSTEM ",SUCCESS);
+                    info("AVITO PHONE FOUND BY NEW SYSTEM ", SUCCESS);
                     $sale->phone1 = preg_replace("/\+7/", "8", $phone);
                     info($sale->phone1);
-                }
-               else  $sale->phone1 = ParsingExtractionMethods::ExtractPhoneFromMAvito($driver->getPageSource());
+                } else  $sale->phone1 = ParsingExtractionMethods::ExtractPhoneFromMAvito($driver->getPageSource());
 
             } else {
                 if (!$sale->phone1) {
@@ -1793,8 +1792,14 @@ class Control extends \yii\db\ActiveRecord
                     else  info(" удалили <a href='" . $sale->url . "' > " . $sale->id_in_source . "</a>", SUCCESS);
 
                 } else {
-                    $sale->disactive = 1;
-                    $counterSUCCESS++;
+                    if (preg_match("/\d{9,11}/", $sale->phone)) {
+                        $sale->disactive = 1;
+                        $counterSUCCESS++;
+                    } else {
+                        $counterERROR++;
+                        $sale->phone1 = '';
+                    }
+
 
                 }
             }

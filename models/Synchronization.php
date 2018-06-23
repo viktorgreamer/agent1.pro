@@ -555,7 +555,7 @@ class Synchronization extends Sale
             // echo "<br>" . $parsing['url'] . " новый объект";
 
             if (!$active_item->save()) my_var_dump($active_item->getErrors());
-            Notifications::VKMessage($active_item->id);
+          //  Notifications::VKMessage($active_item->id);
 
             return " NEW";
         }
