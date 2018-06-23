@@ -1713,6 +1713,7 @@ class Control extends \yii\db\ActiveRecord
         $time_start = time();
         // берем объекты
         $sales = $this->getREADY($type);
+        $id_parsingController = ControlParsing::create($type, $sales);
 
         if (!$sales) return false;
 
@@ -1726,7 +1727,6 @@ class Control extends \yii\db\ActiveRecord
         //  $cookie = new Cookie('cookie_name', 'cookie_value');
         //  $driver->manage()->addCookie($cookie);
         // распарсиваем ресурс стартовой страницы
-        $id_parsingController = ControlParsing::create($type, $sales);
 
         foreach ($sales as $sale) {
             // открываем ссылку ( если нет открывается то выходим)
@@ -1760,8 +1760,8 @@ class Control extends \yii\db\ActiveRecord
                         $driver->getKeyboard()->sendKeys(WebDriverKeys::ARROW_DOWN);
                         $driver->getKeyboard()->sendKeys(WebDriverKeys::ARROW_DOWN);
 
-                        sleep(rand(4, 6));
                         $driver->findElement(WebDriverBy::className('action-show-number'))->click();
+                        sleep(rand(4, 6));
 
                     } else {
                         info("DIDNT FIND 'action-show-number'", DANGER);
@@ -1938,6 +1938,12 @@ class Control extends \yii\db\ActiveRecord
 
 
         }
+        $counts_array = [
+            'AVITO_PHONES_ERROR' => $counterERROR,
+            'AVITO_PHONES_SUCCESS' => $counterSUCCESS,
+
+        ];
+        ControlParsing::updating($id_parsingController, 2, serialize($counts_array));
 
         $config->updateParsingController($id_parsingController);
 

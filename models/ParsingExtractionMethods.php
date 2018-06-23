@@ -311,7 +311,7 @@ class ParsingExtractionMethods extends Model
 
         $phone = preg_replace("/\D+/", "", $output_array);
         $phone = preg_replace("/\A7/", "8", $phone);
-        info("I have got the Phone from avito =" . $phone,SUCCESS);
+        info("I have got the Phone from avito =" . $phone ." BY CLICKING METHODS",SUCCESS);
         return $phone;
     }
 
