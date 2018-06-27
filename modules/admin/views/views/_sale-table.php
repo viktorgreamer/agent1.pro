@@ -45,10 +45,9 @@ if ($sale) {
                 <br>
                 <?php echo $sale->renderAddress(); ?>
                 <?php
-                if ($sale->similarNew) {
+                if ($sale->similar) {
 
-                    //  echo span("similar_id =".$sale->similarNew->id);
-                    $similarsales = $sale->similarNewSales;
+                    $similarsales = $sale->similar->sales;
                 }
                 ?>
                 <?php if ($similarsales) {

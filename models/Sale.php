@@ -468,7 +468,7 @@ class Sale extends \yii\db\ActiveRecord
                         $log = [9, time(), '', ''];
                         $this->addLog($log);
                         $this->disactive = 0;
-                        info("РЕИНКАРНИРОВАЛИ ВАРИАНТ");
+                        info("REINCARNATION OF ITEM");
                         $this->status = 9;
                         $this->sync = 2;
                     }
@@ -2167,7 +2167,7 @@ class Sale extends \yii\db\ActiveRecord
                  $id_similar = $is_existed_salesimilar[0];
 
 
-                //   my_var_dump($is_existed_salesimilar);
+                 //  my_var_dump($is_existed_salesimilar);
 
             } elseif ((count($is_existed_salesimilar) == 0)) {
                 info(" THERE IS NO ONE EXISTED SIMILAR , CREATING NEW", PRIMARY);
@@ -2179,12 +2179,14 @@ class Sale extends \yii\db\ActiveRecord
                 Notifications::VKMessage(" СПОРТНЫЙ МОМЕНТ ПО SALESIMILAR id=" . $this->id);
                 $id_similar = $is_existed_salesimilar[0];
             }
-
+// если установили или создали новый id_similar то проставляем по всем его
             if ($id_similar) {
                 $this->id_similar = $id_similar;
                 if ($not_is_existed_salesimilar) {
                     info("SETTING FOR NOT EXISTED FOR " . count($not_is_existed_salesimilar) . " ITEMS", PRIMARY);
                     foreach ($not_is_existed_salesimilar as $item) {
+                        // обновляем в облаке
+                       Sale::updateAll(['id_similar' => $id_similar], ['id' => $item->id]);
                         $item->id_similar = $id_similar;
                         if (!$item->save()) my_var_dump($item->errors);
                     }

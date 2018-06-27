@@ -167,7 +167,7 @@ class Control extends \yii\db\ActiveRecord
                     }
 
                     if ($agentpro->status_detailed_parsing) {
-                        if ($module->DetaledParsing(100) !== false) continue;
+                        if ($module->DetaledParsing(50) !== false) continue;
                     }
                     if ($agentpro->status_parsing_new) {
                         if ($module->MyParsingNewNewer() !== false) continue;
@@ -212,6 +212,7 @@ class Control extends \yii\db\ActiveRecord
                     if ($module->geocodetion(100) !== false) continue;
                 }
                 if ($agentpro->status_processing) $module->processing(100);
+                if ($agentpro->status_similar_check) $module->similarCheck(50);
                 if ($agentpro->status_analizing) $module->load_sale_statistic(50);
                 if ($agentpro->status_sync) $module->Synchronisation(500);
 
@@ -450,7 +451,7 @@ class Control extends \yii\db\ActiveRecord
             // изменилась только цена то обработку на телефон и похожие вариенты не проводим
             if ($sale->status != 4) {
                 $sale->checkForAgents();
-                $sale->similarCheckNewer();
+                //$sale->similarCheckNewer();
 
                 // $sale->getSimilar_ids();
             }
@@ -466,6 +467,34 @@ class Control extends \yii\db\ActiveRecord
         echo Synchronization::Counts(Synchronization::find(), [
             'processed' => [1, 2, 3],
         ]);
+
+        return true;
+
+
+    }
+
+    public function similarCheck($limit = 50)
+    {
+        $type = "SIMILARCHECK";
+
+        // берем объекты готовые к обработке
+        $sales = $this->getREADY($type, $limit);
+        if (!$sales) return false;
+        $id_parsingController = ControlParsing::create($type, $sales);
+        foreach ($sales as $key => $sale) {
+            if ($key % 30 == 0) {
+                ControlParsing::updatingTime($id_parsingController);
+            }
+            // изменилась только цена то обработку на телефон и похожие вариенты не проводим
+            if ($sale->status != 4) {
+                $sale->similarCheckNewer();
+
+                }
+
+            //  echo " <br>" . $sale->id;
+        }
+        ControlParsing::updating($id_parsingController);
+
 
         return true;
 
@@ -1280,7 +1309,7 @@ class Control extends \yii\db\ActiveRecord
                         // формируем ссылку по правилам для данной конфигурации в зависимости от текущей страницы
                         $url = ParsingConfiguration::RuleOfUrl($config, $page);
                         info(" GETTING PAGE '" . $url . "'");
-                        $driver->get($url);
+                        $driver->getWithCookies($url);
                         // ждем на странице какое-то время имитируя пользователя
                         $config->sleeping();
 
@@ -1401,10 +1430,6 @@ class Control extends \yii\db\ActiveRecord
 
         // если нечего обрабатывать, то выходим
         if (!$sales) return false;
-        info(Synchronization::Counts(Synchronization::find()->where(['not in', 'disactive', [1, 2]]), [
-            'parsed' => [1, 2, 3],
-
-        ]), PRIMARY);
 
         // группируем объекты по id_sources для  того, чтобы обрабатывать их последовательно
         $grouped_sales = array_group_by($sales, 'id_sources');
@@ -1413,6 +1438,8 @@ class Control extends \yii\db\ActiveRecord
             Notifications::VKMessage(" ONE SERVER SESSIONS LIMIT");
             return false;
         }
+        $id_parsingController = ControlParsing::create($type, $sales, $driver->ip);
+
 
         // $driver->getMyIp();
 
@@ -1430,12 +1457,11 @@ class Control extends \yii\db\ActiveRecord
             }
 
             // создаем запись контоля парсинга и берем ее ID
-            $id_parsingController = ControlParsing::create($type, $sales, $driver->ip);
             foreach ($sales as $key_sales => $sale) {
                 $break = false;
                 // открываем ссылку ( если нет открывается то выходим)
 
-                $driver->get($sale->url);
+                $driver->getWithCookies($sale->url);
                 $response = $driver->getPageSource();
                 if (($sale->id_sources == 5) and ($key_sales == 0)) {
                     Selectors::loadPageClasses($response, $sale->id_sources);
@@ -1596,6 +1622,15 @@ class Control extends \yii\db\ActiveRecord
                     $objects = $query->limit($limit)->all();
                     break;
                 }
+                case 'SIMILARCHECK';
+                {
+                    $query = Synchronization::find()
+                        ->where(['id_similar' => 0]);
+                    // удаляем критически занятые id
+                    $query->andFilterWhere(['not in', 'id', ControlParsing::getBusyIds($type)]);
+                    $objects = $query->limit($limit)->all();
+                    break;
+                }
             case 'PARSING_NEW':
                 {
                     $Broken_Controls = $this->getBrokenParsingControls($type);
@@ -1736,7 +1771,7 @@ class Control extends \yii\db\ActiveRecord
             $url = $sale->url;
             $url = preg_replace("/www.avito/", "m.avito", $url);
             info($url);
-            $driver->get($url);
+            $driver->getWithCookies($url);
             sleep(rand(7, 10));
 
             if (!preg_match("/Сохранить.+поиск/", $driver->getPageSource())) {
@@ -1782,24 +1817,11 @@ class Control extends \yii\db\ActiveRecord
                 if ($phone) {
                     info("AVITO PHONE FOUND BY NEW SYSTEM ", SUCCESS);
                     $sale->phone1 = preg_replace("/\+7/", "8", $phone);
-                    if (preg_match("/\d{9,11}/", $sale->phone1)) {
-                        $sale->disactive = 1;
-                        $counterSUCCESS++;
-                    } else {
-                        $counterERROR++;
-                        $sale->phone1 = '';
-                    }
+
 
                     info($sale->phone1);
                 } else  {
                     $sale->phone1 = ParsingExtractionMethods::ExtractPhoneFromMAvito($driver->getPageSource());
-                    if (preg_match("/\d{9,11}/", $sale->phone1)) {
-                        $sale->disactive = 1;
-                        $counterSUCCESS++;
-                    } else {
-                        $counterERROR++;
-                        $sale->phone1 = '';
-                    }
 
                 }
 
@@ -1812,6 +1834,12 @@ class Control extends \yii\db\ActiveRecord
                     else  info(" удалили <a href='" . $sale->url . "' > " . $sale->id_in_source . "</a>", SUCCESS);
 
                 }
+            }
+            if (preg_match("/\d{9,11}/", $sale->phone1)) {
+                $counterSUCCESS++;
+            } else {
+                $counterERROR++;
+                $sale->phone1 = '';
             }
 
 

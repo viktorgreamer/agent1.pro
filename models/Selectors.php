@@ -163,8 +163,8 @@ class Selectors extends \yii\db\ActiveRecord
         if ($this->count == 2) {
             if (preg_match_all($pattern, $pageSource, $output_array)) {
                 if (count($output_array[1]) > 1) {
-                    my_var_dump($output_array[1]);
-                    info("SELECTOR ОБНАРУЖЕН в количестве " . count($output_array[1]), 'success');
+                  //  my_var_dump($output_array[1]);
+                    info("SELECTOR EXISTS IN COUNT " . count($output_array[1]), 'success');
                     $this->selector = $output_array[1][0];
                     if (!$this->save()) my_var_dump($this->errors);
                     return true;
@@ -172,7 +172,7 @@ class Selectors extends \yii\db\ActiveRecord
                 }
                 //  return $output_array[1];
             } else {
-                info("SELECTOR НЕ ОБНАРУЖЕН " . $this->error->name, 'danger');
+                info("SELECTOR DO NOT EXIST " . $this->error->name, 'danger');
                 self::throwError($this->error, $pageSource);
 
                 $this->selector = "____ERROR____";
@@ -182,18 +182,18 @@ class Selectors extends \yii\db\ActiveRecord
         } elseif ($this->count == 1) {
             if (preg_match_all($pattern, $pageSource, $output_array)) {
                 if (count($output_array[1]) == 1) {
-                    my_var_dump($output_array[1]);
-                    info("SELECTOR ОБНАРУЖЕН в количестве " . count($output_array[1]), 'success');
+                   // my_var_dump($output_array[1]);
+                    info("SELECTOR EXISTS IN COUNT" . count($output_array[1]), 'success');
                     $this->selector = $output_array[1][0];
                     if (!$this->save()) my_var_dump($this->errors);
                     return true;
 
                 } else {
-                    my_var_dump($output_array[1]);
-                    info("SELECTOR НЕ ОБНАРУЖЕН", 'danger');
+                  //  my_var_dump($output_array[1]);
+                    info("SELECTOR DO NOT EXIST", 'danger');
                 }
             } else {
-                info("SELECTOR НЕ ОБНАРУЖЕН", 'danger');
+                info("SELECTOR DO NOT EXIST", 'danger');
                 self::throwError($this->error, $pageSource);
                 $this->selector = "____ERROR____";
                 if (!$this->save()) my_var_dump($this->errors);
@@ -201,32 +201,32 @@ class Selectors extends \yii\db\ActiveRecord
         } elseif ($this->count == Selectors::SELECTOR_CIAN_10) {
             if (preg_match_all($pattern, $pageSource, $output_array)) {
                 if (count($output_array[1]) == 2) {
-                    my_var_dump($output_array);
-                    info("SELECTOR ОБНАРУЖЕН в количестве " . count($output_array[1]), 'success');
+                   // my_var_dump($output_array);
+                    info("SELECTOR EXISTS IN COUNT  " . count($output_array[1]), 'success');
                     $this->selector = $output_array[1][0];
                     if (!$this->save()) my_var_dump($this->errors);
                     return true;
 
                 } else {
                     // my_var_dump($output_array);
-                    info("SELECTOR НЕ ОБНАРУЖЕН", 'danger');
+                    info("SELECTOR DO NOT EXIST", 'danger');
                 }
             } else {
-                info("SELECTOR НЕ ОБНАРУЖЕН", 'danger');
+                info("SELECTOR DO NOT EXIST", 'danger');
                 self::throwError($this->error, $pageSource);
                 $this->selector = "____ERROR____";
                 if (!$this->save()) my_var_dump($this->errors);
             }
         } elseif ($this->count == Selectors::SELECTOR_CIAN_11) {
             if (preg_match_all($pattern, $pageSource, $output_array)) {
-                my_var_dump($output_array);
-                info("SELECTOR ОБНАРУЖЕН в количестве " . count($output_array[1]), 'success');
+               // my_var_dump($output_array);
+                info("SELECTOR EXISTS IN COUNT " . count($output_array[1]), 'success');
                 $this->selector = $output_array[1][1];
                 if (!$this->save()) my_var_dump($this->errors);
                 return true;
 
             } else {
-                info("SELECTOR НЕ ОБНАРУЖЕН", 'danger');
+                info("SELECTOR DO NOT EXIST", 'danger');
                 self::throwError($this->error, $pageSource);
                 $this->selector = "____ERROR____";
                 if (!$this->save()) my_var_dump($this->errors);

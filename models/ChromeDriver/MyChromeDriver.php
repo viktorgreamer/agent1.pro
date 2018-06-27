@@ -49,7 +49,7 @@ class MyChromeDriver extends RemoteWebDriver
     const CHROME_HOST = 'http://localhost:9515';
     const SESSION_LOST_TIMEOUT = 100;
 
-    const ERROR_LIMIT = 3;
+    const ERROR_LIMIT = 4;
     const ALL_BUSY = 2;
 
     const NO_PROXY = 1;
@@ -67,9 +67,17 @@ class MyChromeDriver extends RemoteWebDriver
         $freesession = self::getFreeSession();
         if (($freesession) and ($freesession != self::ERROR_LIMIT)) {
             $driver = self::createBySessionID($freesession, self::CHROME_HOST);
-            $driver->ip = Sessions::find()->where(['id_session' => $freesession])->one()->ip;
+            $session = Sessions::find()->where(['id_session' => $freesession])->one();
+            if (!$session->ip) {
+                $driver->getMyIp();
+                $session->ip = $driver->ip;
+            } else {
+                $driver->ip = $session->ip;
+
+            }
             \Yii::$app->params['driver'] = $driver;
             \Yii::$app->params['ip'] = $driver->ip;
+            info(" USING SESSION " . $driver->sessionID . " IP = " . $driver->ip);
             return $driver;
         } else {
             if ($freesession == self::ERROR_LIMIT) {
@@ -134,7 +142,7 @@ class MyChromeDriver extends RemoteWebDriver
     }
 
     public
-    function get($url)
+    function getWithCookies($url)
     {
         Sessions::updateSession($this->sessionID, $url);
 
@@ -143,6 +151,7 @@ class MyChromeDriver extends RemoteWebDriver
 
     }
 
+    // this function uses only then new driver starts for uploading the cookies
     public
     function start_get($url)
     {
@@ -163,6 +172,9 @@ class MyChromeDriver extends RemoteWebDriver
             }
         }
 
+        if (!$this->ip) $this->getMyIp();
+
+
         $wd_cookies = WdCookies::find()->where(['ip_port' => $this->ip])->andWhere(['id_server' => Yii::$app->params['server']])->one();
         if ($wd_cookies) {
             info("UPDATING EXISTED COOKIES", SUCCESS);
@@ -175,6 +187,7 @@ class MyChromeDriver extends RemoteWebDriver
             $wd_cookies->id_server = Yii::$app->params['server'];
             $wd_cookies->body = json_encode($JSON);
             $wd_cookies->time = time();
+
             $wd_cookies->ip_port = $this->ip;
             if (!$wd_cookies->save()) my_var_dump($wd_cookies->errors);
         }
@@ -231,15 +244,16 @@ class MyChromeDriver extends RemoteWebDriver
                 }
             }
         }
-        my_var_dump($ids_session);
+        // my_var_dump($ids_session);
 
 
-        $has_deleted_session = Sessions::deleteAll(['AND',
+        $has_deleted_session = Sessions::updateAll(['status' => Sessions::LOST], ['AND',
             ['not in', 'id_session', $ids_session],
+            ['<', 'datetime_check', (time() - 60*2)],
             ['id_server' => Yii::$app->params['server']]
         ]);
 
-        my_var_dump($has_deleted_session);
+        //  my_var_dump($has_deleted_session);
 
         if (!$ids_session) info("NO SESSION", 'danger');
 
@@ -262,8 +276,10 @@ class MyChromeDriver extends RemoteWebDriver
                 info(" SESSION " . $web_session->id_session . " IS NOT FREE", 'danger');
             }
 
-            if ($freesession) return $freesession;
-            else {
+            if ($freesession) {
+                //   info(" USING SESSION " . $freesession, PRIMARY);
+                return $freesession;
+            } else {
                 if (count($ids_session) > 5) {
                     info(" CANNOT START CHROME DRIVER BECAUSE 5 SESSIONS ARE RUNNING", DANGER);
                     return self::ERROR_LIMIT;
@@ -280,7 +296,12 @@ class MyChromeDriver extends RemoteWebDriver
     public
     function getMyIp()
     {
-
+        $this->start_get('https://api.ipify.org?format=json');
+        $response = $this->getPageSource();
+        $ip = json_decode($response, true);
+        //  my_var_dump($ip);
+        info("GOT IP = " . $ip['ip']);
+        $this->ip = $ip['ip'];
     }
 
     /*

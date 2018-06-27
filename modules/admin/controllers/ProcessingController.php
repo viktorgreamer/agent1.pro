@@ -45,7 +45,7 @@ class ProcessingController extends \yii\web\Controller
 
             $sale->similarCheckNewer();
             echo "<hr>";
-            //$sale->save();
+          //  $sale->save();
         }
         if ($sales) {
             foreach ($sales as $sale) {

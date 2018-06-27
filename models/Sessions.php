@@ -19,6 +19,7 @@ class Sessions extends \yii\db\ActiveRecord
 
     const ACTIVE = 1;
     const FREE = 2;
+    const LOST = 3;
 
     /**
      * @inheritdoc
@@ -58,6 +59,8 @@ class Sessions extends \yii\db\ActiveRecord
         $session->id_session = $id_session;
         $session->datetime_check = time();
         $session->datetime_start = time();
+        if (!$ip) info(" CREATING SESSION WITHOUT IP ",DANGER);
+        else info(" CREATING SESSION WITH IP ".$ip,SUCCESS);
         $session->ip = $ip;
         $session->id_server = Yii::$app->params['server'];
         if (!$session->save()) my_var_dump($session->getErrors());

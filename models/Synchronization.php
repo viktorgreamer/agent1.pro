@@ -451,7 +451,7 @@ class Synchronization extends Sale
         // если такой уже есть то делаем update или ничего не делаем
         //  if ($active_item->id != 4342) return 'JKJ';
         if ($active_item) {
-            info("SYNC PROCESSING ...", PRIMARY);
+          //  info("SYNC PROCESSING ...", PRIMARY);
 
             // делаем update
             $return = '';
@@ -523,7 +523,7 @@ class Synchronization extends Sale
 
                 // значит ничего не изменилось
 
-            } else  echo info(" object was checked " . $delay . " seconds ago");
+            } else  echo info("OBJEC  WAS CHECKED" . $delay . " seconds ago");
 
             // TODO ОТМЕНИТЬ КОГДА ВСЕ СВЕРИМ
             // $active_item->address_line = $parsing['address_line'];
@@ -532,10 +532,10 @@ class Synchronization extends Sale
 
 
             if ((!$active_item->id_category) OR (!preg_match("/THE_SAME/", $return)) OR ($manual_save)) {
-                my_var_dump($active_item->id_category);
-                my_var_dump($return);
-                my_var_dump($manual_save);
-                info("SAVING SINGLE ITEM BECAUSE IT HAS CHANGES", SUCCESS);
+             //   my_var_dump($active_item->id_category);
+              //  my_var_dump($return);
+              //  my_var_dump($manual_save);
+                info("SAVING ... IT HAS CHANGES", SUCCESS);
                 $active_item->date_of_check = time();
                 $active_item->id_category = $config->id;
                 if (!$active_item->save()) my_var_dump($active_item->getErrors());
@@ -543,7 +543,7 @@ class Synchronization extends Sale
 
             return $return;
         } else {
-            info("CREATING NEW ...", PRIMARY);
+           // info("CREATING NEW ...", PRIMARY);
 
             // создаем новый объект и загружаем в него свойства
             $active_item = New Synchronization();
