@@ -45,12 +45,36 @@ class Control extends \yii\db\ActiveRecord
     {
         return 'control';
     }
+    const P_SYNC = 1;
+    const P_NEW = 2;
+    const P_DET = 3;
+    const P_APHONES = 4;
+    const GEO = 5;
+    const PROCC = 6;
+    const ANALISYS = 7;
+    const SIMILAR = 8;
+    const DOWN_SYNC = 9;
+    const UP_SYNC = 10;
+
+    public static function mapTypesControls() {
+        return [
+            self::P_SYNC => 'P_SYNC',
+            self::P_NEW => 'P_NEW',
+            self::P_DET => 'P_DET',
+            self::P_APHONES => 'P_APHONES',
+            self::GEO => 'GEO',
+            self::PROCC => 'PROCC',
+            self::ANALISYS => 'ANALISYS',
+            self::SIMILAR => 'SIMILAR',
+            self::DOWN_SYNC => 'DOWN_SYNC',
+            self::UP_SYNC => 'UP_SYNC',
+        ];
+    }
 
 
-    const SECTIONS_OF_CONTROL = [
-        'PARSING_SYNC', 'PARSYNG_NEW', 'DETAILED_PARSING', 'PARSING_AVITO_PHONES',
-        'GEOCODATION', 'PROCESSING', 'LOAD_ANALIZED', 'UP_SYNCHRONISATION', 'DOWN_SYNCHRONISATION'
-    ];
+
+
+
     const STATUS_STOP_PARSING = 1;
     const STATUS_ACTIVE_PARSING = 0;
     const STATUSES = [
@@ -234,7 +258,7 @@ class Control extends \yii\db\ActiveRecord
         preg_match_all("/chrome.exe/", $response, $output);
         $count_of_process = count($output[0]) / 6;
         // my_var_dump($output);
-        $active_process = ParsingControl::find()->where(['status' => ParsingControl::STATUS_ACTIVE])->andwhere(['in', 'type', ['PARSING_SYNC', 'PARSYNG_NEW', 'DETAILED_PARSING', 'PARSING_AVITO_PHONES']])->all();
+        $active_process = ParsingControl::find()->where(['status' => ParsingControl::STATUS_ACTIVE])->andwhere(['in', 'type', [self::p_SYNC, 'PARSYNG_NEW', 'DETAILED_PARSING', 'PARSING_AVITO_PHONES']])->all();
         if ($active_process) {
             info(count($active_process) . " ACTIVE PARSING PROCESS");
             foreach ($active_process as $process) {
@@ -434,7 +458,7 @@ class Control extends \yii\db\ActiveRecord
 
     public function processing($limit = 50)
     {
-        $type = "PROCESSING";
+        $type = self::PROCC;
 
         // берем объекты готовые к обработке
         $sales = $this->getREADY($type, $limit);
@@ -475,7 +499,7 @@ class Control extends \yii\db\ActiveRecord
 
     public function similarCheck($limit = 50)
     {
-        $type = "SIMILARCHECK";
+        $type = self::SIMILAR;
 
         // берем объекты готовые к обработке
         $sales = $this->getREADY($type, $limit);
@@ -539,7 +563,7 @@ class Control extends \yii\db\ActiveRecord
 
     public function load_sale_statistic($limit = 20)
     {
-        $type = "LOAD_ANALIZED";
+        $type = self::ANALISYS;
         // берем объекты готовые к обработке
         $sales = $this->getREADY($type, $limit);
         if (!$sales) return false;
@@ -566,7 +590,7 @@ class Control extends \yii\db\ActiveRecord
 
     public function MyParsingSync()
     {
-        $type = 'PARSING_SYNC';
+        $type = self::p_SYNC;
         $config = $this->getREADY($type);
 
         if (!$config) {
@@ -761,8 +785,10 @@ class Control extends \yii\db\ActiveRecord
 
 
         $time_start = time();
-        $type = 'PARSING_SYNC';
+        $type = self::P_SYNC;
         $config = $this->getREADY($type);
+        $id_parsingController = ControlParsing::create($type, $config, $driver->ip);
+
 
         if (!$config) {
 
@@ -777,7 +803,6 @@ class Control extends \yii\db\ActiveRecord
         }
         $cashed_items = Synchronization::getCachedCategory($config->id);
         info(" THIS CATEGORY HAD " . count($cashed_items) . " ITEMS INSIDE YOURSELF", DANGER);
-        $id_parsingController = ControlParsing::create($type, $config, $driver->ip);
 
         if ($config->id_sources == 1) {
             $driver->get('https://irr.ru/');
@@ -936,7 +961,7 @@ class Control extends \yii\db\ActiveRecord
     public
     function MyParsingSync1()
     {
-        $type = 'PARSING_SYNC';
+        $type = self::p_SYNC;
         $config = $this->getREADY($type);
 
         if (!$config) {
@@ -1093,7 +1118,7 @@ class Control extends \yii\db\ActiveRecord
     public
     function MyParsingNew()
     {
-        $type = 'PARSING_NEW';
+        $type = self::P_NEW;
         $configs = $this->getREADY($type);
         if (!$configs) return false;
 
@@ -1237,14 +1262,17 @@ class Control extends \yii\db\ActiveRecord
     function MyParsingNewNewer()
     {
         /* @var $config ParsingConfiguration */
-        $type = 'PARSING_NEW';
+        $type = self::P_NEW;
         $configs = $this->getREADY($type);
         if (!$configs) return false;
-        $id_parsingController = ControlParsing::create($type, $configs, $driver->ip);
+        $id_parsingController = ControlParsing::create($type, $configs);
 
         $driver = MyChromeDriver::Open(MyChromeDriver::CURRENT_PROXY);
-        //   $driver->getMyIp();
-        $time_start = time();
+        if ($driver == MyChromeDriver::ERROR_LIMIT) {
+            Notifications::VKMessage(" ONE SERVER SESSIONS LIMIT");
+            return false;
+        }
+          $time_start = time();
 
         // обнуление счетчиков
         $CountCheckedPage = 0;
@@ -1423,7 +1451,7 @@ class Control extends \yii\db\ActiveRecord
     function DetaledParsing($limit = 20)
     {
         /* @var $sale Sale */
-        $type = 'DETAILED_PARSING';
+        $type = self::P_DET;
         $time_start = time();
         // поиск объектов на обработку
         $sales = $this->getREADY($type, $limit);
@@ -1534,7 +1562,7 @@ class Control extends \yii\db\ActiveRecord
         //  my_var_dump($available_sources);
 
         switch ($type) {
-            case 'PARSING_AVITO_PHONES':
+            case self::P_APHONES:
                 {
                     $Broken_Controls = $this->getBrokenParsingControls($type);
                     // берем последнюю необработанную конфигурацию
@@ -1555,7 +1583,7 @@ class Control extends \yii\db\ActiveRecord
 
 
                 }
-            case 'DETAILED_PARSING':
+            case self::P_DET:
                 {
 
                     $Broken_Controls = $this->getBrokenParsingControls($type);
@@ -1580,7 +1608,7 @@ class Control extends \yii\db\ActiveRecord
 
 
                 }
-            case 'UP_SYNCHRONISATION';
+            case self::UP_SYNC :
                 {
                     $query = Synchronization::find()->andWhere(['sync' => 2]);
                     // удаляем критически занятые id
@@ -1588,7 +1616,7 @@ class Control extends \yii\db\ActiveRecord
                     $objects = $query->limit($limit)->all();
                     break;
                 }
-            case 'DOWN_SYNCHRONISATION';
+            case self::DOWN_SYNC;
                 {
                     $query = Sale::find()->andWhere(['sync' => 2]);
                     // удаляем критически занятые id
@@ -1596,7 +1624,7 @@ class Control extends \yii\db\ActiveRecord
                     $objects = $query->limit($limit)->all();
                     break;
                 }
-            case 'LOAD_ANALIZED';
+            case self::ANALISYS;
                 {
                     $query = Synchronization::find()->andWhere(['load_analized' => 2]);
                     // удаляем критически занятые id
@@ -1604,7 +1632,7 @@ class Control extends \yii\db\ActiveRecord
                     $objects = $query->limit($limit)->all();
                     break;
                 }
-            case 'GEOCODATION';
+            case self::GEO;
                 {
                     $query = Synchronization::find()
                         ->where(['geocodated' => 8]);
@@ -1613,7 +1641,7 @@ class Control extends \yii\db\ActiveRecord
                     $objects = $query->limit($limit)->all();
                     break;
                 }
-            case 'PROCESSING';
+            case self::PROCC;
                 {
                     $query = Synchronization::find()
                         ->where(['processed' => 2]);
@@ -1622,7 +1650,7 @@ class Control extends \yii\db\ActiveRecord
                     $objects = $query->limit($limit)->all();
                     break;
                 }
-                case 'SIMILARCHECK';
+            case self::SIMILAR;
                 {
                     $query = Synchronization::find()
                         ->where(['id_similar' => 0]);
@@ -1631,7 +1659,7 @@ class Control extends \yii\db\ActiveRecord
                     $objects = $query->limit($limit)->all();
                     break;
                 }
-            case 'PARSING_NEW':
+            case self::P_NEW:
                 {
                     $Broken_Controls = $this->getBrokenParsingControls($type);
                     $query = ParsingConfiguration::find()
@@ -1647,7 +1675,7 @@ class Control extends \yii\db\ActiveRecord
                     $objects = $query->limit($limit)->all();
                     break;
                 }
-            case 'PARSING_SYNC':
+            case self::P_SYNC:
                 {
                     $period_of_check = $agentpro->period_check;
                     $Broken_Controls = $this->getBrokenParsingControls($type);
@@ -1677,8 +1705,8 @@ class Control extends \yii\db\ActiveRecord
         $count = $query->count();
         if ($count < $limit) $limit = $count;
         if ($count != 0) {
-            info($type . " (" . $limit . " from " . $count . ")");
-        } else info($type . " (NO)", 'danger');
+            info(self::mapTypesControls()[$type] . " (" . $limit . " from " . $count . ")");
+        } else info(self::mapTypesControls()[$type] . " (NO)", 'danger');
 
         return $objects;
 
@@ -1689,40 +1717,41 @@ class Control extends \yii\db\ActiveRecord
     function getBrokenParsingControls($type)
     {
         switch ($type) {
-            case 'PARSING_AVITO_PHONES':
+            case self::P_APHONES :
                 {
                     $Broken_Controls = ControlParsing::find()
                         ->select('id_sources')
                         ->distinct()->where(['in', 'status', [4]])
-                        ->andWhere(['in', 'type', ['PARSING_AVITO_PHONES']])
+                        ->andWhere(['in', 'type', [self::P_APHONES]])
                         ->column();
                     break;
                 }
-            case 'DETAILED_PARSING':
+            case self::P_DET:
                 {
                     $Broken_Controls = ControlParsing::find()
                         ->select('id_sources')
                         ->distinct()->where(['in', 'status', [4]])
-                        ->andWhere(['type' => 'DETALED_PARSING'])
+                        ->andWhere(['type' => self::P_DET])
                         ->column();
 
                     break;
                 }
-            case 'PARSING_NEW':
+            case self::P_NEW:
                 {
                     $Broken_Controls = ControlParsing::find()
                         ->select('id_sources')
                         ->distinct()->where(['in', 'status', [1, 4]])
-                        ->andWhere(['in', 'type', ['PARSING_NEW', 'PARSING_SYNC']])
+                        ->andWhere(['in', 'type', [self::P_NEW, self::P_SYNC]])
                         // ->andwhere(['module_id' => $this->id])
                         ->column();
+                    break;
                 }
-            case 'PARSING_SYNC':
+            case self::P_SYNC:
                 {
                     $Broken_Controls = ControlParsing::find()
                         ->select('id_sources')
                         ->distinct()->where(['in', 'status', [1, 4]])
-                        ->andWhere(['in', 'type', ['PARSING_NEW', 'PARSING_SYNC']])
+                        ->andWhere(['in', 'type', [self::P_NEW, self::P_SYNC]])
                         // ->andwhere(['id' => $this->id])
                         ->column();
                 }
@@ -1744,7 +1773,7 @@ class Control extends \yii\db\ActiveRecord
     public
     function ParsingAvitoPhones($limit = 5)
     {
-        $type = 'PARSING_AVITO_PHONES';
+        $type = self::P_APHONES;
         $time_start = time();
         // берем объекты
         $sales = $this->getREADY($type);
@@ -1999,8 +2028,8 @@ class Control extends \yii\db\ActiveRecord
     public
     function Synchronisation($limit = 200)
     {
-        $type = 'UP_SYNCHRONISATION';
-        $syncs = $this->getREADY('UP_SYNCHRONISATION', $limit);
+        $type = self::UP_SYNC;
+        $syncs = $this->getREADY($type, $limit);
 
         // если ничего не пришло, то сразу выходим
         if ($syncs) {
@@ -2033,7 +2062,7 @@ class Control extends \yii\db\ActiveRecord
             ControlParsing::updating($id_parsingController);
         }
 
-        $type = 'DOWN_SYNCHRONISATION';
+        $type = self::DOWN_SYNC;
         $syncs = $this->getREADY($type, $limit);
 
         // если ничего не пришло, то сразу выходим

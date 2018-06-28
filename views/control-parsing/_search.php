@@ -18,22 +18,14 @@ use app\models\ControlParsing;
         'method' => 'get',
     ]); ?>
     <div class="row">
-        <div class="col-lg-12">
-            <div class="md-form">
-                <?= Mdb::ActiveSelect($model, 'type', array_combine(Control::SECTIONS_OF_CONTROL, Control::SECTIONS_OF_CONTROL), ['multiple' => true]); ?>
-            </div>
+        <div class="col-lg-7">
+            <?= Mdb::ActiveSelect($model, 'type',Control::mapTypesControls(), ['multiple' => true]); ?>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-5">
-            <div class="md-form">
-                <?= Mdb::ActiveSelect($model, 'status', ControlParsing::STATUS, ['multiple' => true]); ?>
-            </div>
+        <div class="col-lg-3">
+            <?= Mdb::ActiveSelect($model, 'status', ControlParsing::STATUS, ['multiple' => true]); ?>
         </div>
-        <div class="col-lg-5">
-            <div class="md-form">
-                <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary btn-sm btn-rounded']) ?>
-            </div>
+        <div class="col-lg-2">
+            <?= Html::submitButton(Yii::t('app', ICON_SEARCH), ['class' => 'btn btn-primary btn-sm btn-rounded']) ?>
         </div>
     </div>
     <?php ActiveForm::end(); ?>

@@ -155,9 +155,8 @@ class ControlParsing extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['date_start', 'date_finish', 'id_sources', 'status', 'config_id'], 'integer'],
+            [['date_start', 'date_finish', 'id_sources', 'status', 'config_id','type'], 'integer'],
             [['params'], 'string', 'max' => 10000],
-            [['type'], 'string', 'max' => 256],
         ];
     }
 

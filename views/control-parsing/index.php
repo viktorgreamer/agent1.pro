@@ -34,7 +34,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'server',
             'date_start:time',
             'date_check:time',
-            'type',
+            [
+                'label' => 'type',
+                'format' => 'raw',
+                'value' => function ($model) {
+             return \app\models\Control::mapTypesControls()[$model->type];
+    }
+            ],
             [
                 'label' => 'duration',
                 'format' => 'raw',

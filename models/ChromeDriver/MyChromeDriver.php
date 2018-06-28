@@ -49,7 +49,7 @@ class MyChromeDriver extends RemoteWebDriver
     const CHROME_HOST = 'http://localhost:9515';
     const SESSION_LOST_TIMEOUT = 100;
 
-    const ERROR_LIMIT = 4;
+    const ERROR_LIMIT = 5;
     const ALL_BUSY = 2;
 
     const NO_PROXY = 1;
@@ -65,9 +65,14 @@ class MyChromeDriver extends RemoteWebDriver
     public static function Open($proxy = false)
     {
         $freesession = self::getFreeSession();
-        if (($freesession) and ($freesession != self::ERROR_LIMIT)) {
+        if ($freesession === self::ERROR_LIMIT) {
+            info(" RETURNING ERROR LIMIT ");
+            return self::ERROR_LIMIT;
+        } elseif ($freesession) {
             $driver = self::createBySessionID($freesession, self::CHROME_HOST);
             $session = Sessions::find()->where(['id_session' => $freesession])->one();
+            $session->status = Sessions::ACTIVE;
+            $session->save();
             if (!$session->ip) {
                 $driver->getMyIp();
                 $session->ip = $driver->ip;
@@ -80,9 +85,6 @@ class MyChromeDriver extends RemoteWebDriver
             info(" USING SESSION " . $driver->sessionID . " IP = " . $driver->ip);
             return $driver;
         } else {
-            if ($freesession == self::ERROR_LIMIT) {
-                return self::ERROR_LIMIT;
-            }
             return self::OpenNew($proxy);
 
         }
@@ -249,7 +251,13 @@ class MyChromeDriver extends RemoteWebDriver
 
         $has_deleted_session = Sessions::updateAll(['status' => Sessions::LOST], ['AND',
             ['not in', 'id_session', $ids_session],
-            ['<', 'datetime_check', (time() - 60*2)],
+            ['<', 'datetime_check', (time() - 60 * 2)],
+            ['id_server' => Yii::$app->params['server']]
+        ]);
+        $has_deleted_session = Sessions::deleteAll(['AND',
+            ['not in', 'id_session', $ids_session],
+            ['status' => Sessions::LOST],
+            ['<', 'datetime_check', (time() - 60 * 10 *60)],
             ['id_server' => Yii::$app->params['server']]
         ]);
 
@@ -263,24 +271,28 @@ class MyChromeDriver extends RemoteWebDriver
             $free_sessions = Sessions::find()->where(['in', 'id_session', $ids_session])
                 ->andWhere(['<', 'datetime_check', (time() - self::SESSION_LOST_TIMEOUT)])->orderBy('datetime_check')->all();
             foreach ($free_sessions as $key => $web_session) {
-                if ($key == 0) $freesession = $web_session->id_session;
-                else {
+                if ($key == 0) {
+                    $freesession = $web_session->id_session;
+                    $web_session->status = Sessions::ACTIVE;
+                    $web_session->save();
+
+                } else {
                     $web_session->status = Sessions::FREE;
                     $web_session->save();
                 }
                 info("SESSION " . $web_session->id_session . " IS FREE FROM " . \Yii::$app->formatter->asRelativeTime($web_session->datetime_check), 'success');
             }
-            $free_sessions = Sessions::find()->where(['in', 'id_session', $ids_session])
-                ->andWhere(['>', 'datetime_check', (time() - self::SESSION_LOST_TIMEOUT)])->all();
-            foreach ($free_sessions as $web_session) {
+            $not_free_sessions = Sessions::find()->where(['in', 'id_session', $ids_session])
+                ->andWhere(['>', 'datetime_check', (time() - self::SESSION_LOST_TIMEOUT)])
+                ->andWhere(['<>', 'status', Sessions::LOST])->all();
+            foreach ($not_free_sessions as $web_session) {
                 info(" SESSION " . $web_session->id_session . " IS NOT FREE", 'danger');
             }
 
             if ($freesession) {
-                //   info(" USING SESSION " . $freesession, PRIMARY);
                 return $freesession;
             } else {
-                if (count($ids_session) > 5) {
+                if (count($not_free_sessions) > 5) {
                     info(" CANNOT START CHROME DRIVER BECAUSE 5 SESSIONS ARE RUNNING", DANGER);
                     return self::ERROR_LIMIT;
                 }

@@ -34,7 +34,8 @@ class Sessions extends \yii\db\ActiveRecord
         $colors = [
             0 => 'table-black',
             1 => 'table-success',
-            2 => 'table-danger'];
+            2 => 'table-warning',
+            3 => 'table-danger'];
         return $colors[$status];
 
     }
