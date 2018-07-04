@@ -1805,7 +1805,7 @@ class Control extends \yii\db\ActiveRecord
 
                 if (preg_match("/href=\"tel:(.{7,13})\"/", $driver->getPageSource(), $output_array)) $phone = $output_array[1];
                 else {
-                    if (preg_match("/action-show-number/", $driver->getPageSource())) {
+                    if (preg_match("/action-show-number|amw-test-item-click/", $driver->getPageSource())) {
                         $element = $driver->findElement(WebDriverBy::className('action-show-number'));
                         $driver->wait(10, 1000)->until(
                             WebDriverExpectedCondition::visibilityOf($element)
