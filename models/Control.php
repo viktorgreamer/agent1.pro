@@ -1805,11 +1805,14 @@ class Control extends \yii\db\ActiveRecord
 
                 if (preg_match("/href=\"tel:(.{7,13})\"/", $driver->getPageSource(), $output_array)) $phone = $output_array[1];
                 else {
-                    if (preg_match("/action-show-number|amw-test-item-click/", $driver->getPageSource())) {
-                        $element = $driver->findElement(WebDriverBy::className('action-show-number'));
+                    if (preg_match("/action-show-number|amw-test-item-click/", $driver->getPageSource(),$output_array)) {
+                        info("FOUND ".$output_array[0],SUCCESS);
+                        $element = $driver->findElement(WebDriverBy::className($output_array[0]));
                         $driver->wait(10, 1000)->until(
                             WebDriverExpectedCondition::visibilityOf($element)
                         );
+
+                        
                         $driver->getKeyboard()->sendKeys(WebDriverKeys::ARROW_DOWN);
                         $driver->getKeyboard()->sendKeys(WebDriverKeys::ARROW_DOWN);
                         $driver->getKeyboard()->sendKeys(WebDriverKeys::ARROW_DOWN);
@@ -1824,7 +1827,7 @@ class Control extends \yii\db\ActiveRecord
                         $driver->getKeyboard()->sendKeys(WebDriverKeys::ARROW_DOWN);
                         $driver->getKeyboard()->sendKeys(WebDriverKeys::ARROW_DOWN);
 
-                        $driver->findElement(WebDriverBy::className('action-show-number'))->click();
+                        $driver->findElement(WebDriverBy::className($output_array[0]))->click();
                         sleep(rand(4, 6));
 
                     } else {
