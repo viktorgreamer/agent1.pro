@@ -243,7 +243,6 @@ class ControlParsing extends \yii\db\ActiveRecord
 //                ->andFilterWhere(['ip' => $ip])
 //                ->column();
 //           if ($id) return [$id];
-        else return [];
         //   }
     }
 
