@@ -2140,7 +2140,7 @@ class Sale extends \yii\db\ActiveRecord
         if ($similarReport === false) {
             info(" CANNOT ANALYSE FOR SALESIMILAR OBJECT", DANGER);
             $this->id_similar = null;
-          //  $this->save();
+            $this->save();
             return false;
         } else {
             $is_existed_salesimilar = array_filter($similarReport, function ($sale) {

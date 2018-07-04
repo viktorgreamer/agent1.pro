@@ -110,6 +110,7 @@ class MyChromeDriver extends RemoteWebDriver
             $capabilities = DesiredCapabilities::chrome();
         } elseif (filter_var(preg_replace("/:.+/", "", $proxy), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             $capabilities = self::getProxyCapabilities($proxy);
+
             $ip = preg_replace("/:.+/", "", $proxy);
         } else {
             AgentPro::throwError(Errors::findOne(ERROR_FORMAT_WEBDRIVER_PROXY));
@@ -130,6 +131,7 @@ class MyChromeDriver extends RemoteWebDriver
 
     public static function getProxyCapabilities($fulladdress)
     {
+        info(" FULL ADDRESS = ".$fulladdress);
         return new DesiredCapabilities(
             [
                 Facebook\WebDriver\Remote\WebDriverCapabilityType::BROWSER_NAME => Facebook\WebDriver\Remote\WebDriverBrowserType::CHROME,

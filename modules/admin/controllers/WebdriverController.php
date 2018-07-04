@@ -20,7 +20,7 @@ class WebdriverController extends \yii\web\Controller
     public function actionTestIp()
     {
         AgentPro::getActive();
-        $driver = MyChromeDriver::Open();
+        $driver = MyChromeDriver::OpenNew("194.242.125.25:8000");
         info("IP=".$driver->ip);
 
         $driver->get('https://yandex.ru/internet/');

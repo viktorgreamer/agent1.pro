@@ -57,8 +57,6 @@ class HelloController extends Controller
     public function actionMainCloud($server = 'default')
     {
 
-        Yii::$app->params['server'] = $server;
-        // echo "chcp 65001";
 
         Control::mainScriptCloud();
 

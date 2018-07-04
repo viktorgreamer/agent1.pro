@@ -23,6 +23,8 @@ use app\models\ControlParsing;
         </div>
         <div class="col-lg-3">
             <?= Mdb::ActiveSelect($model, 'status', ControlParsing::STATUS, ['multiple' => true]); ?>
+        </div> <div class="col-lg-3">
+            <?= Mdb::ActiveSelect($model, 'server', \yii\helpers\ArrayHelper::map(ControlParsing::find()->select('server')->distinct()->all(),'server','server')); ?>
         </div>
         <div class="col-lg-2">
             <?= Html::submitButton(Yii::t('app', ICON_SEARCH), ['class' => 'btn btn-primary btn-sm btn-rounded']) ?>

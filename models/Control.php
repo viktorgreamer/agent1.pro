@@ -497,7 +497,7 @@ class Control extends \yii\db\ActiveRecord
 
     }
 
-    public function similarCheck($limit = 50)
+    public function similarCheck($limit = 100)
     {
         $type = self::SIMILAR;
 
@@ -506,14 +506,13 @@ class Control extends \yii\db\ActiveRecord
         if (!$sales) return false;
         $id_parsingController = ControlParsing::create($type, $sales);
         foreach ($sales as $key => $sale) {
-            if ($key % 30 == 0) {
+            if ($key % 20 == 0) {
                 ControlParsing::updatingTime($id_parsingController);
             }
             // изменилась только цена то обработку на телефон и похожие вариенты не проводим
-            if ($sale->status != 4) {
                 $sale->similarCheckNewer();
+               // $sale->save();
 
-                }
 
             //  echo " <br>" . $sale->id;
         }
@@ -529,7 +528,7 @@ class Control extends \yii\db\ActiveRecord
     public function geocodetion($limit = 20)
     {
         /* @var $sale Sale */
-        $type = "GEOCODATION";
+        $type = self::GEO;
         $start_time = time();
         // берем объекты готовые к обработке
         $sales = $this->getREADY($type, $limit);
@@ -1777,9 +1776,8 @@ class Control extends \yii\db\ActiveRecord
         $time_start = time();
         // берем объекты
         $sales = $this->getREADY($type);
-        $id_parsingController = ControlParsing::create($type, $sales);
-
         if (!$sales) return false;
+        $id_parsingController = ControlParsing::create($type, $sales);
 
         $driver = MyChromeDriver::Open(MyChromeDriver::CURRENT_PROXY);
         if ($driver == MyChromeDriver::ERROR_LIMIT) {

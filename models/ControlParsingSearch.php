@@ -15,11 +15,15 @@ class ControlParsingSearch extends ControlParsing
     /**
      * @inheritdoc
      */
+
+    public $server;
+
     public function rules()
     {
         return [
             [['id', 'date_start', 'date_finish','config_id'], 'integer'],
             [['type','status'], 'safe'],
+            [['server'], 'string'],
         ];
     }
 
@@ -65,6 +69,7 @@ class ControlParsingSearch extends ControlParsing
             'config_id' => $this->config_id,
         ]);
         if ($this->status)  $query->andFilterWhere(['in', 'status', $this->status]);
+        if ($this->server)  $query->andFilterWhere(['server' => $this->server]);
         if ($this->type)  $query->andFilterWhere(['in', 'type', $this->type]);
         $query->orderBy(['id' => SORT_DESC]);
         return $dataProvider;
