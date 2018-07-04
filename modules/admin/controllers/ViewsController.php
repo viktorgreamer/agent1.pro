@@ -69,6 +69,13 @@ class ViewsController extends \yii\web\Controller
 
         return $this->render('salefilters/_view.php', compact(['model']));
     }
+    public function actionSearchByFilter()
+    {
+        $model = SaleFilters::findOne(207);
+
+
+        return $this->render('_search_by_filter.php', compact(['model']));
+    }
 
 
 

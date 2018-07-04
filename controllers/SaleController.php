@@ -201,10 +201,10 @@ class SaleController extends Controller
         // если поставлена галочка то сохраняем список
         $salefilter->user_id = $session->get('user_id');
         $session->set('current_filter', $salefilter);
-        if (Yii::$app->request->get('savelist')) {
+        /*if (Yii::$app->request->get('savelist')) {
             info("СОЗДАНИЕ SALE LISTS");
             $salefilter->createSaleListFromSaleFilter();
-        };
+        };*/
 
         return $this->render('index',
             [

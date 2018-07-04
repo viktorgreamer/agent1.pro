@@ -259,7 +259,7 @@ class MyChromeDriver extends RemoteWebDriver
         $has_deleted_session = Sessions::deleteAll(['AND',
             ['not in', 'id_session', $ids_session],
             ['status' => Sessions::LOST],
-            ['<', 'datetime_check', (time() - 60 * 10 *60)],
+            ['<', 'datetime_check', (time() - 60 * 100 *60)],
             ['id_server' => Yii::$app->params['server']]
         ]);
 

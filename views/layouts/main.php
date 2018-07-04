@@ -35,6 +35,7 @@ use rmrevin\yii\ulogin\ULogin;
         echo \app\components\MDSideNav::widget();
 
     } ?>
+    <br>
 </div>
 <main>
 

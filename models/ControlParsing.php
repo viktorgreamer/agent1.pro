@@ -212,11 +212,10 @@ class ControlParsing extends \yii\db\ActiveRecord
     public static function getBusyIds($type, $ip = null)
     {
 
-        if (in_array($type, ['PARSING_AVITO_PHONES', 'DETAILED_PARSING', 'UP_SYNCHRONISATION', 'DOWN_SYNCHRONISATION', 'LOAD_ANALIZED', 'GEOCODATION', 'PROCESSING'])) {
             $ids_row = ArrayHelper::getColumn(
                 ControlParsing::find()
                     ->where(['type' => $type])
-                    ->andwhere(['status' => Self::ACTIVE])
+                    ->andwhere(['status' => self::ACTIVE])
                     ->andwhere(["IS NOT", 'ids', null])
                     ->andFilterWhere(['ip' => $ip])
                     ->all(),
@@ -235,7 +234,7 @@ class ControlParsing extends \yii\db\ActiveRecord
             }
             return $ids;
 
-        }
+
 //        else {
 //            $id = ControlParsing::find()
 //                ->select('id')
