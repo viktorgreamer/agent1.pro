@@ -92,7 +92,7 @@ class ControlParsing extends \yii\db\ActiveRecord
         }
     }
     public static function closeBroken() {
-          $interval = 90;
+          $interval = 15;
         $brokenControls = ControlParsing::find()
             ->select(['id','type','date_start','ids','ids_sources'])
             ->where(['in', 'status', [ControlParsing::BROKEN]])
