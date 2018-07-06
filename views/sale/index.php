@@ -12,14 +12,13 @@ use app\models\SaleFilters;
 
 $this->title = Yii::t('app', 'Sales');
 $this->params['breadcrumbs'][] = $this->title;
-if (Yii::$app->controller->action->id == 'search-by-filter') $this->title = "Поиск по фильру ".$salefilter->name;
-?>
-<div class="sale-index">
+if (Yii::$app->controller->action->id == 'search-by-filter') $this->title = "Поиск по фильру " . $salefilter->name;   ?>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+
+<div class="sale-index">
     <? if (Yii::$app->controller->action->id == 'search-by-filter') {
         echo $this->render('_search_by_filter', ['salefilter' => $salefilter]);
-    } else echo $this->render('_search', ['salefilter' => $salefilter]); ?>
+    } else echo $this->render('_sale_search_grid', ['salefilter' => $salefilter]); ?>
 
     <? if ($_GET['view'] == SaleFilters::VIEW_MAP) {
         $dataProvider = new ActiveDataProvider(

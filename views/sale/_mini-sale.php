@@ -8,8 +8,7 @@ use app\models\Renders;
 
 ?>
 
-    <div class="row"
-         id="row_mini_sale<?= $sale->id; ?>" <?php if ($sale->disactive == 1) echo " style='background-color: gainsboro'"; ?>>
+    <div class="row" id="row_mini_sale<?= $sale->id; ?>" <?php if ($sale->disactive == 1) echo " style='background-color: gainsboro'"; ?>>
 
         <div class="col-sm-6 col-md-6 col-6 col-lg-6">
             <div class="row">
@@ -21,7 +20,6 @@ use app\models\Renders;
 
                 <div class="col-sm-8" style="padding-left: 5px; padding-right: 5px;">
                     <?php echo \app\models\Sale::ROOMS_COUNT_ARRAY[$sale->rooms_count]; ?>
-                   <?php if ($sale->similar->status == \app\models\SaleSimilar::SOLD) echo Renders::SOLD(); ?>
                     <?php echo $sale->renderAddress(); ?>
                     <?php echo $sale->renderFloors();
                     echo $sale->renderHouse_type(); ?>
@@ -36,11 +34,13 @@ use app\models\Renders;
             <div style='text-align: center;'><b> <?php echo Renders::Price($sale->price); ?> </b></div>
             <?php if ($contacts) echo $sale->renderContacts('mini'); ?>
 
+
         </div>
         <div class="col-sm-2 col-md-2 col-2 col-lg-2">
             <?php if ($controls) {
                 echo $this->render('_sale_controls', ['sale' => $sale, 'salefilter' => $salefilter]);
                 ?>
+                <?php if ($sale->similar->status == \app\models\SaleSimilar::SOLD) echo Renders::SOLD(); ?>
                 <p id="id<?= $sale->id; ?>" hidden><?php echo strip_tags($sale->title_to_copy); ?> </p>
 
 
@@ -50,6 +50,8 @@ use app\models\Renders;
         </div>
 
     </div>
+
+
     <hr style="margin-top: 0px;margin-bottom: 0px;">
 
 <?php

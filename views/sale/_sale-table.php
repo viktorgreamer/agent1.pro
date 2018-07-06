@@ -11,9 +11,11 @@ use yii\helpers\Url;
 use app\models\SaleFilters;
 use app\components\Mdb;
 use app\models\Sale;
+use app\models\SaleSimilar;
+use app\models\Renders;
 
 
-$sale = $model;
+ $sale = $model;
 // инифиализация
 $tags = $sale->tags;
 if ($sale->addresses) $boolAddress = true;
@@ -26,27 +28,26 @@ if ($sale) {
 
         <? if ($_SESSION['moderated_mode']) echo $this->render('_moderate_table', ['sale' => $sale]); ?>
 
-        <?php   if ($sale->similarNew->status == 3) info('ПРОДАНО'); ?>
+        <?php //  if ($sale->similarNew->status == 3) info('ПРОДАНО'); ?>
         <div class="row no-p sim_id_<?php echo $sale->id_similar; ?>"
-             id="row_<?= $sale->id; ?>" <?php if ($sale->similarNew->moderated == 3) echo "style=\"background-color: #e8f5e9;\""; ?>>
-            <div class="col-sm-1"><?= $sale->renderUrl(); ?>
+             id="row_<?= $sale->id; ?>" <?php if ($sale->similar->moderated == 3) echo "style=\"background-color: #e8f5e9;\""; ?>>
+
+            <div class="col-sm-4 col-md-4 col-4 col-lg-1"><?= $sale->renderUrl(); ?>
                 <div class="row" style='min-height: 90px;padding-right: 20px;'>
                     <? echo $sale->photos; ?>
                 </div>
+                <?php if ($sale->similar->moderated == \app\models\SaleSimilar::MODERATED) echo Renders::MODERATED(); ?>
             </div>
-
-
-            <div class="col-sm-2">
+            <div class="col-sm-8 col-8 col-md-8 col-lg-2">
                 <strong> <?php echo Sale::ROOMS_COUNT_ARRAY[$sale->rooms_count] ?></strong>
+
+
                 <br>
                 <?php echo $sale->renderAddress(); ?>
-
                 <?php
+                if ($sale->similar) {
 
-                if ($sale->similarNew) {
-                    //  echo span("similar_id =".$sale->similarNew->id);
-
-                    $similarsales = $sale->similarNewSales;
+                    $similarsales = $sale->similarsales;
                 }
                 ?>
                 <?php if ($similarsales) {
@@ -59,7 +60,10 @@ if ($sale) {
                     ]);
                     ?>
                     <div class="modal-body">
-                        <?= $this->render('@app/views/sale/_mini_sale_similar', ['sales' => $similarsales, 'contacts' => true, 'controls' => true, 'salefilter' => $salefilter]); ?>
+                        <?= $this->render('@app/views/sale/_mini-sales', ['sales' => $similarsales, 'contacts' => true, 'controls' => true, 'salefilter' => $salefilter]); ?>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success btn-sm" data-dismiss="modal">Закрыть</button>
+                        </div>
                     </div>
                     <?= Mdb::ModalEnd(); ?>
                     <br>
@@ -68,7 +72,7 @@ if ($sale) {
                 <small>
                     <?php echo $sale->renderFloors();
                     echo $sale->renderHouse_type(); ?>
-                    <?php echo $sale->renderAreas(); ?>
+                    <strong><?php echo $sale->renderAreas(); ?></strong>
                     <br> <?php echo \app\models\Renders::Days_ago($sale->date_start); ?>
                 </small>
                 <?php if ($boolAddress) { ?>
@@ -83,7 +87,7 @@ if ($sale) {
                         <div class="modal-dialog modal-lg" role="document">
                             <div class="modal-content">
                                 <div class="modal-body">
-                                    <? echo $this->render('//tags/quick-add-form', [
+                                    <? echo $this->render('//tags/quick-add-form-alternative', [
                                         'parent_id' => $sale->id_address,
                                         'realtags' => $sale->addresses->getTags(),
                                         'type' => 'address',
@@ -95,9 +99,8 @@ if ($sale) {
                         </div>
                     </div>
                 <? } ?>
-
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-8 col-8 col-lg-4 col-md-4">
                 <a data-toggle="collapse" href="#collapseExample<?= $sale->id ?>" aria-expanded="false"
                    aria-controls="collapseExample">Описание </a>
                 <div class="collapse" id="collapseExample<?= $sale->id ?>">
@@ -119,7 +122,7 @@ if ($sale) {
                         <div class="modal-content">
                             <div class="modal-body">
 
-                                <? echo $this->render('//tags/quick-add-form', [
+                                <? echo $this->render('//tags/quick-add-form-alternative', [
                                     'parent_id' => $sale->id,
                                     'realtags' => $sale->tagsSale,
                                     'type' => 'sale',
@@ -142,44 +145,31 @@ if ($sale) {
 
 
             </div>
-
-            <div class="col-sm-4">
+            <div class="col-sm-4 col-4 col-md-6 col-lg-4">
                 <div class="row">
                     <div class="col-sm-5">
-                        <small>
-                            <?php
-                            echo Html::a(\app\models\Renders::Price($sale->price), ['sale-analitics/show', 'id' => $sale->id], ['target' => '_blank']);
-                            // если устаовлен флажек показывать статистику
+                        <div class="float-right">  <?= \app\models\Renders::Price($sale->price); ?></div>
+                        <?php
+                        $title_to_copy = strip_tags($sale->title_to_copy_all);
+                        $current = $_SESSION['title_to_copy'];
+                        $current .= $title_to_copy . " \n ";
+                        $_SESSION['title_to_copy'] = $current;
+                        ?>
+                        <textarea id="id<?= $sale->id; ?>"
+                                  hidden><?php echo strip_tags($sale->title_to_copy); ?> </textarea>
 
-                            // if (in_array('show_stat', explode(",", $options))) {
-                            echo "<br>" . $sale->renderStat();
-                            $title_to_copy = strip_tags($sale->title_to_copy_all);
-                            $current = $_SESSION['title_to_copy'];
-                            $current .= $title_to_copy . " \n ";
-                            $_SESSION['title_to_copy'] = $current;
-                            ?>
-                            <textarea id="id<?= $sale->id; ?>" hidden><?php echo strip_tags($sale->title_to_copy); ?> </textarea>
-
-
-                        </small>
                     </div>
                     <div class="col-sm-7">
                         <?= $sale->renderContacts(); ?>
                     </div>
                 </div>
+                <?php if ($sale->similar->status == SaleSimilar::SOLD) echo Renders::SOLD(); ?>
+
             </div>
 
 
             <div class="col-sm-1">
-
-                <?php if ($controls) {
-                    echo $this->render('_sale_controls1', compact(['sale', 'salefilter', 'salelist']));
-                    ?>
-
-                    <?php
-                }
-                ?>
-
+                <?php if ($controls) echo $this->render('_sale_controls', compact(['sale', 'salefilter', 'salelist'])); ?>
 
             </div>
         </div>

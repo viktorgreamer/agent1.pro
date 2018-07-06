@@ -29,6 +29,9 @@ use app\models\Geocodetion;
                     <div class="col-sm-2">
                         <?= \app\components\Mdb::ActiveTextInput($model, 'hull', ['id' => 'hull']); ?>
                     </div>
+                    <div class="col-sm-2">
+                        <?= \app\components\Mdb::ActiveSelect($model, 'balcon', Addresses::mapBalcon()); ?>
+                    </div>
                 </div>
                 <div class="row">
                     <!--                        <div id="fulladdress"></div>-->

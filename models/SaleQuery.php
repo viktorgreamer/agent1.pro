@@ -24,6 +24,17 @@ class SaleQuery extends ActiveQuery
         $modelClass = Sale::className();
         parent::__construct($modelClass);
     }
+    public function searchSimilar($id_similar)
+    {
+        $this->from(['s' => Sale::tableName()]);
+        // присоединяем связи
+        $this->joinWith(['agent AS agent']);
+        $this->joinWith(['addresses AS address']);
+
+        $this->where(['s.id_similar' => $id_similar]);
+
+    }
+
 
     public function search($salefilter, $type_of_show = SaleFilters::SHOW_MAIN)
     {
@@ -95,7 +106,7 @@ class SaleQuery extends ActiveQuery
 //                $this->onCondition(['controls.id_salefilter' => $param]);
 //            }
 //        ]);
-        $this->joinWith(['similarNew AS sim']);
+        $this->joinWith(['similar AS sim']);
     }
 
     protected function main()
@@ -367,6 +378,7 @@ class SaleQuery extends ActiveQuery
         return array_group_by($new_tags, 'type');
 
     }
+
 
 
 

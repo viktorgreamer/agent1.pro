@@ -76,7 +76,12 @@ class SaleSimilar extends \yii\db\ActiveRecord
 
     public function getSales()
     {
-        return $this->hasMany(Sale::className(), ['id_similar' => 'id']);
+        if ($this->id) {
+            $saleQuery = new SaleQuery();
+            return $saleQuery->searchSimilar($this->id)->all();
+        }
+
+
     }
 
     /**

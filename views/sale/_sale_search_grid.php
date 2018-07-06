@@ -24,6 +24,8 @@ $module = $session->get('module');
 $session->set('tags_id_to_search_sale', $salefilter->plus_tags);
 $session->set('minus_tags_id_to_search_sale', $salefilter->minus_tags);
 ?>
+<div class="searching_tags_div"></div>
+<div id='available_actions'></div>
 <!-- Switch -->
 <div class="sale-index">
     <!--Accordion wrapper-->

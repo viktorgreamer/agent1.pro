@@ -2,12 +2,15 @@
     max-width: 600px;
     width: auto;
 }
+
 .clickable {
     cursor: pointer;
 }
+
 .dropdown-icons {
     min-width: 4rem;
 }
+
 .dropdown-icons2 {
     min-width: 12rem;
 }
@@ -16,12 +19,14 @@
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
 .no-margin-botton {
     margin-bottom: 1px;
     padding-left: 5px;
     padding-right: 5px;
 
 }
+
 .no-padding-table {
 
     padding-top: 0px;
@@ -34,6 +39,12 @@
 
 .mdb-select-small-height {
     height: 50px;
+}
+
+.margin-top-5px {
+    padding-left: 0px;
+    padding-right: 0px;
+
 }
 
 my-icons-action {
@@ -49,7 +60,6 @@ img.sold {
     bottom: 10px;
 
 }
-
 
 ul.horizontal {
     list-style-type: none;
@@ -67,10 +77,10 @@ ul.horizontal {
     padding-top: 5px;
 
 }
+
 .searching_tags_div {
     height: 40px;
 }
-
 
 li.horizontal {
     float: left;

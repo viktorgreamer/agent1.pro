@@ -45,6 +45,7 @@ class Control extends \yii\db\ActiveRecord
     {
         return 'control';
     }
+
     const P_SYNC = 1;
     const P_NEW = 2;
     const P_DET = 3;
@@ -56,7 +57,8 @@ class Control extends \yii\db\ActiveRecord
     const DOWN_SYNC = 9;
     const UP_SYNC = 10;
 
-    public static function mapTypesControls() {
+    public static function mapTypesControls()
+    {
         return [
             self::P_SYNC => 'P_SYNC',
             self::P_NEW => 'P_NEW',
@@ -71,8 +73,21 @@ class Control extends \yii\db\ActiveRecord
         ];
     }
 
-
-
+    public static function TypesControls()
+    {
+        return [
+            self::P_SYNC,
+            self::P_NEW,
+            self::P_DET,
+            self::P_APHONES,
+            self::GEO,
+            self::PROCC,
+            self::ANALISYS,
+            self::SIMILAR,
+            self::DOWN_SYNC,
+            self::UP_SYNC,
+        ];
+    }
 
 
     const STATUS_STOP_PARSING = 1;
@@ -179,6 +194,7 @@ class Control extends \yii\db\ActiveRecord
                 ControlParsing::deleteOverControllersNew(ControlParsing::ACTIVE);
                 ControlParsing::deleteOverControllersNew(ControlParsing::SUCCESS);
                 ControlParsing::deleteOverControllersNew(ControlParsing::BROKEN);
+                ControlParsing::closeBroken();
                 info("CONSOLE SCRIPT " . $module->region);
 
                 if (!$module->parsing_status) {
@@ -510,8 +526,8 @@ class Control extends \yii\db\ActiveRecord
                 ControlParsing::updatingTime($id_parsingController);
             }
             // изменилась только цена то обработку на телефон и похожие вариенты не проводим
-                $sale->similarCheckNewer();
-               // $sale->save();
+            $sale->similarCheckNewer();
+            // $sale->save();
 
 
             //  echo " <br>" . $sale->id;
@@ -1271,7 +1287,7 @@ class Control extends \yii\db\ActiveRecord
             Notifications::VKMessage(" ONE SERVER SESSIONS LIMIT");
             return false;
         }
-          $time_start = time();
+        $time_start = time();
 
         // обнуление счетчиков
         $CountCheckedPage = 0;
@@ -1712,23 +1728,24 @@ class Control extends \yii\db\ActiveRecord
     }
 
 // вычисление сломанных контроллеров парсинга и вычитания их из поиска
-    protected
+    public
     function getBrokenParsingControls($type)
     {
         switch ($type) {
             case self::P_APHONES :
                 {
                     $Broken_Controls = ControlParsing::find()
-                        ->select('id_sources')
-                        ->distinct()->where(['in', 'status', [4]])
-                        ->andWhere(['in', 'type', [self::P_APHONES]])
+                        ->select('ids_sources')
+                        ->distinct()
+                        ->where(['status' => 4])
+                        ->andWhere(['type' => self::P_APHONES])
                         ->column();
                     break;
                 }
             case self::P_DET:
                 {
                     $Broken_Controls = ControlParsing::find()
-                        ->select('id_sources')
+                        ->select('ids_sources')
                         ->distinct()->where(['in', 'status', [4]])
                         ->andWhere(['type' => self::P_DET])
                         ->column();
@@ -1738,8 +1755,8 @@ class Control extends \yii\db\ActiveRecord
             case self::P_NEW:
                 {
                     $Broken_Controls = ControlParsing::find()
-                        ->select('id_sources')
-                        ->distinct()->where(['in', 'status', [1, 4]])
+                        ->select('ids_sources')
+                        ->distinct()->where(['in', 'status', [4]])
                         ->andWhere(['in', 'type', [self::P_NEW, self::P_SYNC]])
                         // ->andwhere(['module_id' => $this->id])
                         ->column();
@@ -1748,23 +1765,30 @@ class Control extends \yii\db\ActiveRecord
             case self::P_SYNC:
                 {
                     $Broken_Controls = ControlParsing::find()
-                        ->select('id_sources')
-                        ->distinct()->where(['in', 'status', [1, 4]])
+                        ->select('ids_sources')
+                        ->distinct()->where(['in', 'status', [4]])
                         ->andWhere(['in', 'type', [self::P_NEW, self::P_SYNC]])
                         // ->andwhere(['id' => $this->id])
                         ->column();
+                    break;
                 }
 
             default :
                 $Broken_Controls = [];
+                break;
         }
+      //  my_var_dump($Broken_Controls);
         // если есть сломанные ресурсы, то рендерим их:
-        if (count($Broken_Controls) != 0) {
-            info("BROKEN CONTROLS");
+        if (count($Broken_Controls)) {
+            $total = '';
             foreach ($Broken_Controls as $broken_Control) {
-                info(Sale::ID_SOURCES[$broken_Control]);
+                $total .= "," . $broken_Control;
             }
-            return $Broken_Controls;
+            $total = explode(",", $total);
+            $total = array_values(array_unique($total));
+            $total = array_diff($total, array('', 0, null));
+            my_var_dump($total);
+            return $total;
         } else return [];
     }
 
@@ -1805,14 +1829,14 @@ class Control extends \yii\db\ActiveRecord
 
                 if (preg_match("/href=\"tel:(.{7,13})\"/", $driver->getPageSource(), $output_array)) $phone = $output_array[1];
                 else {
-                    if (preg_match("/action-show-number|amw-test-item-click/", $driver->getPageSource(),$output_array)) {
-                        info("FOUND ".$output_array[0],SUCCESS);
+                    if (preg_match("/action-show-number|amw-test-item-click/", $driver->getPageSource(), $output_array)) {
+                        info("FOUND " . $output_array[0], SUCCESS);
                         $element = $driver->findElement(WebDriverBy::className($output_array[0]));
                         $driver->wait(10, 1000)->until(
                             WebDriverExpectedCondition::visibilityOf($element)
                         );
 
-                        
+
                         $driver->getKeyboard()->sendKeys(WebDriverKeys::ARROW_DOWN);
                         $driver->getKeyboard()->sendKeys(WebDriverKeys::ARROW_DOWN);
                         $driver->getKeyboard()->sendKeys(WebDriverKeys::ARROW_DOWN);
@@ -1850,7 +1874,7 @@ class Control extends \yii\db\ActiveRecord
 
 
                     info($sale->phone1);
-                } else  {
+                } else {
                     $sale->phone1 = ParsingExtractionMethods::ExtractPhoneFromMAvito($driver->getPageSource());
 
                 }

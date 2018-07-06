@@ -263,8 +263,8 @@ class Sale extends \yii\db\ActiveRecord
 
     public function getTags()
     {
-        if ($this->similarNew) {
-            $tags_sale = $this->similarNew->tags;
+        if ($this->similar) {
+            $tags_sale = $this->similar->tags;
         } else $tags_sale = Tags::convertToArray($this->tags_id);
         // $tags_sale = $sale->tags;
         if (($this->addresses)) {
@@ -1779,15 +1779,15 @@ class Sale extends \yii\db\ActiveRecord
         return $this->hasOne(SaleSimilar::className(), ['id' => 'id_similar']);
     }
 
-    public function getSimilarNewSales()
+    public function getSimilarsales()
     {
 
         return Sale::find()
             ->from(['s' => Sale::tableName()])
             ->joinWith(['agent AS agent'])
             ->joinWith(['addresses AS address'])
-            ->joinWith(['similarNew AS sim'])
-            ->where(['in', 's.id', Tags::convertToArray($this->similarNew->similar_ids)])
+            ->joinWith(['similar AS sim'])
+            ->where(['s.id_similar' => $this->id_similar])
             ->andWhere(['<>', 's.id', $this->id])
             ->all();
     }

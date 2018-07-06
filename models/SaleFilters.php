@@ -177,6 +177,14 @@ class SaleFilters extends \yii\db\ActiveRecord
         0 => 'Список',
         1 => 'Карта'
     ];
+    public static function mapBalcon() {
+        return [
+            0 => "Неважно",
+            1 => "Балкон",
+            2 => "Лоджия",
+            3 => "Балк/Лодж",
+        ];
+    }
 
 
     private static $tablePrefix;
@@ -328,7 +336,7 @@ class SaleFilters extends \yii\db\ActiveRecord
     {
         return [
             [['id', 'uniqueness', 'user_id', 'period_ads', 'price_down', 'price_up', 'grossarea_down', 'grossarea_up', 'status_blacklist2', 'date_of_ads', 'floor_down', 'floor_up', 'year_down', 'year_up',
-                'house_type', 'floorcount_down', 'floorcount_up', 'is_super_filter', 'type', 'discount', 'sort_by', 'date_start', 'date_finish', 'discount', 'type', 'sale_disactive', 'moderated'], 'integer'],
+                'house_type', 'balcon', 'floorcount_down', 'floorcount_up', 'is_super_filter', 'type', 'discount', 'sort_by', 'date_start', 'date_finish', 'discount', 'type', 'sale_disactive', 'moderated'], 'integer'],
             [['polygon_text', 'text_like', 'similar_white_list_id', 'similar_black_list_id', 'black_list_id', 'white_list_id', 'check_list_id', 'phone', 'komment', 'hidden_comment', 'plus_tags', 'minus_tags'], 'string'],
             [['name', 'locality', 'tags_id', 'photo', 'regions', 'plus_tags'], 'string', 'max' => 255],
             [['rooms_count', 'id_sources', 'disactive_id_sources'], 'string', 'max' => 30],

@@ -91,6 +91,49 @@ class ControlParsing extends \yii\db\ActiveRecord
             );
         }
     }
+    public static function closeBroken() {
+          $interval = 90;
+        $brokenControls = ControlParsing::find()
+            ->select(['id','type','date_start','ids','ids_sources'])
+            ->where(['in', 'status', [ControlParsing::BROKEN]])
+            ->andWhere([">", 'date_start', (time() - $interval * 60)])
+            // ->groupBy('type')
+            ->asArray()
+            ->all();
+
+       // my_var_dump($brokenControls);
+        foreach (Control::mapTypesControls() as $key => $control) {
+            if ($array = array_filter($brokenControls, function ($item) use ($key) {
+                return $item['type'] == $key;
+            })) {
+                if (count($array) > 5) {
+                    $message = " CONTROL ".$control." IS BROKEN ".count($array)." РАЗ ЗА ПОСЛЕДНИЕ ".$interval." МИНУТ";
+                    info($message);
+                    Notifications::VKMessage($message);
+                    if ($ids_broken = ArrayHelper::getColumn($array,'id')) {
+                        $ids = [];
+                        foreach ($ids_broken as $item) {
+
+                            array_push($ids,intval($item));
+                        }
+
+                    }
+
+
+                    my_var_dump($ids_broken = array_values ($ids_broken));
+                    ControlParsing::updateAll(['status' => ControlParsing::FULL_BROKEN],['in','id',$ids]);
+                   // AgentPro::throwError();
+
+                }
+              }
+
+
+        }
+
+        info("COUNT = " . count($brokenControls));
+    }
+
+
 
     public static function deleteOverControllers($status = 0, $duration = 5000, $limit = 20, $field = 'date_start')
     {
