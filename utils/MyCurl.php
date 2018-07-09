@@ -55,7 +55,7 @@ class MyCurl extends Curl
 
             if (!file_exists($filename)) {
               //  info(" FILE IS NOT EXIST", 'danger');
-                file_put_contents($filename, "");
+                file_put_contents(\Yii::getAlias("@app") . "/web/" . $filename, "");
             } // else  info(" FILE IS EXIST", 'success');
             return $filename;
         } else {
@@ -63,7 +63,7 @@ class MyCurl extends Curl
 
             if (!file_exists($filename)) {
             //    info(" FILE IS NOT EXIST", 'danger');
-                file_put_contents($filename, "");
+                file_put_contents(\Yii::getAlias("@app") . "/web/" . $filename, "");
             }  // else  info(" FILE IS EXIST", 'success');
             $this->ip_port_filename = $filename;
             return $filename;

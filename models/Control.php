@@ -203,7 +203,7 @@ class Control extends \yii\db\ActiveRecord
                         if ($module->MyParsingSyncNewer() !== false) continue;
                     }
                     if ($agentpro->status_parsing_avito_phones) {
-                        if ($module->ParsingAvitoPhones() !== false) continue;
+                        if ($module->ParsingAvitoPhones1() !== false) continue;
                     }
 
                     if ($agentpro->status_detailed_parsing) {
@@ -1777,7 +1777,7 @@ class Control extends \yii\db\ActiveRecord
                 $Broken_Controls = [];
                 break;
         }
-      //  my_var_dump($Broken_Controls);
+        //  my_var_dump($Broken_Controls);
         // если есть сломанные ресурсы, то рендерим их:
         if (count($Broken_Controls)) {
             $total = '';
@@ -1921,15 +1921,21 @@ class Control extends \yii\db\ActiveRecord
     public
     function ParsingAvitoPhones1($limit = 20)
     {
-        $type = 'PARSING_AVITO_PHONES';
+        $type = self::P_APHONES;
         $time_start = time();
         // берем объекты
-        $sales = Sale::find()->where(['id_sources' => 3])->limit(10)->all();
-
-
+        $sales = $this->getREADY($type, 5);
         if (!$sales) return false;
+        $id_parsingController = ControlParsing::create($type, $sales);
+        if ($proxy = Proxy::find()->where(['status' => 1])->orderBy('time')->one()) {
+            info(" PROXY " . $proxy->fulladdress . " WAS USED " . Yii::$app->formatter->asRelativeTime($proxy->time), SUCCESS);
+            $proxy->time = time();
+            $proxy->save();
+            \Yii::$app->params['ip'] = $proxy->fulladdress;
+        };
 
 
+        // $sales = [];
         foreach ($sales as $sale) {
             // открываем ссылку ( если нет открывается то выходим)
 
@@ -1937,6 +1943,16 @@ class Control extends \yii\db\ActiveRecord
             $url = preg_replace("/www.avito/", "m.avito", $url);
 
             $curl = new MyCurl();
+            if ($proxy) {
+                $curl->ipPort = $proxy->fulladdress;
+                $curl->setOpt(CURLOPT_FOLLOWLOCATION, true);
+                $curl->setOpt(CURLOPT_HTTPPROXYTUNNEL, 1);
+                $curl->setOpt(CURLOPT_PROXY, $curl->ipPort);
+                $curl->setOpt(CURLOPT_PROXYUSERPWD, $proxy->login . ":" . $proxy->password);
+
+            }
+
+
             $headers = [
                 'Upgrade-Insecure-Requests' => '1',
                 'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
@@ -1948,16 +1964,41 @@ class Control extends \yii\db\ActiveRecord
             ];
             $curl->setHeaders($headers);
             $curl->getUrlWithCookies($url);
-            $response = gzdecode($curl->response);
+            sleep(rand(4, 6));
+            if ($curl->responseHeaders['content-encoding'] == 'gzip') $response = gzdecode($curl->response);
+            else $response = $curl->response;
             $curl->close();
 
             $response = str_get_html($response);
+            if (preg_match_all("/(action-show-number|amw-test-number-click)/", $response, $output_array)) {
+                my_var_dump($output_array);
+                $selector = $output_array[0][0];
+                //  $selector = "action-show-number";
+                info(" SELECTOR = " . $selector, SUCCESS);
+                $hash = $response->find("." . $selector, 0)->href;
+                if (!$hash) {
 
-            $hash = $response->find('.js-action-show-number', 0)->href;
+                }
+                echo span("HASH IS " . $hash);
 
-            echo "<br> HASH IS " . $hash;
+
+            } else {
+                $error = Errors::findOne(AVITO_CANNOT_FIND_PHONEBUTTON_DIV_CLASS);
+                if (!$response) $response = "THE RESPONSE IS EMPTY";
+                AgentPro::throwError($error, $response);
+                $counterERROR++;
+                info(" DELETING THE ITEM",DANGER);
+                $sale->delete();
+                continue;
+
+            }
+
+
+            $hash = $response->find("." . $selector, 0)->href;
+
 
             $url_phone = "https://m.avito.ru/" . $hash . "?async";
+
 
             $headers = [
                 'Accept' => 'application/json',
@@ -1968,28 +2009,52 @@ class Control extends \yii\db\ActiveRecord
                 'Accept-Encoding' => 'gzip, deflate, br',
                 'Accept-Language' => 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,es;q=0.6',
             ];
+            // info("URL =".$url_phone);
+            // my_var_dump($headers);
+            $curl = new MyCurl();
+            if ($proxy) {
+                $curl->ipPort = $proxy->fulladdress;
+                $curl->setOpt(CURLOPT_HTTPPROXYTUNNEL, 1);
+                $curl->setOpt(CURLOPT_PROXY, $curl->ipPort);
+                $curl->setOpt(CURLOPT_PROXYUSERPWD, $proxy->login . ":" . $proxy->password);
 
+            }
             $curl->setHeaders($headers);
             $curl->getUrlWithCookies($url_phone);
-            $response = gzdecode($curl->response);
+            if ($curl->responseHeaders['content-encoding'] == 'gzip') $response = gzdecode($curl->response);
+            else $response = $curl->response;
+
+            $response = json_decode($response);
+            //  my_var_dump($response);
             $curl->close();
 
 
             info(" TELEPHONE = " . $response->phone);
 
-            preg_match("/\d+\s\d{3}\s\d{3}-\d{2}-\d{2}/", $response->phone, $output_array);
-
-            $phone = preg_replace("/\D+/", "", $output_array[0]);
-            $phone = preg_replace("/\A7/", "8", $phone);
+            $phone = preg_replace("/\A7/", "8", preg_replace("/\D/", "", $response->phone));
 
             $sale->phone1 = $phone;
+            if (preg_match("/\d{9,11}/", $sale->phone1)) {
+                $counterSUCCESS++;
+            } else {
+                $counterERROR++;
+                $sale->phone1 = '';
+            }
 
             sleep(rand(4, 6));
-            // if (!$sale->save()) my_var_dump($sale->getErrors());
+            if (!$sale->save()) my_var_dump($sale->getErrors());
+            ControlParsing::updatingTime($id_parsingController);
 
 
         }
 
+        $counts_array = [
+            'AVITO_PHONES_ERROR' => $counterERROR,
+            'AVITO_PHONES_SUCCESS' => $counterSUCCESS,
+
+        ];
+        ControlParsing::updating($id_parsingController, 2, serialize($counts_array));
+        //  $driver->quit();
         return true;
 
     }

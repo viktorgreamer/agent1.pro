@@ -95,7 +95,7 @@ class AgentPro extends \yii\db\ActiveRecord
 
         $agentpro = self::find()->where(['status' => self::ACTIVE])->one();
         if ($agentpro) {
-            // $agentpro->status = self::DISACTIVE;
+             $agentpro->status = self::DISACTIVE;
             Notifications::VKMessage(AgentPro::ErrorLogs()[$id_error]);
             if ($id_error) $agentpro->id_error = $id_error;
             $agentpro->time = time();
@@ -183,12 +183,22 @@ class AgentPro extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function throwError($error)
+    public static function throwError($error,$pageSource = '')
     {
-        AgentPro::stop($error->id);
+        if ($pageSource) {
+            info($pageSource);
+            $ip = \Yii::$app->params['ip'];
+            $time = str2url(date("Y-m-d H:i:s"));
+            $dir = Yii::getAlias('@app');
+            file_put_contents($dir."/web/errors/".$ip."_".$time."_error_" . $error->name . ".html", $pageSource);
+
+        }
+
         info($error->name, 'danger');
         if ($error->fatality == Errors::FATAL_ERROR) {
             info("STOP THE APPLICATION",DANGER);
+            AgentPro::stop($error->id);
+
             if (!self::DEBUG_MODE) die();
         }
 

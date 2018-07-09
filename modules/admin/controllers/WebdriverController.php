@@ -7,8 +7,10 @@ use app\models\ChromeDriver\MyChromeDriver;
 use app\models\Control;
 use app\models\ControlParsing;
 use app\models\Notifications;
+use app\models\Proxy;
 use app\models\Sessions;
 use app\models\WdCookies;
+use app\utils\MyCurl;
 use Facebook\WebDriver\Cookie;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -24,9 +26,7 @@ class WebdriverController extends \yii\web\Controller
     public function actionTestIp()
     {
         AgentPro::getActive();
-        $driver = MyChromeDriver::OpenNew("194.242.125.25:8000");
-        $driver->switchTo()->alert()->sendKeys('Test'); // enter text
-        $driver->switchTo()->alert()->accept();
+        $driver = MyChromeDriver::OpenNew("194.242.124.101:8000");
         info("IP=" . $driver->ip);
 
         // $driver->get('https://yandex.ru/internet/');
@@ -208,6 +208,29 @@ class WebdriverController extends \yii\web\Controller
         ControlParsing::deleteAll(['status' => 4]);
 
     }
+
+
+    public function actionMyCurlTest() {
+        if ($proxy = Proxy::find()->where(['status' => 1])->orderBy('time')->one()) {
+            info(" PROXY WAS USED " . Yii::$app->formatter->asRelativeTime($proxy->time), SUCCESS);
+            $proxy->time = time();
+            $proxy->save();
+        };
+        $curl = new MyCurl();
+        if ($proxy) {
+            $curl->ipPort = $proxy->fulladdress ;
+            $curl->setOpt(CURLOPT_HTTPPROXYTUNNEL, 1);
+            $curl->setOpt(CURLOPT_PROXY, $curl->ipPort);
+            $curl->setOpt(CURLOPT_PROXYUSERPWD, $proxy->login . ":" . $proxy->password);
+
+        }
+
+        $curl->get("https://yandex.ru/internet/");
+        echo $curl->response;
+        return $this->render('index');
+
+    }
+
 
 
 }
