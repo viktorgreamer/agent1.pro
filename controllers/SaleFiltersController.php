@@ -16,6 +16,7 @@ use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use app\components\Mdb;
 use app\models\MyArrayHelpers;
+
 /**
  * SaleFiltersController implements the CRUD actions for SaleFilters model.
  * @var $salefilter SaleFilters;
@@ -57,7 +58,7 @@ class SaleFiltersController extends Controller
             $filters_existed = MyArrayHelpers::AddOrDelete($filters_existed, $similar_id);
 
             $filters_add_to->relevanted_ids = implode(",", $filters_existed);
-        } else  {
+        } else {
             info('НЕТ связанные ids');
             $filters_add_to->relevanted_ids = $similar_id;
         }
@@ -96,7 +97,6 @@ class SaleFiltersController extends Controller
     }
 
 
-
     public function actionIndex()
     {
 
@@ -110,17 +110,18 @@ class SaleFiltersController extends Controller
     }
 
 
-    public function actionSaveCurrentSalefilter($name = '',$type = 1)
+    public function actionSaveCurrentSalefilter($name = '', $type = 1, $params = [])
     {
 
         if ($name == '') $name = "Фильтр_" . date('Y-m-d H:i:s', time());
         $session = Yii::$app->session;
         $salefilter = $session->get('current_filter');
-
+        $params = json_decode($params,true);
         $is_existed_salefilter = SaleFilters::find()->where(['user_id' => $session['user_id']])->andWhere(['name' => $name])->one();
         if ($is_existed_salefilter) {
             //  my_var_dump($is_existed_salefilter);
             //  my_var_dump($salefilter);
+
             $black_list_id = $is_existed_salefilter->black_list_id;
             $white_list_id = $is_existed_salefilter->white_list_id;
             $similar_white_list_id = $is_existed_salefilter->similar_white_list_id;
@@ -129,10 +130,15 @@ class SaleFiltersController extends Controller
             $user_id = $is_existed_salefilter->user_id;
             // обновляем все атрибуты
             $is_existed_salefilter->copyAttributes($salefilter);
+            if ($params['vk_inform']) $is_existed_salefilter->vk_inform = 1; else $is_existed_salefilter->vk_inform = 0;
+            if ($params['mail_inform']) $is_existed_salefilter->mail_inform = 1; else $is_existed_salefilter->mail_inform = 0;
+            if ($params['sms_inform']) $is_existed_salefilter->sms_inform = 1; else $is_existed_salefilter->sms_inform = 0;
+            if ($params['hidden_comment']) $is_existed_salefilter->hidden_comment = $params['hidden_comment'];
+
             // но сохраняем все исключения
 
             //  $is_existed_salefilter->price_down = 1100000;
-            $is_existed_salefilter->user_id =  $user_id;
+            $is_existed_salefilter->user_id = $user_id;
             $is_existed_salefilter->black_list_id = $black_list_id;
             $is_existed_salefilter->white_list_id = $white_list_id;
             $is_existed_salefilter->similar_white_list_id = $similar_white_list_id;
@@ -142,15 +148,20 @@ class SaleFiltersController extends Controller
             if (!$is_existed_salefilter->save(false)) return my_var_dump($is_existed_salefilter->getErrors());
             else {
                 Mdb::Alert(" Успешно обновили Фильтр: " . $is_existed_salefilter->name, 'success');
-                return Html::a("Поиск по фильтру '".span($is_existed_salefilter->name, 'success')."'", ['sale/search-by-filter', 'id' => $is_existed_salefilter->id]);
-                 }
+                return Html::a("Поиск по фильтру '" . span($is_existed_salefilter->name, 'success') . "'", ['sale/search-by-filter', 'id' => $is_existed_salefilter->id]);
+            }
         } else {
+            if ($params['vk_inform']) $salefilter->vk_inform = 1;
+            if ($params['mail_inform']) $salefilter->mail_inform = 1;
+            if ($params['sms_inform']) $salefilter->sms_inform = 1;
+            if ($params['hidden_comment']) $salefilter->hidden_comment = $params['hidden_comment'];
+
             $salefilter->name = $name;
             $salefilter->type = $type;
             if (!$salefilter->save(false)) return my_var_dump($salefilter->getErrors());
             else {
                 Mdb::Alert(" Успешно Сохранили Фильтр: " . $salefilter->name, 'success');
-                return Html::a("Поиск по фильтру '".span($salefilter->name, 'success')."'", ['sale/search-by-filter', 'id' => $salefilter->id]);
+                return Html::a("Поиск по фильтру '" . span($salefilter->name, 'success') . "'", ['sale/search-by-filter', 'id' => $salefilter->id]);
             }
         }
         // return $this->render('@app/views/console/processing');
@@ -171,9 +182,6 @@ class SaleFiltersController extends Controller
 
         return $this->renderAjax('_show-lists', ['salefilters' => SaleFilters::getMyFiltersAsArray($type)]);
     }
-
-
-
 
 
     public function actionAddItemAjax()
@@ -198,7 +206,7 @@ class SaleFiltersController extends Controller
         $price = Yii::$app->request->get('price');
         $id_similar = Yii::$app->request->get('id_item');;
         $id_salefilter = Yii::$app->request->get('id_salefilter');
-       $salefilter = SaleFilters::findOne($id_salefilter);
+        $salefilter = SaleFilters::findOne($id_salefilter);
 
         return $salefilter->OnControl($id_similar, $price);
 
@@ -294,7 +302,6 @@ class SaleFiltersController extends Controller
         $model->load(Yii::$app->request->post());
 
 
-
         if (!$model->save(false)) my_var_dump($model->getErrors());
         return $this->render('update', [
             'salefilter' => $model,
@@ -331,12 +338,11 @@ class SaleFiltersController extends Controller
 
     public function actionLoadPhoto($id)
     {
-       $filter = SaleFilters::findOne($id);
-       $filter->LoadPhotoToLocal();
+        $filter = SaleFilters::findOne($id);
+        $filter->LoadPhotoToLocal();
 
         return $this->render('debug');
     }
-
 
 
     /**
@@ -358,7 +364,7 @@ class SaleFiltersController extends Controller
     public function actionDownloadPhotoAndResize($id = 0)
     {
         $salefilter = SaleFilters::findOne($id);
-       $salefilter->LoadPhotoToLocal();
+        $salefilter->LoadPhotoToLocal();
 
     }
 

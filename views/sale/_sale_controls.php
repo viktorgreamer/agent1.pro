@@ -99,9 +99,9 @@ if ($salefilter->id != 0) {
     }
 
     if ($sale->id_similar) $salefilter_list[] = "<a class=\"on-control\"
-           data-id=\"<?= $salefilter->id ?>\"
-           data-id_item=\"<?= $sale->id_similar ?>\"
-           data-price=\"<?= $sale->price ?>\">
+           data-id=".$salefilter->id."
+           data-id_item=".$sale->id_similar."
+           data-price=".$sale->price.">
             <i class=\"fa fa-exclamation red-text fa-2x\" aria-hidden=\"true\"></i><i
                     class=\"fa fa-eye fa-2x\" aria-hidden=\"true\" title=\"Следить за ценой\"></i>
                             </a>";

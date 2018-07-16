@@ -25,18 +25,18 @@ use yii\helpers\Html;
  */
 class Agents extends \yii\db\ActiveRecord
 {
-    /**
-     * @inheritdoc
-     */
 
-    const PERSON_TYPE_HOUSEKEEPER = 0;
     const PERSON_TYPE_AGENT = 1;
+    const PERSON_TYPE_HOUSEKEEPER = 2;
+    const PERSON_TYPE_DEVELOPER = 3;
 
-    const PERSON_TYPE =
-        [
-            0 => 'ХОЗЯИН',
-            1 => 'АГЕНТ'
+    public static function mapPersonType() {
+        return [
+            0=> 'Любой',
+            2 => 'ХОЗЯИН',
+            1 => 'АГЕНТ',
         ];
+    }
 
     private static $tablePrefix;
 

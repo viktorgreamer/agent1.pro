@@ -99,25 +99,7 @@ use yii\widgets\ActiveForm;
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <div class="md-form">
-                <textarea type="text" id="form7"
-                          name="patterns"
-                          class="md-textarea"><? if ($model->patterns) echo $model->patterns; ?></textarea>
-                <label for="form7">autoload patterns</label>
-            </div>
-        </div>
-    </div> <div class="row">
-        <div class="col-12">
-            <div class="md-form">
-                <textarea type="text" id="form11"
-                          name="minus_patterns"
-                          class="md-textarea"><? if ($model->minus_patterns) echo $model->minus_patterns; ?></textarea>
-                <label for="form11">autoload -patterns</label>
-            </div>
-        </div>
-    </div>
+
 
 
     <div class="form-group">

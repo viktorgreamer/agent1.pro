@@ -51,23 +51,25 @@ class SaleController extends Controller
     {
 
         $session = Yii::$app->session;
-        $searchModel = new SaleSearch();
-        $salefilter = new SaleFilters();
-
-        // if (!$salefilter->validate(Yii::$app->request->get())) echo my_var_dump($salefilter->getErrors());
+        if ($id) {
+            $salefilter = SaleFilters::findOne($id);
+        } else $salefilter = new SaleFilters();
+        $params = Yii::$app->request->get();
+        if (!$salefilter->validate(Yii::$app->request->get())) echo my_var_dump($salefilter->getErrors());
         $salefilter->load(Yii::$app->request->get());
 
-        $dataProvider = $searchModel->search_dataprovider($salefilter, 10);
+        $query = new SaleQuery();
+        $query->search($salefilter, $_GET['type_of_show']);
+
         $salefilter->user_id = $session->get('user_id');
         $session->set('current_filter', $salefilter);
-        $session['current_filter'] = $salefilter;
 
+        return $this->render('moderate',
+            [
+                'query' => $query->limit(1),
+                'salefilter' => $salefilter
+            ]);
 
-        return $this->render('moderate', [
-            'searchModel' => $searchModel,
-            'salefilter' => $salefilter,
-            'dataProvider' => $dataProvider,
-        ]);
 
 
     }
@@ -192,13 +194,13 @@ class SaleController extends Controller
         if ($id) {
             $salefilter = SaleFilters::findOne($id);
         } else $salefilter = new SaleFilters();
+        $params = Yii::$app->request->get();
         if (!$salefilter->validate(Yii::$app->request->get())) echo my_var_dump($salefilter->getErrors());
         $salefilter->load(Yii::$app->request->get());
 
         $query = new SaleQuery();
         $query->search($salefilter, $_GET['type_of_show']);
 
-        // если поставлена галочка то сохраняем список
         $salefilter->user_id = $session->get('user_id');
         $session->set('current_filter', $salefilter);
         /*if (Yii::$app->request->get('savelist')) {

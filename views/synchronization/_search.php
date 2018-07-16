@@ -77,6 +77,12 @@ use app\components\Mdb;
 
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <?= Mdb::ActiveSelect($model, 'sort_by',\app\models\SaleFilters::TYPE_OF_SORTING_ARRAY ) ?>
+
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-sm-1">

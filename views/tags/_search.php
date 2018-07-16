@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\components\Mdb;
 use app\models\Tags;
+
 /* @var $this yii\web\View */
 /* @var $modele app\models\TagsSearch */
 /* @var $form yii\widgets\ActiveForm */
@@ -33,11 +34,11 @@ use app\models\Tags;
 
             <div class="md-form form-sm">
                 <?= \app\components\MdbTextInput::widget([
-                'request_type' => 'get',
-                'name' => 'text_like',
-                'label' => 'название',
-            ]); ?>
-        </div>
+                    'request_type' => 'get',
+                    'name' => 'text_like',
+                    'label' => 'название',
+                ]); ?>
+            </div>
 
         </div>
         <div class="col-sm-2">
@@ -67,8 +68,11 @@ use app\models\Tags;
 
         </div>
         <div class="col-sm-2">
-            <?php  echo  Mdb:: ActiveSelect($model, 'a_type', [ 0 => "ANY"] + Tags::A_TYPES  + [999 => 'НЕТ']); ?>
+            <?php echo Mdb:: ActiveSelect($model, 'a_type', [0 => "ANY"] + Tags::A_TYPES + [999 => 'НЕТ']); ?>
 
+        </div>
+        <div class="col-sm-2">
+            <?php echo Mdb:: ActiveCheckbox($model, 'searchable', ['label' => 'В поиске']); ?>
         </div>
         <div class="col-2">
             <?php // выбор ресурса
@@ -77,7 +81,7 @@ use app\models\Tags;
                 'value' => $model->publish,
                 'name' => 'publish',
                 'placeholder' => 'Тип публичности',
-                'options' =>  [10 => 'Любой'] + \app\models\Tags::PUBLIC_ARRAY,
+                'options' => [10 => 'Любой'] + \app\models\Tags::PUBLIC_ARRAY,
                 'label' => '',
                 'color' => 'primary'
             ]); ?>

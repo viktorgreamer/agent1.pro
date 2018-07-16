@@ -14,6 +14,10 @@ use app\models\MyArrayHelpers;
 class Methods
 {
 
+    public static function isInList($needle,$list) {
+        if (in_array($needle,Methods::convertToArrayWithBorders($list))) return true; else return false;
+    }
+
     // метод для удаления элемента из списка с границами ",";
     public static function removeFromList($needle, $haystack)
     {

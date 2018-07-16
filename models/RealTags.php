@@ -120,7 +120,7 @@ class RealTags extends \yii\db\ActiveRecord
                         if ($tag->a_type) {
                             echo "<br> ЕСТЬ ДОПОЛНИТЕЛЬНЫЙ ТИП<br>";
                             //  echo $sale->similarNew->tags_id;
-                            $all_tags = Tags::find()->where(['in','id', $sale->similarNew->tags])->all();
+                            $all_tags = Tags::find()->where(['in','id', $sale->similar>tags])->all();
                             foreach ($all_tags as $tag) {
                                 echo "<br>".$tag->id." ".$tag->name." a_TYPE ".$tag->a_type;
                             }
@@ -128,14 +128,14 @@ class RealTags extends \yii\db\ActiveRecord
                             $all_tags_splitted = Tags::find()->select('id')->where(['in','id', MyArrayHelpers::DeleteFromArray($tag_id, $sale->similarNew->tags)])->andWhere(['a_type' => $a_type])->column();
                             echo "<br>all_tags_splitted<br>";
                             my_var_dump($all_tags_splitted);
-                            echo "<br>ORIGINAL: ".$sale->similarNew->tags_id;
+                            echo "<br>ORIGINAL: ".$sale->similar->tags_id;
                             echo "<br>DUPLICATES: ".Tags::convertToString($all_tags_splitted);
                             $new_array = array_diff($sale->similarNew->tags, $all_tags_splitted);
                             echo "<br>NEW ARRAY: ".Tags::convertToString($new_array);
                             echo "<br>";
                             echo "<br>";
                             echo "<br>";
-                        } else $new_array = $sale->similarNew->tags;
+                        } else $new_array = $sale->similar->tags;
 
 
                         $similar = SaleSimilar::findOne($sale->id_similar);
@@ -168,7 +168,10 @@ class RealTags extends \yii\db\ActiveRecord
 //                    $RealTags->tag_id = $tag_id;
 //                    $RealTags->save();
 //                }
-                $address = Addresses::findOne($parent_id);
+                if ($parent_id == 'setToAllAddresses') {
+                    Tags::setToMany($tag_id,'setToAllAddresses');
+
+                } else  $address = Addresses::findOne($parent_id);
                 if ($address) {
                     $address->setTags(MyArrayHelpers::AddOrDelete($address->tags, $tag_id));
                     if (!$address->save()) return my_var_dump($address->getErrors());
@@ -195,12 +198,12 @@ class RealTags extends \yii\db\ActiveRecord
                 if ($current_tags != '') {
                     //  echo " если в списке что-то есть";
                     // получаем список уже имеющихся tags
-                    $exist_tags = explode(',', $current_tags);
+                    $exist_tags = Tags::convertToArray($current_tags);
                     // если там данный tag есть то удаляем его если нет то добавляем
                     if (in_array($tag_id, $exist_tags)) unset($exist_tags[array_search($tag_id, $exist_tags)]);
                     else  array_push($exist_tags, $tag_id);
                     // переводим массив в список
-                    if (count($exist_tags) == 0) $current_tags = ''; else $current_tags = implode(",", $exist_tags);
+                    if (count($exist_tags) == 0) $current_tags = ''; else $current_tags = Tags::convertToString($exist_tags);
 
                 } else {
                     // echo " список был пустой";
@@ -218,12 +221,12 @@ class RealTags extends \yii\db\ActiveRecord
                 if ($current_tags != '') {
                     //  echo " если в списке что-то есть";
                     // получаем список уже имеющихся tags
-                    $exist_tags = explode(',', $current_tags);
+                    $exist_tags = Tags::convertToArray($current_tags);
                     // если там данный tag есть то удаляем его если нет то добавляем
                     if (in_array($tag_id, $exist_tags)) unset($exist_tags[array_search($tag_id, $exist_tags)]);
                     else  array_push($exist_tags, $tag_id);
                     // переводим массив в список
-                    if (count($exist_tags) == 0) $current_tags = ''; else $current_tags = implode(",", $exist_tags);
+                    if (count($exist_tags) == 0) $current_tags = ''; else $current_tags = Tags::convertToString($exist_tags);
 
                 } else {
                     // echo " список был пустой";

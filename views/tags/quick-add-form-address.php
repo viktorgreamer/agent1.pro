@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use app\models\Tags;
 
 
 /* @var $this yii\web\View */
@@ -30,64 +31,52 @@ $tags_groups = Yii::$app->cache->get('tags_address');
 // $realtags =  \app\models\Addresses::findOne($id)->tags;
 
 ?>
-    <div class="tags-quick-add-form">
+<div class="tags-quick-add-form">
 
-        <?php
-        foreach ($tags_groups as $tags_group) {
-            ?>
+    <?php
+    foreach ($tags_groups as $tags_group) {
+        ?>
 
-            <div class="row">
-                <div class="card">
-                    <div class="card-header success-color white-text">
-                        <?= $tags_group['name'] ?>
-                    </div>
-                    <div class="card-body">
+        <div class="row">
+            <div class="card">
+                <div class="card-header success-color white-text">
+                    <?= $tags_group['name'] ?>
+                </div>
+                <div class="card-body">
 
-                        <?php
+                    <?php
 
-                        $tags = $tags_group['tags'];
+                    $tags = $tags_group['tags'];
 
-                        if (count($tags) != 0) {
-                            foreach ($tags as $tag) { ?>
-                                <? if ((!empty($realtags)) and (in_array($tag->id, $realtags))) { ?> <i
-                                        class="fa fa-check" id="tag_in_address_<?= $tag->id ?>"
-                                        aria-hidden="true"></i> <?php } ?>
-                                <a href="#" class="tags-action-button-address" data-address_id="<?= $id ?>"
-                                   data-tag_id="<?= $tag->id ?>">  <span
-                                            class="badge badge-<?= $tag->color; ?> <? if ((!empty($realtags)) and (in_array($tag->id, $realtags))) echo 'border border-primary'; ?>"
-                                            id="tag_address_<?= $tag->id ?>"
-                                            style='margin-top: 7px; margin-bottom: 7px;'><?= $tag->name; ?></span></a>
+                    if (count($tags) != 0) {
+                        foreach ($tags as $tag) { ?>
+                            <? if ((!empty($realtags)) and (in_array($tag->id, $realtags))) { ?> <i
+                                    class="fa fa-check" id="tag_in_address_<?= $tag->id ?>"
+                                    aria-hidden="true"></i> <?php } ?>
+                            <a href="#" class="tags-action-button-address" data-address_id="<?= $id ?>"
+                               data-tag_id="<?= $tag->id ?>">  <span
+                                        class="badge badge-<?= $tag->color; ?> <? if ((!empty($realtags)) and (in_array($tag->id, $realtags))) echo 'border border-primary'; ?>"
+                                        id="tag_address_<?= $tag->id ?>"
+                                        style='margin-top: 7px; margin-bottom: 7px;'><?= $tag->name; ?></span></a>
 
-                                <?php
-                            }
+                            <?php
                         }
-                        ?>
+                    }
+                    ?>
 
-                    </div>
                 </div>
             </div>
-            <?php
-        }
+        </div>
+        <?php
+    }
 
 
-        ?>
-        <hr>
-        <a href="<?= Url::toRoute(['/tags/create']) ?>" target="_blank"> +new tag</a>
-        <button type="button" class="btn btn-success btn-sm" data-dismiss="modal" aria-label="Close"
-                id="closeModal">
-            Закрыть
-        </button>
+    ?>
+    <hr>
+    <a href="<?= Url::toRoute(['/tags/create']) ?>" target="_blank"> +new tag</a>
+    <button type="button" class="btn btn-success btn-sm" data-dismiss="modal" aria-label="Close"
+            id="closeModal">
+        Закрыть
+    </button>
 
-    </div><!-- tags-quick-form -->
-
-<?php
-$tags_class_appearance = Tags::ACTIVE_TAG_CLASS_APPEARENCE;
-$tags_class_exit = Tags::ACTIVE_TAG_CLASS_EXIT;
-$script = <<< JS
-tags_class_appearance = $tags_class_appearance
-tags_class_exit = $tags_class_exit
-
-
-
-JS;
-$this->registerJs($script, yii\web\View::POS_READY);
+</div>

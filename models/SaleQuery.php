@@ -135,18 +135,16 @@ class SaleQuery extends ActiveQuery
 
         $this->andFilterWhere(['in', 's.house_type', Methods::convertToArrayWithBorders($this->salefilter->house_type)]);
         $this->andFilterWhere(['in', 's.phone1', Methods::convertToArrayWithBorders($this->salefilter->phone)]);
+        if ($this->salefilter->person_type) {
+            $this->andWhere(['agent.person_type' => $this->salefilter->person_type]);
+        }
 
         if ($this->salefilter->floor_down) $this->andFilterWhere(['>=', 's.floor', $this->salefilter->floor_down]);
         if ($this->salefilter->floor_up) $this->andFilterWhere(['<=', 's.floor', $this->salefilter->floor_up]);
         if ($this->salefilter->floorcount_down) $this->andFilterWhere(['>=', 's.floorcount', $this->salefilter->floorcount_down]);
         if ($this->salefilter->floorcount_up) $this->andFilterWhere(['<=', 's.floorcount', $this->salefilter->floorcount_up]);
 
-        if ((!$this->salefilter->agents) and ($this->salefilter->housekeepers)) {
-            $this->andFilterWhere(['agent.person_type' => 0]);
-        }
-        if (($this->salefilter->agents) and (!$this->salefilter->housekeepers)) {
-            $this->andFilterWhere(['agent.person_type' => 1]);
-        }
+
 
         if ($this->salefilter->text_like != '') $this->andFilterWhere(['or',
             ['like', 's.address', $this->salefilter->text_like],

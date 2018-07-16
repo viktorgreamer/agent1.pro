@@ -18,6 +18,8 @@ class AddressesSearch extends Addresses
     public $floorcount_up;
     public $year_up;
     public $year_down;
+    public $plus_tags;
+    public $minus_tags;
 
     /**
      * @inheritdoc
@@ -26,7 +28,7 @@ class AddressesSearch extends Addresses
     {
         return [
             [['id', 'house_type', 'floorcount', 'year', 'tagged', 'floorcount_up', 'floorcount_down', 'year_up', 'year_down'], 'integer'],
-            [['address', 'polygon_text'], 'string'],
+            [['address', 'polygon_text','plus_tags','minus_tags'], 'string'],
             [['coords_x', 'coords_y', 'street', 'house', 'hull', 'locality', 'district', 'address_string_variants', 'precision_yandex', 'status', 'address', 'tagged', 'polygon_text', 'id'], 'safe'],
         ];
     }
@@ -34,6 +36,18 @@ class AddressesSearch extends Addresses
     public function formName()
     {
         return '';
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'year_up' => 'До года',
+            'year_down' => 'От года',
+            'floorcount_down' => 'От этажа',
+            'floorcount_up' => 'До этажа',
+            'tagged' => 'Tags',
+            'house_type' => 'тип дома',
+        ];
     }
 
     /**
@@ -57,6 +71,17 @@ class AddressesSearch extends Addresses
         $query = Addresses::find();
         $this->load($params);
         // add conditions that should always apply here
+      if ($this->year_up)  $query->andFilterWhere(['<=', 'year', $this->year_up]);
+      if ($this->year_down)   $query ->andFilterWhere(['>=', 'year', $this->year_down]);
+
+
+
+        if ($this->house_type) $query->andFilterWhere(['house_type' => $this->house_type]);
+
+        if ($this->floorcount_down) $query->andFilterWhere(['>=', 'floorcount', $this->floorcount_down]);
+        if ($this->floorcount_up) $query->andFilterWhere(['<=', 'floorcount', $this->floorcount_up]);
+
+
         $query->andFilterWhere(['like', 'street', $this->street])
             ->andFilterWhere(['like', 'hull', $this->hull])
             ->andFilterWhere(['like', 'house', $this->house])
@@ -64,59 +89,48 @@ class AddressesSearch extends Addresses
             ->andWhere(['<>', 'precision_yandex', 'street'])
             ->andfilterWhere(['id' => $this->id]);
 
-        if (!empty($this->house_type)) $query->andFilterWhere(['in', 'house_type', explode(",", $this->house_type)]);
-
-        if (($this->floorcount_down != 0)) $query->andFilterWhere(['>=', 'floorcount', $this->floorcount_down]);
-        if (($this->floorcount_up != 0)) $query->andFilterWhere(['<=', 'floorcount', $this->floorcount_up]);
-        if (($this->year_up != 0)) $query->andFilterWhere(['<=', 'year', $this->year_up]);
-        if (($this->year_down != 0)) $query->andFilterWhere(['>=', 'year', $this->year_down]);
-        if ($this->status != 10) $query->andWhere(['status' => $this->status]);
+         if ($this->status != 10) $query->andWhere(['status' => $this->status]);
         if ($this->tagged == 1) $query->andWhere(['IS', 'tags_id', NULL]);
         if ($this->tagged == 2) $query->andWhere(['<>', 'tags_id', '']);
         $session = Yii::$app->session;
 
-        if (($this->polygon_text != '') or (!empty($session->get('tags_id_to_search')))) {
-            $addresses = $query->all();
-            $ids = [];
-            foreach ($addresses as $address) {
+        $polygon_id_addresses = [];
+        if ($this->polygon_text) {
+          //  info(" POLYGON");
+            if (empty(Yii::$app->cache->get('all_addesses'))) {
+                Yii::$app->cache->set('all_addesses', Addresses::find()->select('id,coords_x,coords_y')->asArray()->all());
 
-                if ($this->polygon_text != '') {
-                    if (!isPointInsidePolygon(json_decode(substr($this->polygon_text, 1, -1)), [$address->coords_x, $address->coords_y])) continue;
-
-                }
-
-                // searching via tags
-               if (!empty($session->get('tags_id_to_search'))) {
-                   if ($address->tags_id) {
-                       $continue = false;
-
-                       if (!empty($session->get('tags_id_to_search'))) {
-                           $tags_plus = explode(',', $session->get('tags_id_to_search'));
-                           foreach ($tags_plus as $tag_plus) {
-                              // info("searching " . $tag_plus . "in " . $address->tags_id, 'default');
-                               if (in_array($tag_plus, explode(',', $address->tags_id))) 1; // info($tag_plus . " in " . $address->tags_id,'success');
-                               else {
-
-                                  // info($tag_plus . " not in " . $address->tags_id, 'alert');
-                                   $continue = true;
-                                   break;
-                               }
-
-                           }
-                       }
-                   } else continue; // если tags нет то сразу пропускаем поисе по tags
-               }
-
-                if ($continue) continue;
-
-                $ids[] = $address->id;
             }
-            $query = Addresses::find()
-                ->where(['in', 'id', $ids]);
+            $all_addesses = Yii::$app->cache->get('all_addesses');
+            foreach ($all_addesses as $address) {
+                // echo $address['coords_x']." ".$address['coords_y'];
+                if (!isPointInsidePolygon(json_decode(substr($this->polygon_text, 1, -1)), [$address['coords_x'], $address['coords_y']])) continue;
+                array_push($polygon_id_addresses, $address['id']);
+            }
+          if ($polygon_id_addresses)  $query->andWhere(['in','id',$polygon_id_addresses]);
 
+        }
+        if ($minus_tags_address = Tags::convertToArray($this->minus_tags)) {
+            foreach ($minus_tags_address as $tag) {
+                $this->andWhere(['not like', 'tags_id', "," . $tag . ","]);
+            }
 
         }
 
+
+        // группироем по условиям OR и AND
+        if ($tags_address = Tags::convertToArray($this->plus_tags)) {
+            $grouped_tags_addresses = $this->groupTags($tags_address);
+            foreach ($grouped_tags_addresses as $grouped_tags_address) {
+                $queryOR = ['or'];
+                foreach ($grouped_tags_address as $item) {
+                    array_push($queryOR, ['like', 'tags_id', "," . $item['id'] . ","]);
+                }
+                $this->andWhere($queryOR);
+
+            }
+
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -124,6 +138,25 @@ class AddressesSearch extends Addresses
 
 
         return $dataProvider;
+    }
+
+    protected function groupTags($tags)
+    {
+        if (empty(Yii::$app->cache->get('tags'))) {
+            Yii::$app->cache->set('tags', Tags::find()->indexBy('id')->asArray()->all());
+
+        }
+        $all_tags = Yii::$app->cache->get('tags');
+
+
+        $new_tags = [];
+        foreach ($tags as $tag) {
+            array_push($new_tags, $all_tags[$tag]);
+        }
+
+
+        return array_group_by($new_tags, 'type');
+
     }
 
     public

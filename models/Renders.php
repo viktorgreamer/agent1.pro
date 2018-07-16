@@ -170,18 +170,9 @@ abstract class Renders
 
     public static function StaticView($type = '', $options = [])
     {
-        switch ($type) {
-            case 'mini_sale':
-                return \Yii::$app->view->render('@app/views/sale/_mini_sale-table', $options);
-            case 'mini_sale_similar':
-                return \Yii::$app->view->render('@app/views/sale/_mini_sale_similar', $options);
-            case '_chart_prices':
-                return \Yii::$app->view->render('@app/views/sale-analitics/_chart_prices', $options);
-            case 'sale/_sale-table':
-                return \Yii::$app->view->render('@app/views/sale/_sale-table', $options);
-            default:
-                return 'NO VIEW FOUND';
-        }
+
+        return \Yii::$app->view->render("@app/views/".$type, $options);
+
 
 
     }

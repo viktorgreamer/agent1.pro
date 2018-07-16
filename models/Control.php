@@ -251,7 +251,7 @@ class Control extends \yii\db\ActiveRecord
                 if ($agentpro->status_geocogetion) {
                     if ($module->geocodetion(100) !== false) continue;
                 }
-                if ($agentpro->status_processing) $module->processing(100);
+                if ($agentpro->status_processing) $module->processing(50);
                 if ($agentpro->status_similar_check) $module->similarCheck(50);
                 if ($agentpro->status_analizing) $module->load_sale_statistic(50);
                 if ($agentpro->status_sync) $module->Synchronisation(500);
@@ -480,9 +480,6 @@ class Control extends \yii\db\ActiveRecord
         $sales = $this->getREADY($type, $limit);
         if (!$sales) return false;
         $id_parsingController = ControlParsing::create($type, $sales);
-        echo Synchronization::Counts(Synchronization::find(), [
-            'processed' => [1, 2, 3],
-        ]);
         foreach ($sales as $key => $sale) {
             if ($key % 30 == 0) {
                 ControlParsing::updatingTime($id_parsingController);
@@ -491,11 +488,11 @@ class Control extends \yii\db\ActiveRecord
             // изменилась только цена то обработку на телефон и похожие вариенты не проводим
             if ($sale->status != 4) {
                 $sale->checkForAgents();
-                //$sale->similarCheckNewer();
+                // $sale->similarCheckNewer();
 
                 // $sale->getSimilar_ids();
             }
-            $sale->AutoLoadTags();
+         //   $sale->AutoLoadTags();
             $sale->SalefiltersCheck();
             $sale->changingStatuses('PROCESSED');
             if (!$sale->save()) my_var_dump($sale->getErrors());
@@ -504,9 +501,7 @@ class Control extends \yii\db\ActiveRecord
         }
         ControlParsing::updating($id_parsingController);
 
-        echo Synchronization::Counts(Synchronization::find(), [
-            'processed' => [1, 2, 3],
-        ]);
+
 
         return true;
 

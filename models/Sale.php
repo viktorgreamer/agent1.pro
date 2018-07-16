@@ -274,6 +274,18 @@ class Sale extends \yii\db\ActiveRecord
         return $tags;
 
     }
+    public function getTagsNew()
+    {
+        $tags_similar = $this->similar->tags_id;
+        if (!$this->similar) $tags_sale = $this->tags_id;
+        $tags_address = $this->addresses->tags_id;
+        $tags_all = preg_replace("/,,/", ",", $tags_similar . $tags_address. $tags_sale);
+
+        $tags = Tags::convertToArray($tags_all);
+
+        return $tags;
+
+    }
 
     public function getTagsAddress()
     {
@@ -331,10 +343,16 @@ class Sale extends \yii\db\ActiveRecord
 
     }
 
+    public function getLogs()
+    {
+        return $this->hasMany(SaleLog::className(), ['sale_id' => 'id']);
+    }
+
+
     public function RenderLog()
 
     {
-        $logs = $this->getLog();
+        $logs = $this->getLogs()->all();
         $body = '';
         if ($logs) {
             foreach ($logs as $log) {
@@ -1798,6 +1816,11 @@ class Sale extends \yii\db\ActiveRecord
     {
 
         return $this->renderRooms_count() . "<strong> " . $this->renderAddress() . "</strong> , " . $this->renderFloors() . ", " . $this->renderHouse_type() . " , " . $this->renderAreas() . " цена: " . \app\models\Renders::Price($this->price);
+
+    }
+
+    public function getInform_message() {
+        return strip_tags($this->renderLong_title()."\r\n ".$this->description."r\n ".$this->phone1);
 
     }
 

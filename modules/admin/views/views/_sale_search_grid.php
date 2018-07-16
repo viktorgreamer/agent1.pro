@@ -24,6 +24,8 @@ $module = $session->get('module');
 $session->set('tags_id_to_search_sale', $salefilter->plus_tags);
 $session->set('minus_tags_id_to_search_sale', $salefilter->minus_tags);
 ?>
+<div class="searching_tags_div"></div>
+<div id='available_actions'></div>
 <!-- Switch -->
 <div class="sale-index">
     <!--Accordion wrapper-->
@@ -39,7 +41,9 @@ $session->set('minus_tags_id_to_search_sale', $salefilter->minus_tags);
                    value="<? echo $_GET['minus_tags']; ?>">
             <div class="card">
                 <!-- Card header -->
-                <div class="card-header" style="padding-left: 0px;padding-right: 0px; padding-bottom: 5px;padding-top: 5px;" role="tab" id="headingMain">
+                <div class="card-header"
+                     style="padding-left: 0px;padding-right: 0px; padding-bottom: 5px;padding-top: 5px;" role="tab"
+                     id="headingMain">
                     <a data-toggle="collapse" href="#collapseMain" aria-expanded="true" aria-controls="collapseMain">
                         <h5 class="mb-0">Основные<i class="fa fa-angle-down rotate-icon"></i></h5>
                     </a>
@@ -161,7 +165,7 @@ $session->set('minus_tags_id_to_search_sale', $salefilter->minus_tags);
                                 <div class="col-md-4 col-lg-3 col-sm-4 col-4">
                                     <?php echo Mdb::ActiveSelect($salefilter, 'uniqueness', SaleFilters::TYPE_OF_UNIQUING, ['label' => 'Уникальность']); ?>
                                 </div>
-                                 <div class="col-md-2 col-lg-2 col-sm-2 col-2">
+                                <div class="col-md-2 col-lg-2 col-sm-2 col-2">
                                     <?php echo Mdb::ActiveSelect($salefilter, 'balcon', SaleFilters::mapBalcon(), ['label' => 'Балк/Лодж']); ?>
                                 </div>
                                 <div class="col-md-2 col-lg-1 col-sm-2 col-2">
@@ -174,7 +178,9 @@ $session->set('minus_tags_id_to_search_sale', $salefilter->minus_tags);
 
 
                 <!-- Card header -->
-                <div class="card-header" style="padding-left: 0px;padding-right: 0px;  padding-bottom: 5px;padding-top: 5px;" role="tab" id="headingOne">
+                <div class="card-header"
+                     style="padding-left: 0px;padding-right: 0px;  padding-bottom: 5px;padding-top: 5px;" role="tab"
+                     id="headingOne">
                     <a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                         <h5 class="mb-0">Дом, год постройки,материал <i class="fa fa-angle-down rotate-icon"></i>
                         </h5>
@@ -233,11 +239,9 @@ $session->set('minus_tags_id_to_search_sale', $salefilter->minus_tags);
                                         <?php echo Mdb::ActiveSelect($salefilter, 'house_type', Sale::HOUSE_TYPES, ['label' => 'Тип дома']); ?>
                                     </div>
                                     <div class="col-md-6 col-sm-6 col-6">
-                                        <?php echo Mdb::ActiveCheckbox($salefilter, 'agents', ['label' => 'Агенты']); ?>
+                                        <?php echo Mdb::ActiveSelect($salefilter, 'person_type', \app\models\Agents::mapPersonType(), ['label' => 'агент\хозяин', 'id' => 'person_type']); ?>
                                     </div>
-                                    <div class="col-md-6 col-sm-6 col-6">
-                                        <?php echo Mdb::ActiveCheckbox($salefilter, 'housekeepers', ['label' => 'Хозяин']); ?>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -245,7 +249,8 @@ $session->set('minus_tags_id_to_search_sale', $salefilter->minus_tags);
                 </div>
 
                 <!-- Card header -->
-                <div class="card-header" style="padding-left: 0px;padding-right: 0px;  padding-bottom: 5px;padding-top: 5px;" role="tab"
+                <div class="card-header"
+                     style="padding-left: 0px;padding-right: 0px;  padding-bottom: 5px;padding-top: 5px;" role="tab"
                      id="headingExtended">
                     <a data-toggle="collapse" href="#Extended" aria-expanded="true" aria-controls="Extended">
                         <h5 class="mb-0">Расширенные<i class="fa fa-angle-down rotate-icon"></i>
@@ -304,7 +309,9 @@ $session->set('minus_tags_id_to_search_sale', $salefilter->minus_tags);
                     </div>
                 </div>
 
-                <div class="card-header" style="padding-left: 0px;padding-right: 0px; padding-bottom: 5px;padding-top: 5px;" role="tab" id="headingSave">
+                <div class="card-header"
+                     style="padding-left: 0px;padding-right: 0px; padding-bottom: 5px;padding-top: 5px;" role="tab"
+                     id="headingSave">
                     <a data-toggle="collapse" href="#collapseSave" aria-expanded="true"
                        aria-controls="collapseSave">
                         <h5 class="mb-0">Сохранить<i class="fa fa-angle-down rotate-icon"></i>
@@ -330,7 +337,23 @@ $session->set('minus_tags_id_to_search_sale', $salefilter->minus_tags);
                                         <?= Mdb::ActiveTextInput($salefilter, 'hidden_comment'); ?>    </div>
                                 </div>
                             </div>
+                            <div class="col-md-6 col-lg-6 col-sm-12 col-12 no-margin-botton">
+                              <h3> Посылать обновления</h3>
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-4 col-4">
+                                        <?php echo Mdb::ActiveCheckbox($salefilter, 'mail_inform', ['label' => 'E-mail']); ?>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-4">
+                                        <?php echo Mdb::ActiveCheckbox($salefilter, 'vk_inform', ['label' => 'Vkontakte']); ?>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-4">
+                                        <?php echo Mdb::ActiveCheckbox($salefilter, 'sms_inform', ['label' => 'Sms']); ?>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
+
 
                     </div>
                 </div>

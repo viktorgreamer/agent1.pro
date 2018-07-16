@@ -29,6 +29,11 @@ class Actions
     const PARSING_CONTROL = 8;
     const PARSING_CONFIGURATION = 9;
     const PROXY = 15;
+    const TAGS = 10;
+    const ADDRESSES = 11;
+
+    // Массовые Действия
+    const TO_MANY_ADDRESSES = 1;
 
     // список Actions
     const  DELETE = 1;
@@ -64,6 +69,7 @@ class Actions
     const  SALE_MODERATION_ONCALL = 5;
     const  SALE_GEOCODATED = 6;
     const  SALE_GEOCODATION_ERROR = 7;
+    const SALE_PROCESSED = 8;
 
     // Parsing-Control
     const PARSING_CONTROL_DELETE = 1;
@@ -84,6 +90,18 @@ class Actions
     const PROXY_STATUS = 1;
     const PROXY_STATUS_ACTIVE = 1;
     const PROXY_STATUS_DISACTIVE = 0;
+
+
+    // TAGS
+    const TAGS_SEARCHABLE = 1;
+    const TAGS_SEARCHABLE_TRUE = 1;
+    const TAGS_SEARCHABLE_FALSE = 0;
+
+    // ADDRESSES
+    const ADDRESSES_BALCON = 1;
+
+
+
 
 
     public static function getNameAttribute($id_model, $id_attr = 0)
@@ -115,6 +133,15 @@ class Actions
                 Actions::SALESIMILAR_TAGS_IDS => 'tags_ids',
                 Actions::SALESIMILAR_MODERATED => 'moderated',
                 Actions::SALESIMILAR_STATUS => 'status',
+                Actions::SALE_PROCESSED => 'processed',
+            ],
+            Actions::SYNC => [
+                Actions::SALE_GEOCODATED => 'geocodated',
+                Actions::SALESIMILAR_SIMILAR_IDS => 'similar_ids',
+                Actions::SALESIMILAR_TAGS_IDS => 'tags_ids',
+                Actions::SALESIMILAR_MODERATED => 'moderated',
+                Actions::SALESIMILAR_STATUS => 'status',
+                Actions::SALE_PROCESSED => 'processed',
             ],
             Actions::PARSING_CONFIGURATION => [
                 Actions::PARSING_CONFIGURATION_ACTIVE => 'active',
@@ -126,6 +153,14 @@ class Actions
             ],
             Actions::PROXY => [
                 Actions::PROXY_STATUS => 'status',
+
+            ],
+            Actions::TAGS => [
+                Actions::TAGS_SEARCHABLE => 'searchable',
+
+            ],
+            Actions::ADDRESSES => [
+                Actions::ADDRESSES_BALCON => 'balcon',
 
             ],
 
@@ -195,6 +230,10 @@ class Actions
                                                         <i class=\"fa fa-ban fa-stack-2x text-danger\" title='Не правильно указан адрес'></i>
                                                     </span>",
             ],
+            Actions::TAGS => [
+                Actions::TAGS_SEARCHABLE_FALSE => ICON_NOSEARCH,
+                Actions::TAGS_SEARCHABLE_TRUE => ICON_SEARCH,
+            ]
 
 
         ];
@@ -265,13 +304,22 @@ class Actions
     public
     static function ChangeStatus($id_parent, $id_model, $id_attr, $id_status)
     {
+        if ($id_parent == Actions::TO_MANY_ADDRESSES) {
+            $attrname = Actions::getNameAttribute($id_model, $id_attr);
+            $session = \Yii::$app->session;
+            $id_addresses = $session->get('addresses');
+
+          if ($id_addresses)  Addresses::updateAll([$attrname => $id_status],['in','id',$id_addresses]);
+        }
+
         $model = Actions::getModel($id_model, $id_parent);
         if ($model) {
             $attrname = Actions::getNameAttribute($id_model, $id_attr);
             $attrWas = $model[$attrname];
-            $model[$attrname] = $id_status;
-            $return = " Успешно изменили " . $id_model . ":" . $id_attr . " c " . $attrWas . " на '" . $model[$attrname] . "'";
-            $model->save();
+            $model->$attrname = $id_status;
+            $return = " Успешно изменили " . $id_model . ":" . $id_attr . " c " . $attrWas . " на " . $model[$attrname];
+            my_var_dump($model);
+            if (!$model->save(false)) my_var_dump($model->errors);
         } else {
 
             echo "<br>" . span(" PARENT IS NOT EXISTS", 'danger');
@@ -313,8 +361,12 @@ class Actions
 
             case Actions::PARSING_CONFIGURATION :
                 return ParsingConfiguration::findOne($id_parent);
+
             case Actions::PROXY :
                 return Proxy::findOne($id_parent);
+
+            case Actions::TAGS :
+                return Tags::findOne($id_parent);
 
             default:
                 echo "<br>" . span(" MODEL IS NOT EXISTS", 'danger');

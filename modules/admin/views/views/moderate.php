@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
     <?= ListView::widget([
-        'dataProvider' => $dataProvider,
+        'dataProvider' =>  new ActiveDataProvider(['query' => $query]),
         'itemView' => '_moderate_view',
 
         'layout' => "{summary}\n{items}\n{pager}",

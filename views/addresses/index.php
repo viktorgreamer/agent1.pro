@@ -21,18 +21,23 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php echo $this->render('_search', ['model' => $searchModel, 'addresses' => $dataProvider->getModels()]); ?>
+    <? echo Html::a(ICON_EDIT, ['create'], ['class' => CLASS_BUTTON]) ?>
     <div class="row">
+
         <?php
+        $session = Yii::$app->session;
+        $module = $session->get('module'); ?>
 
-        // echo YandexMaps::widget(['addresses' => $dataProvider->getModels()
-        // ]);
-        ?>
+                        <?= \app\components\YandexMaps::widget([
+                            'addresses' => $dataProvider->getModels(), // передаем addresses
+                            'module' => $module, // передаем текущий модуль (город в котором работаем, чтобы получить координаты центра и zoom по умолчанию
+                            'polygon' => $searchModel->polygon_text,
+                            'isEditablePolygon' => true // добавление кнопок для редактирования полигона
+                        ]); ?>
 
 
-        <p>
-            <? echo Html::a('Create Addresses', ['create'], ['class' => 'btn btn-success btn-sm']) ?>
-        </p>
-        <?php Pjax::begin(); ?>    <?= GridView::widget([
+
+        <?= GridView::widget([
             'dataProvider' => $dataProvider,
             //  'filterModel' => $searchModel,
             'emptyText' => '',
@@ -49,23 +54,49 @@ $this->params['breadcrumbs'][] = $this->title;
                 // 'house',
                 // 'hull',
                 // 'district',
-                'floorcount',
+               // 'floorcount',
                 [
-                    'label' => 'материал стен',
+                    'label' => '',
                     'format' => 'raw',
                     'value' => function ($model) {
-                        return $model->RenderHouseType();
+                        return $model->floorcount." ".$model->RenderHouseType()."<br> ".\app\models\Addresses::mapBalcon()[$model->balcon];
+                    }
+                ], [
+                    'label' => 'Теги',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+            $body = " <a id=\"#AddTagsAddress".$model->id."\" type=\"button\"
+                       data-toggle=\"modal\"
+                       data-target=\"#TagsModal".$model->id."\"> <i
+                                class=\"fa fa-tags green-text fa-2x\" aria-hidden=\"true\"></i>
+                    </a>
+                    <div class=\"modal fade\" id=\"TagsModal".$model->id."\" tabindex=\"-1\"
+                         role=\"dialog\"
+                         aria-labelledby=\"myModalLabel\" aria-hidden=\"true\">
+                        <div class=\"modal-dialog modal-lg\" role=\"document\">
+                            <div class=\"modal-content\">
+                                <div class=\"modal-body\">
+                                    ".$this->render('//tags/quick-add-form-alternative', [
+                                        'parent_id' => $model->id,
+                                        'realtags' => $model->tags,
+                                        'type' => 'address',
+                                        'id_address' => true
+                                    ])."</div>
+                            </div>
+                        </div>
+                    </div>";
+                        return $body;
                     }
                 ],
-                [
+               /* [
                     'label' => 'pattern',
                     'format' => 'raw',
                     'value' => function ($model) {
                         return $model->pattern;
                     }
-                ],
+                ],*/
                 [
-                    'label' => 'Координаты',
+                    'label' => 'Коор-ты',
                     'format' => 'raw',
                     'value' => function ($model) {
                         $customurl = "https://yandex.ru/maps/?mode=search&text=" . $model->coords_x . ", " . $model->coords_y; //$model->id для AR
@@ -80,13 +111,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => 'tags',
                     'format' => 'raw',
                     'value' => function ($model) {
-                        $Realtags = explode(',', $model->tags_id);
-                        $tags = '';
-                        foreach ($Realtags as $realtag) {
-                            $tag = Tags::findOne($realtag);
-                            $tags .= " <span class=\"badge badge-" . $tag->color . "\">#" . $tag->name . "</span>";
-                        }
-                        return $tags;
+
+                        return  Tags::render($model->tags);
                     }
                 ],
 
@@ -108,6 +134,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         );
                     }
                 ],
+
+
 
                 [
                     'class' => \yii\grid\ActionColumn::className(),
@@ -154,6 +182,5 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
 
         ]); ?>
-        <?php Pjax::end(); ?>
     </div>
 </div>

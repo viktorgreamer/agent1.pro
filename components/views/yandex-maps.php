@@ -54,7 +54,7 @@ var Placemarks = $Placemarks;
             '<button class=\"btn btn-primary btn-sm btn-rounded waves-effect\" id=\"stopEditPolyline\"><i class=\"fa fa-check fa-fw\" aria-hidden=\"true\"></i>Стоп</button>'
         ].join('')),
          ButtonRefreshLayout = ymaps.templateLayoutFactory.createClass([
-            '<button class=\"btn btn-primary btn-sm btn-rounded waves-effect\" id=\"refreshPolyline\"><i class=\"fa fa-refresh fa-fw\" aria-hidden=\"true\"></i>Восставиноть</button>'
+            '<button class=\"btn btn-primary btn-sm btn-rounded waves-effect\" id=\"refreshPolyline\"><i class=\"fa fa-refresh fa-fw\" aria-hidden=\"true\"></i>Восставить</button>'
         ].join('')),
 
         buttonRefresh = new ymaps.control.Button({
@@ -130,7 +130,7 @@ var Placemarks = $Placemarks;
          $(document).on('click','#stopEditPolyline',  function () {
                 polygon.editor.stopEditing();
                 printGeometry(polygon.geometry.getCoordinates());
-                toastr.success('закончили рисовать');
+              //  toastr.success('закончили рисовать');
                 $('#regionselectclear').removeAttr('disabled');
                 $('#startDrawNew').removeAttr('disabled');
             });
@@ -139,7 +139,7 @@ var Placemarks = $Placemarks;
       
             printGeometry();
             myCollection.remove(polygon);
-            toastr.success('очистили полигон');
+          //  toastr.success('очистили полигон');
             $('#startDrawNew').removeAttr('disabled'); 
             $('#refreshPolyline').removeAttr('disabled'); 
            
@@ -151,7 +151,7 @@ var Placemarks = $Placemarks;
             polygon = resetPolygon();
            myCollection.add(polygon);
             polygon.editor.startDrawing();
-              toastr.success('начинаем рисовать');
+          //    toastr.success('начинаем рисовать');
             $('#EditPolyline').attr('disabled','disabled');
             $('#regionselectclear').attr('disabled','disabled');
 
@@ -159,7 +159,7 @@ var Placemarks = $Placemarks;
         $(document).on('click','#EditPolyline', function () {
              myCollection.add(polygon); 
             polygon.editor.startDrawing();
-              toastr.success('редактируем');
+            //  toastr.success('редактируем');
               $('#startDrawNew').attr('disabled','disabled');
               $('#refreshPolyline').attr('disabled','disabled');
           
@@ -167,7 +167,7 @@ var Placemarks = $Placemarks;
 
         });
         $(document).on('click','#get-zoom', function () {
-           toastr.success('zoom = '+  myMap_$map_id.getZoom());
+         //  toastr.success('zoom = '+  myMap_$map_id.getZoom());
 
 
         });

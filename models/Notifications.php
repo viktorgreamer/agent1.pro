@@ -12,6 +12,7 @@ namespace app\models;
 class Notifications
 {
     const VIKTOR_ID = "907609";
+  //  const VIKTOR_ID = "vasilyev_1983";
     const SYSTEM_MESSAGE = 1;
 
     const  VK_TOKEN = '39d97c8dead8d9d14b6083101d65cf017807e74c5020fb4b775414f14be0a54d08ab0e199a3ac213f330c';
@@ -50,6 +51,18 @@ class Notifications
     public static function VKMessage($message)
     {
        Notifications::vkApi_messagesSend(self::VIKTOR_ID, $message);
+    }
+
+    public static function Mail($message = '',$toEmail = 'an.viktory@gmail.com') {
+        if ($message) {
+            \Yii::$app->mailer->compose()
+                ->setTo($toEmail)
+                ->setFrom(['viktorgreamer1@yandex.ru' => 'agent1.pro'])
+                ->setSubject("NEW ITEM")
+                ->setTextBody($message)
+                ->send();
+        }
+
     }
 
 

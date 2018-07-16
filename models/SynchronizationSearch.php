@@ -19,6 +19,7 @@ class SynchronizationSearch extends Synchronization
     public $date_of_die_down;
     public $date_of_start_up;
     public $date_of_start_down;
+    public $sort_by;
 
     /**
      * @inheritdoc
@@ -26,7 +27,7 @@ class SynchronizationSearch extends Synchronization
     public function rules()
     {
         return [
-            [['id', 'id_sources', 'disactive', 'price', 'rooms_count'], 'integer'],
+            [['id', 'id_sources', 'disactive', 'price', 'rooms_count','sort_by'], 'integer'],
             [['id_in_source'], 'string'],
             [['url', 'title', 'address', 'status', 'sync', 'geocodated', 'processed', 'load_analized', 'tags_autoload', 'parsed', 'moderated', 'id_in_source', 'disactive',
                 'date_of_check_up', 'date_of_check_down', 'date_of_die_up', 'date_of_die_down', 'date_of_start_up', 'date_of_start_down'], 'safe'],
@@ -86,6 +87,12 @@ class SynchronizationSearch extends Synchronization
     public function search($params)
     {
         $query = Synchronization::find();
+        $query->from(['sync' => Synchronization::tableName()]);
+        // присоединяем связи
+       // $query->joinWith(['agent AS agent']);
+       // $query->joinWith(['addresses AS address']);
+       // $query->joinWith(['similar AS sim']);
+      //  $query->joinWith(['logs AS logs']);
 
         // add conditions that should always apply here
 
@@ -102,42 +109,71 @@ class SynchronizationSearch extends Synchronization
             return $dataProvider;
         }
 
-        if ($this->id) $query->andFilterWhere(['id' => $this->id]);
+        if ($this->id) $query->andFilterWhere(['sync.id' => $this->id]);
 
-        if ($this->id_sources) $query->andFilterWhere(['id_sources' => $this->id_sources]);
+        if ($this->id_sources) $query->andFilterWhere(['sync.id_sources' => $this->id_sources]);
         //
-        if ($this->sync) $query->andFilterWhere(['sync' => $this->sync]);
+        if ($this->sync) $query->andFilterWhere(['sync.sync' => $this->sync]);
 
         // если надо вывести опреденного статуса
-        if ($this->disactive != 10) $query->andFilterWhere(['disactive' => $this->disactive]);
+        if ($this->disactive != 10) $query->andFilterWhere(['sync.disactive' => $this->disactive]);
         // если надо вывести не удаленные
-        if ($this->status) $query->andWhere(['status' => $this->status]);
+        if ($this->status) $query->andWhere(['sync.status' => $this->status]);
         // если надо определенный стасус геокодирования
-        if ($this->geocodated) $query->andFilterWhere(['geocodated' => $this->geocodated]);
+        if ($this->geocodated) $query->andFilterWhere(['sync.geocodated' => $this->geocodated]);
 
-        if ($this->moderated) $query->andFilterWhere(['moderated' => $this->moderated]);
+        if ($this->moderated) $query->andFilterWhere(['sync.moderated' => $this->moderated]);
         // если нужно опеределенный статус парсинга
-        if ($this->parsed) $query->andFilterWhere(['parsed' => $this->parsed]);
+        if ($this->parsed) $query->andFilterWhere(['sync.parsed' => $this->parsed]);
         // если нужно опеределенный статус обработки
-        if ($this->processed) $query->andFilterWhere(['processed' => $this->processed]);
+        if ($this->processed) $query->andFilterWhere(['sync.processed' => $this->processed]);
         // если нужно опеределенный статус load_analized
-        if ($this->load_analized) $query->andFilterWhere(['load_analized' => $this->load_analized]);
+        if ($this->load_analized) $query->andFilterWhere(['sync.load_analized' => $this->load_analized]);
 
         // если нужно определенное количество комнат
-        if ($this->rooms_count) $query->andFilterWhere(['rooms_count' => $this->rooms_count]);
-        if ($this->id_in_source) $query->andFilterWhere(['id_in_source' => $this->id_in_source]);
+        if ($this->rooms_count) $query->andFilterWhere(['sync.rooms_count' => $this->rooms_count]);
+        if ($this->id_in_source) $query->andFilterWhere(['sync.id_in_source' => $this->id_in_source]);
 
         // временные фильтры
-        if ($this->date_of_check_up) $query->andFilterWhere(['<', 'date_of_check', $this->date_of_check_up + 86400]);
-        if ($this->date_of_check_down) $query->andFilterWhere(['>', 'date_of_check', $this->date_of_check_down]);
+        if ($this->date_of_check_up) $query->andFilterWhere(['<', 'sync.date_of_check', $this->date_of_check_up + 86400]);
+        if ($this->date_of_check_down) $query->andFilterWhere(['>', 'sync.date_of_check', $this->date_of_check_down]);
 
-        if ($this->date_of_start_up) $query->andFilterWhere(['<', 'date_start', $this->date_of_start_up + 86400]);
-        if ($this->date_of_start_down) $query->andFilterWhere(['>', 'date_start', $this->date_of_start_down]);
+        if ($this->date_of_start_up) $query->andFilterWhere(['<', 'sync.date_start', $this->date_of_start_up + 86400]);
+        if ($this->date_of_start_down) $query->andFilterWhere(['>', 'sync.date_start', $this->date_of_start_down]);
 
-        if ($this->date_of_die_up) $query->andFilterWhere(['<', 'date_of_die', $this->date_of_die_up + 86400]);
-        if ($this->date_of_die_down) $query->andFilterWhere(['>', 'date_of_die', $this->date_of_die_down]);
+        if ($this->date_of_die_up) $query->andFilterWhere(['<', 'sync.date_of_die', $this->date_of_die_up + 86400]);
+        if ($this->date_of_die_down) $query->andFilterWhere(['>', 'sync.date_of_die', $this->date_of_die_down]);
 
-        $query->orderBy(['date_of_check' => SORT_DESC]);
+      //  $query->orderBy(['sync.date_of_check' => SORT_DESC]);
+
+        switch ($this->sort_by) {
+            case SaleFilters::SORTING_ID:
+                $query->orderBy(['sync.id' => SORT_ASC]);
+                break;
+            case SaleFilters::SORTING_PRICE_ASC:
+                $query->orderBy(['sync.price' => SORT_ASC]);
+                break;
+
+            case SaleFilters::SORTING_PRICE_DESC:
+                $query->orderBy(['sync.price' => SORT_DESC]);
+                break;
+            case SaleFilters::SORTING_DATE_START_ASC:
+                $query->orderBy(['sync.date_start' => SORT_DESC]);
+                break;
+
+            case SaleFilters::SORTING_DATE_START_DESC:
+                $query->orderBy(['sync.date_start' => SORT_ASC]);
+                break;
+
+            case SaleFilters::SORTING_ID_ADDRESS_ASC:
+                $query->orderBy(['sync.id_address' => SORT_ASC]);
+                break;
+            case SaleFilters::SORTING_ID_ADDRESS_DESC:
+                $query->orderBy(['sync.id_address' => SORT_DESC]);
+                break;
+
+
+        }
 
 //
 //        $query->andFilterWhere(['like', 'url', $this->url])

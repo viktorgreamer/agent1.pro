@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-    <?php   echo $this->render('_counts', ['dataProvider' => $dataProvider]); ?>
+    <?php //  echo $this->render('_counts', ['dataProvider' => $dataProvider]); ?>
 
 
     <?= GridView::widget([
@@ -94,7 +94,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
 
 
-            [
+           /* [
                 'label' => 'log',
                 'format' => 'raw',
                 'value' => function ($model) {
@@ -102,7 +102,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $model->RenderLog();
 
                 }
-            ],
+            ],*/
 
             [
                 'label' => "admin",
@@ -115,6 +115,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     $buttons .= "<hr><a class='change-status' data-status_name='processed' data-id_item=" . $model->id . "><i class='fa fa-spinner fa-2x' aria-hidden='true'></i></a>";
                     $buttons .= "<hr><a class='change-status' data-status_name='sync' data-id_item=" . $model->id . "><i class='fa fa-link fa-2x' aria-hidden='true'></i></a>";
                     $buttons .= "<hr><a class='change-statuses' data-model='sync' data-value='6' data-attrname='disactive' data-id=" . $model->id . "><i class='fa fa-play fa-2x' aria-hidden='true'></i></a>";
+                    $buttons .= "<hr>".\app\models\Actions::renderChangeStatus($model->id,\app\models\Actions::SYNC, \app\models\Actions::SALE_PROCESSED,2,'PROCESSED');
+                    $buttons .= "<hr><a class='change-statuses' data-model='sync' data-value='0' data-attrname='id_similar' data-id=" . $model->id . ">SIMILAR</a>";
                     $buttons .= "<hr><a class='change-statuses' data-model='sync' data-value='' data-attrname='phone1' data-id=" . $model->id . "><i class='fa fa-phone fa-2x' aria-hidden='true'></i></a>";
 
                     return $buttons;

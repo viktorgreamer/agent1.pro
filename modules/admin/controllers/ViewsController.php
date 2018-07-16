@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use app\components\Mdb;
 use app\models\Sale;
 use app\models\SaleFilters;
 use app\models\SaleFiltersSearch;
@@ -19,9 +20,25 @@ class ViewsController extends \yii\web\Controller
     {
         return $this->render('index');
     }
+
+    public function actionAlert()
+    {
+        Mdb::Alert(" HELLO I AM ALET MESSAGE ",SUCCESS);
+        return $this->render('index');
+    }
+
+
+
+    public function actionCheckBox()
+    {
+        return $this->render('checkbox');
+    }
+
+
     public function actionSaleSearchForm()
     {
-        return $this->render('_sale_search_grid.php');
+        $salefilter = SaleFilters::findOne(229);
+        return $this->render('_sale_search_grid.php',['salefilter' => $salefilter]);
     }
     public function actionOneSale()
     {
@@ -32,6 +49,13 @@ class ViewsController extends \yii\web\Controller
         $salefilter =  new SaleFilters();
         $salefilter->id = 898;
         return $this->render('_sale-table.php', compact(['sale','controls', 'salefilter']));
+    }
+    public function actionOneSaleInform()
+    {
+
+        $sale = Sale::findOne(1456);
+        echo strip_tags($sale->renderLong_title()." ".$sale->description);
+        return $this->render('index');
     }
     public function actionMiniOneSale()
     {

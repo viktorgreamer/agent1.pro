@@ -12,9 +12,9 @@ use app\models\Tags;
 //$type = 'sale';
 //$parent_id = $id; // add tags to sale
 if (!$id_address) {
-    $tags_groups = \app\models\Tags::getGroupedTags('');
+    $tags_groups = \app\models\Tags::getGroupedTags('', $searchable);
     // echo span("NO ID ADDRESS");
-} else $tags_groups = \app\models\Tags::getGroupedTags($type);
+} else $tags_groups = \app\models\Tags::getGroupedTags($type,$searchable);
 
 $unique_pre = substr(md5(rand()), 0, 10);
 // TODO: добавить потом локальные Local_tags : например " район панковка" или 361 рем завод, или зайстрокщик скандинавия!
@@ -27,7 +27,6 @@ if (!$realtags) $realtags = [];
 
     <ul class="nav  nav-tabs nav-justified">
         <? foreach ($tags_groups as $key => $tags_group) { ?>
-
             <li class="nav-item">
                 <a class="nav-link tag-panel<? $n++;
                 if ($n == 1) echo "active"; ?>" data-toggle="tab" href="#<?= $unique_pre; ?><?= $key + 1; ?>"
@@ -35,14 +34,12 @@ if (!$realtags) $realtags = [];
                     <div class="d-none d-lg-block"> <?= $tags_group['name'] ?></div>
                 </a>
             </li>
-
         <? } ?>
     </ul>
 
     <div class="tab-content card">
         <? $n = 0;
         foreach ($tags_groups as $key => $tags_group) { ?>
-
             <div class="tab-pane fade <? $n++;
             if ($n == 1) echo "show active"; ?>" id="<?= $unique_pre; ?><?= $key + 1; ?>" role="tabpanel">
                 <br>

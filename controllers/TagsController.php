@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\components\TagsWidgets;
+
 /**
  * TagsController implements the CRUD actions for Tags model.
  */
@@ -23,7 +24,7 @@ class TagsController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                   // 'delete' => ['POST'],
+                    // 'delete' => ['POST'],
                 ],
             ],
         ];
@@ -72,7 +73,7 @@ class TagsController extends Controller
         $model = new Tags();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $model->updateAllCache() ;
+            $model->updateAllCache();
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -81,31 +82,36 @@ class TagsController extends Controller
         }
     }
 
-    public function actionRenderTags() {
+    public function actionRenderTags()
+    {
         $session = Yii::$app->session;
         $plus_tags = $session->get('tags_id_to_search_sale');
         $minus_tags = $session->get('minus_tags_id_to_search_sale');
         $tags = '';
-        if ($plus_tags) $tags .= "<a class='remove-plus-tags' href='#'> <i class='fa fa-plus  fa-fw text-primary'></i>".TagsWidgets::widget(['tags' => Tags::convertToArray($plus_tags),'br' => false])."</a><br>";
-        if ($minus_tags) $tags .= "<a class='remove-minus-tags' href='#'> <i class='fa fa-minus  fa-fw text-danger'></i>".TagsWidgets::widget(['tags' => Tags::convertToArray($minus_tags),'br' => false])."</a><br>";
+        if ($plus_tags) $tags .= "<a class='remove-plus-tags' href='#'> <i class='fa fa-plus  fa-fw text-primary'></i>" . TagsWidgets::widget(['tags' => Tags::convertToArray($plus_tags), 'br' => false]) . "</a><br>";
+        if ($minus_tags) $tags .= "<a class='remove-minus-tags' href='#'> <i class='fa fa-minus  fa-fw text-danger'></i>" . TagsWidgets::widget(['tags' => Tags::convertToArray($minus_tags), 'br' => false]) . "</a><br>";
 
-        return  $tags;
+        return $tags;
 
     }
-    public function actionRemoveMinusTags() {
+
+    public function actionRemoveMinusTags()
+    {
 
         $session = Yii::$app->session;
 
-       $session->set('minus_tags_id_to_search_sale', '');
-          return  '';
+        $session->set('minus_tags_id_to_search_sale', '');
+        return '';
 
     }
-    public function actionRemovePlusTags() {
+
+    public function actionRemovePlusTags()
+    {
 
         $session = Yii::$app->session;
 
-       $session->set('tags_id_to_search_sale', '');
-          return  '';
+        $session->set('tags_id_to_search_sale', '');
+        return '';
 
     }
 
@@ -119,11 +125,12 @@ class TagsController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-          //  $model->updateAllCache();
-
+        if ($model->load(Yii::$app->request->post()) && ($model->save())) {
+            $model->updateAllCache();
             return $this->redirect(['view', 'id' => $model->id]);
+
         } else {
+            my_var_dump($model->errors);
             return $this->render('update', [
                 'model' => $model,
             ]);
@@ -158,9 +165,11 @@ class TagsController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    public function actionReset() {
-       $TYPES = 'building,plan,object,locality,condition,deal';
-      $TYPES_ARRAY = [
+
+    public function actionReset()
+    {
+        $TYPES = 'building,plan,object,locality,condition,deal';
+        $TYPES_ARRAY = [
             '1' => 'Квартира',
             '2' => 'Планировка',
             '3' => 'Здание',
@@ -172,11 +181,12 @@ class TagsController extends Controller
         echo count($tags);
         foreach ($tags as $tag) {
             $tag->type = '6';
-           if (!$tag->save()) my_var_dump($tag->getErrors());
+            if (!$tag->save()) my_var_dump($tag->getErrors());
         }
     }
 
-    public function actionTest() {
+    public function actionTest()
+    {
         return $this->render('test');
     }
 

@@ -18,7 +18,7 @@ class TagsSearch extends Tags
     public function rules()
     {
         return [
-            [['id', 'parent'], 'integer'],
+            [['id', 'global_parent','searchable'], 'integer'],
             [['name', 'locality', 'type','a_type', 'color', 'komment', 'publish'], 'safe'],
         ];
     }
@@ -67,7 +67,9 @@ class TagsSearch extends Tags
         if ($this->type != 10) $query->andFilterWhere(['type' => $this->type]);
         if (($this->a_type) and ($this->a_type != 999)) $query->andFilterWhere(['a_type' => $this->a_type]);
         if ($this->a_type == 999) $query->andWhere(['IS', 'a_type', NULL]);
-        if ($this->parent != 10) $query->andFilterWhere(['parent' => $this->parent]);
+        if ($this->global_parent != 10) $query->andFilterWhere(['global_parent' => $this->global_parent]);
+
+        if ($this->searchable) $query->andFilterWhere(['searchable' => 1]);
         if ($this->publish != 10) $query->andFilterWhere(['publish' => $this->publish]);
         if ($this->locality != 'any') $query->andFilterWhere(['locality' => $this->locality]);
 

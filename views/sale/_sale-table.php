@@ -17,7 +17,7 @@ use app\models\Renders;
 
  $sale = $model;
 // инифиализация
-$tags = $sale->tags;
+$tags = $sale->getTagsNew();
 if ($sale->addresses) $boolAddress = true;
 if ($sale) {
 

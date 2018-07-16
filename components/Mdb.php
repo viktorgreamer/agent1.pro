@@ -266,7 +266,11 @@ JS;
 
     public static function Alert($message, $type)
     {
-        return \Yii::$app->view->registerJs("toastr." . $type . "(" . $message . ")", View::POS_READY);
+        return \Yii::$app->view->registerJs("toastr." . $type . "('" . $message . "')", View::POS_READY);
+    }
+    public static function checkBox($model, $attrName, $options = [])
+    {
+       return Html::activeCheckbox($model, $attrName, $options = []);
     }
 
     public static function ActiveCheckbox($model, $attrName, $options = [])

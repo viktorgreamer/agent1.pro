@@ -19,6 +19,9 @@ class SaleFiltersOnControl extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+
+    const PRICE_DOWN = 1;
+
     public static $tablePrefix;
 
     public static function tableName()
