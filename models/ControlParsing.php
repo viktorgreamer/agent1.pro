@@ -340,6 +340,7 @@ class ControlParsing extends \yii\db\ActiveRecord
             $parsingController->ids = $sales->id;
             info("busy_id_sources = " . $busy_id_sources);
         } else {
+          //  my_var_dump($sales);
             $busy_id_sources = array_unique(ArrayHelper::getColumn($sales, 'id_sources'));
             if (!empty($busy_id_sources)) $parsingController->ids_sources = implode(",", $busy_id_sources);
             info("busy_id_sources = " . implode(',', $busy_id_sources));

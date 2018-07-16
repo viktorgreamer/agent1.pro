@@ -797,15 +797,13 @@ class Control extends \yii\db\ActiveRecord
         $time_start = time();
         $type = self::P_SYNC;
         $config = $this->getREADY($type);
-        $id_parsingController = ControlParsing::create($type, $config, $driver->ip);
-
-
         if (!$config) {
 
             return false;
         }
-        $start_success_stop = $config->success_stop;
 
+        $id_parsingController = ControlParsing::create($type, $config, $driver->ip);
+        $start_success_stop = $config->success_stop;
         $driver = MyChromeDriver::Open(MyChromeDriver::CURRENT_PROXY);
         if ($driver == MyChromeDriver::ERROR_LIMIT) {
             Notifications::VKMessage(" ONE SERVER SESSIONS LIMIT");
