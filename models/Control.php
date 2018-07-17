@@ -492,7 +492,7 @@ class Control extends \yii\db\ActiveRecord
 
                 // $sale->getSimilar_ids();
             }
-         //   $sale->AutoLoadTags();
+            //   $sale->AutoLoadTags();
             $sale->SalefiltersCheck();
             $sale->changingStatuses('PROCESSED');
             if (!$sale->save()) my_var_dump($sale->getErrors());
@@ -500,7 +500,6 @@ class Control extends \yii\db\ActiveRecord
             //  echo " <br>" . $sale->id;
         }
         ControlParsing::updating($id_parsingController);
-
 
 
         return true;
@@ -885,18 +884,33 @@ class Control extends \yii\db\ActiveRecord
                 // берем контейнер с вариантами
                 if ($config->id_sources == 1) $pq_page = $pq_page->find('.js-productGrid')->eq(0);
 
-              if ($selector = Selectors::find()->where(['id_sources' => $config->source->id])->andWhere(['type' => Selectors::TYPE_TABLE_CONTAINER])->one()) {
-                  $div_selector = $selector->selector;
-              } else {
-                  INFO(" CANNOT FIND SELECTOR RECORD",DANGER);
-                  die;
-              }
-                info(" DIV SELECTOR = ".$div_selector);
+                if ($selector = Selectors::find()->where(['id_sources' => $config->source->id])->andWhere(['type' => Selectors::TYPE_TABLE_CONTAINER])->one()) {
+                    $div_selector = $selector->selector;
+                } else {
+                    INFO(" CANNOT FIND SELECTOR RECORD", DANGER);
+                    die;
+                }
+                info(" DIV SELECTOR = " . $div_selector);
                 $pq_containers = $pq_page->find("." . $div_selector);
+
+                if (count($pq_containers) == 0) {
+                    info("REFRESHING", SUCCESS);
+                    $driver->navigate()->refresh();
+                }
+                $pq_page = \phpQuery::newDocument($driver->getPageSource());
+                $pq_containers = $pq_page->find("." . $div_selector);
+                if (count($pq_containers) == 0) {
+                    info("REFRESHING", SUCCESS);
+                    $driver->navigate()->refresh();
+                }
+                $pq_page = \phpQuery::newDocument($driver->getPageSource());
+                $pq_containers = $pq_page->find("." . $div_selector);
+
                 if (count($pq_containers) == 0) {
                     info("NOTHING TO SCRAPE ... EXITING", 'danger');
                     $config->UpdateAndSave($page, $total_pages, $ItemsCounter);
                     break;
+
                 } else {
                     info(count($pq_containers) . " items on current page");
                 }
@@ -961,13 +975,11 @@ class Control extends \yii\db\ActiveRecord
             info($ItemsCounter . " ITEMS WERE CHECKED ON " . $CountCheckedPage . " PAGES DURING " . ($current_time - $time_start) . " SECONDS");
 
         }
-        $counts_array = [
-            'ADDRESS_CHANGED' => $counterADDRESS_CHANGE,
+        $counts_array = ['ADDRESS_CHANGED' => $counterADDRESS_CHANGE,
             'PRICE_CHANGED' => $counterPRICE_CHANGED,
             'DATESTART_UPDATED' => $counterDATESTART_UPDATED,
             'NEW' => $counterNEW,
-            'THE_SAME' => $counterTHE_SAME,
-        ];
+            'THE_SAME' => $counterTHE_SAME,];
         ControlParsing::updating($id_parsingController, 2, serialize($counts_array));
 
     }
@@ -1564,7 +1576,7 @@ class Control extends \yii\db\ActiveRecord
     }
 
 
-    // метод для получение объектов для обработки c выводом их количества и статуса
+// метод для получение объектов для обработки c выводом их количества и статуса
     protected
     function getREADY($type = '', $limit = 20, $params = [])
     {
@@ -1912,7 +1924,8 @@ class Control extends \yii\db\ActiveRecord
 
     }
 
-    public function emptyMethods()
+    public
+    function emptyMethods()
     {
         return "JKHcxcxKG";
     }
@@ -1986,7 +1999,7 @@ class Control extends \yii\db\ActiveRecord
                 if (!$response) $response = "THE RESPONSE IS EMPTY";
                 AgentPro::throwError($error, $response);
                 $counterERROR++;
-                info(" DELETING THE ITEM",DANGER);
+                info(" DELETING THE ITEM", DANGER);
                 $sale->delete();
                 continue;
 
