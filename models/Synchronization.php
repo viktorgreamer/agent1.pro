@@ -377,7 +377,7 @@ class Synchronization extends Sale
                 // если THE_SAME
                 if ($delay > 100) {
                     // echo "<br> !!!объект остался прежним";
-                    if ($response['date_start'] != $active_item->date_start) {
+                    if ($active_item->TimeBetween($response['date_start'],5000)) {
                         $log = [7, time(), date("d.m.y H:i:s", $active_item->date_start), date("d.m.y H:i:s", $response['date_start'])];
                         echo "<br>" . Sale::RenderOneLog($log);
                         $active_item->changingStatuses('DATESTART_UPDATED');

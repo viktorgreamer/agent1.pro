@@ -62,14 +62,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => \yii\grid\ActionColumn::className(),
                 'buttons' => [
                     'update' => function ($url, $model) {
-
                         $customurl = Yii::$app->getUrlManager()->createUrl(['parsing-configuration/update', 'id' => $model->id]); //$model->id для AR
-                        return \yii\helpers\Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>', $customurl, ['target' => '_blank']);
+                        return \yii\helpers\Html::a('<i class="fa-2x fa-pencil" aria-hidden="true"></i>', $customurl, ['target' => '_blank']);
                     },
                     'activate' => function ($url, $model) {
                        return Actions::renderChangeStatus($model->id, Actions::PARSING_CONFIGURATION, Actions::PARSING_CONFIGURATION_ACTIVE,
                             Actions::PARSING_CONFIGURATION_ACTIVE_ACTIVATE ,
                             Actions::getIcons(Actions::PARSING_CONFIGURATION,Actions::PARSING_CONFIGURATION_ACTIVE_ACTIVATE));
+                    },
+                    'reset' => function ($url, $model) {
+                       return Actions::renderChangeStatus($model->id, Actions::PARSING_CONFIGURATION, Actions::PARSING_CONFIGURATION_LAST_TIMESTAMP,
+                           (time() - 10*24*60*60),
+                            Actions::getIcons(Actions::PARSING_CONFIGURATION,Actions::PARSING_CONFIGURATION_LAST_TIMESTAMP));
                     },
                     'disactivate' => function ($url, $model) {
                        return Actions::renderChangeStatus($model->id, Actions::PARSING_CONFIGURATION, Actions::PARSING_CONFIGURATION_ACTIVE,
@@ -77,7 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             Actions::getIcons(Actions::PARSING_CONFIGURATION,Actions::PARSING_CONFIGURATION_ACTIVE_DISACTIVATE));
                     },
                 ],
-                'template' => '{update}{activate}{disactivate}',
+                'template' => '{update}{activate}{disactivate}{reset}',
             ]
 
         ],

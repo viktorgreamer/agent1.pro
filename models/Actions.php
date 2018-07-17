@@ -85,6 +85,7 @@ class Actions
     const PARSING_CONFIGURATION_ACTIVE = 1;
     const PARSING_CONFIGURATION_ACTIVE_ACTIVATE = 1;
     const PARSING_CONFIGURATION_ACTIVE_DISACTIVATE = 0;
+    const PARSING_CONFIGURATION_LAST_TIMESTAMP = 2;
 
     // PROXY
     const PROXY_STATUS = 1;
@@ -145,6 +146,7 @@ class Actions
             ],
             Actions::PARSING_CONFIGURATION => [
                 Actions::PARSING_CONFIGURATION_ACTIVE => 'active',
+                Actions::PARSING_CONFIGURATION_LAST_TIMESTAMP => 'last_timestamp',
 
             ],
             Actions::AGENT => [
@@ -214,6 +216,7 @@ class Actions
             Actions::PARSING_CONFIGURATION => [
                 Actions::PARSING_CONFIGURATION_ACTIVE_ACTIVATE => Mdb::Fa("play fa-fw " . $color . " fa-2x", ['title' => "Запустить "]),
                 Actions::PARSING_CONFIGURATION_ACTIVE_DISACTIVATE => Mdb::Fa("pause fa-fw " . $color . " fa-2x", ['title' => "Пауза"]),
+                Actions::PARSING_CONFIGURATION_LAST_TIMESTAMP => Mdb::Fa("step-backward fa-fw " . $color . " fa-2x", ['title' => "ЗАНОВО"]),
 
             ],
             Actions::AGENT => [

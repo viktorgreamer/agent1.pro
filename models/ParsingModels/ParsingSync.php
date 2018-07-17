@@ -20,6 +20,7 @@ class ParsingSync extends Model
     public $price;
     public $starred;
     public $date_start;
+    public $date_start_about;
 
     /**
      * @inheritdoc
@@ -93,8 +94,14 @@ class ParsingSync extends Model
 
         if (!empty($starred)) $this->starred = true; else $this->starred = false;
         $date = $pq_div->find("div." . $selectors['YANDEX_TABLE_PUBLISHED_DATE_DIV_CLASS'])->text();
-        //  echo "<br> date as String".$date;
-        $this->date_start = ParsingExtractionMethods::Date_to_unix($date);
+        echo "<br> date as String" . $date;
+        if (preg_match("/(\d+)\sчасов\sназад/", $date, $output_array)) {
+            $this->date_start = time() - $output_array[1] * 60 * 60;
+            $this->date_start_about = true;
+        } else {
+            $this->date_start = ParsingExtractionMethods::Date_to_unix($date);
+
+        }
         //  echo "<br> date_start".$date_start;
 
         $this->address_line = trim($pq_div->find("h4." . $selectors['YANDEX_TABLE_ADDRESS_DIV_CLASS'])->text());
@@ -104,7 +111,7 @@ class ParsingSync extends Model
     {
 
         $selectors = Selectors::getSelectors(Selectors::TYPE_TABLE, IRR_ID_SOURCE);
-       // my_var_dump($selectors);
+        // my_var_dump($selectors);
         $this->title = $pq_div->find("div." . $selectors['IRR_TABLE_TITLE_DIV_CLASS'])->text();
         $this->price = preg_replace("/\D+/", "", $pq_div->find("div." . $selectors['IRR_TABLE_PRICE_DIV_CLASS'])->text());
         $this->url = $pq_div->find('a')->attr('href');

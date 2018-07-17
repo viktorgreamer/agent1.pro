@@ -222,6 +222,15 @@ class Sale extends \yii\db\ActiveRecord
         ];
     }
 
+    public function TimeBetween($time, $seconds)
+    {
+        if (($this->date_start > ($time - $seconds)) && ($this->date_start < ($time + $seconds))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * @inheritdoc
      */
@@ -274,12 +283,13 @@ class Sale extends \yii\db\ActiveRecord
         return $tags;
 
     }
+
     public function getTagsNew()
     {
         $tags_similar = $this->similar->tags_id;
         if (!$this->similar) $tags_sale = $this->tags_id;
         $tags_address = $this->addresses->tags_id;
-        $tags_all = preg_replace("/,,/", ",", $tags_similar . $tags_address. $tags_sale);
+        $tags_all = preg_replace("/,,/", ",", $tags_similar . $tags_address . $tags_sale);
 
         $tags = Tags::convertToArray($tags_all);
 
@@ -452,14 +462,13 @@ class Sale extends \yii\db\ActiveRecord
                         $this->disactive = 0;
                     }
 
-                    $similar = SaleSimilar::findOne($this->id_similar);
+                    /*$similar = SaleSimilar::findOne($this->id_similar);
                     if ($similar) {
-                        $similar->removeID($this->id);
-                        if (count(Methods::convertToArrayWithBorders($similar->similar_ids_all)) == 0) {
+                       if (count(Methods::convertToArrayWithBorders($similar->similar_ids_all)) == 0) {
                             info(" DETELING SIMILAR, BECAUSE THERE ARE NO ITEMS IN IT");
                             $similar->delete();
                         }
-                    }
+                    }*/
 
                     $this->id_similar = 0;
                     return "ADDRESS_CHANGED";
@@ -1819,8 +1828,9 @@ class Sale extends \yii\db\ActiveRecord
 
     }
 
-    public function getInform_message() {
-        return strip_tags($this->renderLong_title()."\r\n ".$this->description."r\n ".$this->phone1);
+    public function getInform_message()
+    {
+        return strip_tags($this->renderLong_title() . "\r\n " . $this->description . "r\n " . $this->phone1);
 
     }
 
@@ -2178,7 +2188,7 @@ class Sale extends \yii\db\ActiveRecord
             }
 
             info("EXISTED_SALESIMILAR_ID COUNT=" . count($is_existed_salesimilar));
-              my_var_dump($is_existed_salesimilar);
+            my_var_dump($is_existed_salesimilar);
 
             $not_is_existed_salesimilar = array_filter($similarReport, function ($sale) {
                 return ($sale['id_similar'] == 0);
@@ -2187,10 +2197,10 @@ class Sale extends \yii\db\ActiveRecord
 
             if ((count($is_existed_salesimilar) == 1)) {
                 info(" THERE IS ONE EXISTED SIMILAR , GETTING HIS ID_SIMILAR", SUCCESS);
-                 $id_similar = $is_existed_salesimilar[0];
+                $id_similar = $is_existed_salesimilar[0];
 
 
-                 //  my_var_dump($is_existed_salesimilar);
+                //  my_var_dump($is_existed_salesimilar);
 
             } elseif ((count($is_existed_salesimilar) == 0)) {
                 info(" THERE IS NO ONE EXISTED SIMILAR , CREATING NEW", PRIMARY);
@@ -2209,7 +2219,7 @@ class Sale extends \yii\db\ActiveRecord
                     info("SETTING FOR NOT EXISTED FOR " . count($not_is_existed_salesimilar) . " ITEMS", PRIMARY);
                     foreach ($not_is_existed_salesimilar as $item) {
                         // обновляем в облаке
-                       Sale::updateAll(['id_similar' => $id_similar], ['id' => $item->id]);
+                        Sale::updateAll(['id_similar' => $id_similar], ['id' => $item->id]);
                         $item->id_similar = $id_similar;
                         if (!$item->save()) my_var_dump($item->errors);
                     }
@@ -2220,11 +2230,11 @@ class Sale extends \yii\db\ActiveRecord
             //  my_var_dump($is_existed_salesimilar);
 
             // my_var_dump(count($similarReport));
-          //  $similars = $this->calculateSimilarObjects();
+            //  $similars = $this->calculateSimilarObjects();
             info(" COUNT=" . count($similars));
 
             //  foreach ($similars as $similar) {
-         //   echo \Yii::$app->view->render('@app/views/sale/_mini_sale_similar', ['sales' => $similars, 'contacts' => true]);
+            //   echo \Yii::$app->view->render('@app/views/sale/_mini_sale_similar', ['sales' => $similars, 'contacts' => true]);
             //   echo "<br>".$similar->renderLong_title().Html::a('url',$similar->url);
             // }
 

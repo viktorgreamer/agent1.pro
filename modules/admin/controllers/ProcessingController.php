@@ -17,6 +17,18 @@ class ProcessingController extends \yii\web\Controller
         return $this->render('index');
     }
 
+    public function actionTestTimeBetween()
+    {
+        $sync = new Synchronization();
+        $sync->date_start = time() - 8000;
+        info(\Yii::$app->formatter->asRelativeTime($sync->date_start));
+        if ($sync->TimeBetween(time(),5000)) info(" DATE START BEETWEEN",SUCCESS);
+        else {
+            info(" DATE START OUT",DANGER);
+        }
+        return $this->render('index');
+    }
+
 
     public function actionAutoSetSimilar($id = 0)
     {
