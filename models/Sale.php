@@ -231,6 +231,15 @@ class Sale extends \yii\db\ActiveRecord
         }
     }
 
+    public function PriceBetween($price, $divergense)
+    {
+        if (($this->price > ($price - $divergense)) && ($this->price < ($price + $divergense))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * @inheritdoc
      */

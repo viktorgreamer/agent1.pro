@@ -885,7 +885,12 @@ class Control extends \yii\db\ActiveRecord
                 // берем контейнер с вариантами
                 if ($config->id_sources == 1) $pq_page = $pq_page->find('.js-productGrid')->eq(0);
 
-                $div_selector = Selectors::find()->where(['id_sources' => $config->source->id])->andWhere(['type' => Selectors::TYPE_TABLE_CONTAINER])->one()->selector;
+              if ($selector = Selectors::find()->where(['id_sources' => $config->source->id])->andWhere(['type' => Selectors::TYPE_TABLE_CONTAINER])->one()) {
+                  $div_selector = $selector->selector;
+              } else {
+                  INFO(" CANNOT FIND SELECTOR RECORD",DANGER);
+                  die;
+              }
                 info(" DIV SELECTOR = ".$div_selector);
                 $pq_containers = $pq_page->find("." . $div_selector);
                 if (count($pq_containers) == 0) {

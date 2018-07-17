@@ -28,6 +28,8 @@ class Selectors extends \yii\db\ActiveRecord
     const  SELECTOR_COUNT_MORE_1 = 2;
     const  SELECTOR_CIAN_10 = 3;
     const  SELECTOR_CIAN_11 = 4;
+    const  SELECTOR_YANDEX_00 = 5;
+
 
     public static function getCounts()
     {
@@ -35,7 +37,8 @@ class Selectors extends \yii\db\ActiveRecord
             self::SELECTOR_COUNT_1 => "1",
             self::SELECTOR_COUNT_MORE_1 => "MORE 1",
             self::SELECTOR_CIAN_10 => "CIAN_10",
-            self::SELECTOR_CIAN_11 => "CIAN_11"
+            self::SELECTOR_CIAN_11 => "CIAN_11",
+            self::SELECTOR_YANDEX_00 => "YANDEX_00"
         ];
     }
 
@@ -163,7 +166,7 @@ class Selectors extends \yii\db\ActiveRecord
         if ($this->count == 2) {
             if (preg_match_all($pattern, $pageSource, $output_array)) {
                 if (count($output_array[1]) > 1) {
-                  //  my_var_dump($output_array[1]);
+                    my_var_dump($output_array);
                     info("SELECTOR EXISTS IN COUNT " . count($output_array[1]), 'success');
                     $this->selector = $output_array[1][0];
                     if (!$this->save()) my_var_dump($this->errors);
@@ -182,7 +185,7 @@ class Selectors extends \yii\db\ActiveRecord
         } elseif ($this->count == 1) {
             if (preg_match_all($pattern, $pageSource, $output_array)) {
                 if (count($output_array[1]) == 1) {
-                   // my_var_dump($output_array[1]);
+                    my_var_dump($output_array[1]);
                     info("SELECTOR EXISTS IN COUNT" . count($output_array[1]), 'success');
                     $this->selector = $output_array[1][0];
                     if (!$this->save()) my_var_dump($this->errors);
@@ -222,6 +225,20 @@ class Selectors extends \yii\db\ActiveRecord
                // my_var_dump($output_array);
                 info("SELECTOR EXISTS IN COUNT " . count($output_array[1]), 'success');
                 $this->selector = $output_array[1][1];
+                if (!$this->save()) my_var_dump($this->errors);
+                return true;
+
+            } else {
+                info("SELECTOR DO NOT EXIST", 'danger');
+                self::throwError($this->error, $pageSource);
+                $this->selector = "____ERROR____";
+                if (!$this->save()) my_var_dump($this->errors);
+            }
+         } elseif ($this->count == Selectors::SELECTOR_YANDEX_00) {
+            if (preg_match_all($pattern, $pageSource, $output_array)) {
+                my_var_dump($output_array[0][0]);
+                info("SELECTOR EXISTS IN COUNT " . count($output_array[1]), 'success');
+                $this->selector = $output_array[0][0];
                 if (!$this->save()) my_var_dump($this->errors);
                 return true;
 

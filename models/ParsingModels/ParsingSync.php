@@ -87,7 +87,10 @@ class ParsingSync extends Model
         $this->price = $price;
 
         //  echo "<br>".$price;
-        $this->url = "https://realty.yandex.ru" . $pq_div->find('a')->attr('href');
+        $url = $pq_div->find('a')->attr('href');
+        if (!strpos($url, "realty.yandex.ru")) $this->url = "https://realty.yandex.ru" . $url;
+        else $this->url = $url;
+
         preg_match("/\d+/", $this->url, $output_array);
         $this->id_in_source = $output_array[0];
         $starred = $pq_div->find('div.offer-label')->html();
@@ -104,7 +107,7 @@ class ParsingSync extends Model
         }
         //  echo "<br> date_start".$date_start;
 
-        $this->address_line = trim($pq_div->find("h4." . $selectors['YANDEX_TABLE_ADDRESS_DIV_CLASS'])->text());
+        $this->address_line = trim($pq_div->find("." . $selectors['YANDEX_TABLE_ADDRESS_DIV_CLASS'])->text());
     }
 
     public function extractTabledIrr($pq_div)

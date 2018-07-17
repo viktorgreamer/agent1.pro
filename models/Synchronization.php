@@ -324,46 +324,8 @@ class Synchronization extends Sale
                 // делаем update
                 $return = '';
                 // если ADDRESS_CHANGED
-                if (trim($active_item->address_line) != $response['address_line']) {
-                    if ($active_item->id_address) {
-                        $address = Addresses::findOne($active_item->id_address);
-                        if ($address) {
-                            $pattern = $address->getPattern();
-                            if ($pattern) {
-                                if (!preg_match($address->getPattern() . "iu", $response['address_line'], $output)) {
-                                    $log = [5, time(), trim($active_item->address_line), $response['address_line']];
-                                    echo "<br>" . Sale::RenderOneLog($log);
-                                    $active_item->UpdateAddress($response, $log);
-                                    info("id=" . $active_item->id . " " . $active_item->changingStatuses('ADDRESS_CHANGED'), 'alert');
-                                    $return .= "ADDRESS_CHANGED";
-                                    //  Renders::SystemMail(" pattern ='".$address->getPattern()."' ADDRESS_CHANGED ID=".$active_item->id);
-
-                                };
-                            } else {
-                                $log = [5, time(), trim($active_item->address_line), $response['address_line']];
-                                echo "<br>" . Sale::RenderOneLog($log);
-                                $active_item->UpdateAddress($response, $log);
-                                info("id=" . $active_item->id . " " . $active_item->changingStatuses('ADDRESS_CHANGED'), 'alert');
-                                $return .= "ADDRESS_CHANGED";
-                                //  Renders::SystemMail(" pattern ='".$address->getPattern()."' ADDRESS_CHANGED ID=".$active_item->id);
-                            }
-                        }
-
-
-                    } else {
-                        $log = [5, time(), trim($active_item->address_line), $response['address_line']];
-                        echo "<br>" . Sale::RenderOneLog($log);
-                        $active_item->UpdateAddress($response, $log);
-                        info("id=" . $active_item->id . " " . $active_item->changingStatuses('ADDRESS_CHANGED'), 'alert');
-
-                        $return .= "ADDRESS_CHANGED";
-                        //  Renders::SystemMail(" ADDRESS_CHANGED WITHOUT ID ADDRESS ID=".$active_item->id);
-                    }
-
-
-                }
                 // если PRICE_CHANGED
-                if ($active_item->price != $response['price']) {
+                if ($active_item->PriceBetween($response['price'],5)) {
                     $log = [4, time(), $active_item->price, $response['price']];
                     $active_item->price = $response['price'];
                     $active_item->addLog($log);
@@ -473,7 +435,7 @@ class Synchronization extends Sale
                 // делаем update
                 $return = '';
                 // если PRICE_CHANGED
-                if ($active_item->price != $parsing['price']) {
+                if (!$active_item->PriceBetween($parsing['price'],5)) {
                     $log = [4, time(), $active_item->price, $parsing['price']];
                     $active_item->price = $parsing['price'];
                     $active_item->addLog($log);
@@ -487,7 +449,7 @@ class Synchronization extends Sale
                 // если THE_SAME
                 if ($delay > 100) {
                     // echo "<br> !!!объект остался прежним";
-                    if ($parsing['date_start'] != $active_item->date_start) {
+                    if (!$active_item->TimeBetween($parsing['date_start'],5000)) {
                         $log = [7, time(), date("d.m.y H:i:s", $active_item->date_start), date("d.m.y H:i:s", $parsing['date_start'])];
                         info(Sale::RenderOneLog($log));
                         $active_item->changingStatuses('DATESTART_UPDATED');

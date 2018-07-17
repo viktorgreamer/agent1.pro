@@ -1,0 +1,87 @@
+(function (lib, img, cjs, ss) {
+
+var p; // shortcut to reference prototypes
+
+// library properties:
+lib.properties = {
+	width: 300,
+	height: 300,
+	fps: 24,
+	color: "#FFFFFF",
+	opacity: 1.00,
+	manifest: [
+		{src:"//banners.adfox.ru/180713/adfox/648443/300-300-orlovskiy.jpg", id:"image"}
+	]
+};
+
+
+
+lib.ssMetadata = [];
+
+
+// symbols:
+
+
+
+(lib.image = function() {
+	this.initialize(img.image);
+}).prototype = p = new cjs.Bitmap();
+p.nominalBounds = new cjs.Rectangle(0,0,300,300);
+
+
+(lib.Символ5 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Слой 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#FFFFFF").s().p("EgmJBYfMAAAiw9MBMTAAAMAAACw9g");
+	this.shape.setTransform(318.9,566.4);
+
+	this.timeline.addTween(cjs.Tween.get(this.shape).wait(1));
+
+}).prototype = p = new cjs.MovieClip();
+p.nominalBounds = new cjs.Rectangle(74.7,0,488.4,1132.7);
+
+
+(lib.Символ1 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Слой 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f().s("#999999").ss(2,1,1).p("A3b3bMAu3AAAMAAAAu3Mgu3AAAg");
+	this.shape.setTransform(150,150);
+
+	this.timeline.addTween(cjs.Tween.get(this.shape).wait(1));
+
+}).prototype = p = new cjs.MovieClip();
+p.nominalBounds = new cjs.Rectangle(-1,-1,302,302);
+
+
+// stage content:
+(lib._300_300 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Слой 2
+	this.instance = new lib.Символ1();
+	this.instance.setTransform(150,150,1,1,0,0,0,150,150);
+	new cjs.ButtonHelper(this.instance, 0, 1, 1);
+
+	this.timeline.addTween(cjs.Tween.get(this.instance).wait(120));
+
+	// Слой 3
+	//this.instance_1 = new lib.Символ5();
+	//this.instance_1.setTransform(215.5,517.6,1,1.026,0,-10,0,318.7,566.3);
+	//new cjs.ButtonHelper(this.instance_1, 0, 1, 1);
+
+	//this.timeline.addTween(cjs.Tween.get(this.instance_1).to({scaleY:1.03,x:640.7,y:517.5},19).to({_off:true},1).wait(80).to({_off:false,x:-219.3},0).to({x:217.7},19).wait(1));
+
+	// Слой 1
+	this.instance_2 = new lib.image();
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_2).wait(120));
+
+}).prototype = p = new cjs.MovieClip();
+p.nominalBounds = new cjs.Rectangle(20.5,95.1,690.4,1145);
+
+})(lib = lib||{}, images = images||{}, createjs = createjs||{}, ss = ss||{});
+var lib, images, createjs, ss;
