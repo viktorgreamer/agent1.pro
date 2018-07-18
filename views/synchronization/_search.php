@@ -77,12 +77,7 @@ use app\components\Mdb;
 
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <?= Mdb::ActiveSelect($model, 'sort_by',\app\models\SaleFilters::TYPE_OF_SORTING_ARRAY ) ?>
 
-                        </div>
-                    </div>
                 </div>
 
                 <div class="col-sm-1">
@@ -138,6 +133,18 @@ use app\components\Mdb;
                         </div>
                         <div class="col-12">
                             <?= Mdb::ActiveDatepicker($model, 'date_of_start_up', ['label' => 'Время появления до']) ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="row">
+                        <div class="col-12">
+                            <?= Mdb::ActiveSelect($model, 'sort_by',\app\models\SaleFilters::mapSorting() ) ?>
+
+                        </div>
+                        <div class="col-12">
+                            <?= Mdb::ActiveSelect($model, 'log',\app\models\SaleLog::mapTypes()) ?>
+
                         </div>
                     </div>
                 </div>

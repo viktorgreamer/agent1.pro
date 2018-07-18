@@ -84,25 +84,25 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function ($model) {
                     return " STATUS: " . \app\models\Sale::DISACTIVE_CONDITIONS_ARRAY[$model->disactive] .
-                        " <hr>parsed: " . \app\models\Sale::TYPE_OF_PARSED[$model->parsed] .
-                        " <hr>geocodated: " . \app\models\Geocodetion::GEOCODATED_STATUS_ARRAY[$model->geocodated] .
-                        " <hr>processed: " . \app\models\Sale::TYPE_OF_PROCCESSED[$model->processed] .
-                        " <hr>load_analized: " . \app\models\Sale::TYPE_OF_ANALIZED[$model->load_analized] .
-                        " <hr>sync: " . \app\models\Sale::TYPE_OF_SYNC[$model->sync];
+                        " <hr style=\"margin-top: 0px; margin-bottom: 0px;\">parsed: " . \app\models\Sale::TYPE_OF_PARSED[$model->parsed] .
+                        " <hr style=\"margin-top: 0px; margin-bottom: 0px;\">geocodated: " . \app\models\Geocodetion::GEOCODATED_STATUS_ARRAY[$model->geocodated] .
+                        " <hr style=\"margin-top: 0px; margin-bottom: 0px;\">processed: " . \app\models\Sale::TYPE_OF_PROCCESSED[$model->processed] .
+                        " <hr style=\"margin-top: 0px; margin-bottom: 0px;\">load_analized: " . \app\models\Sale::TYPE_OF_ANALIZED[$model->load_analized] .
+                        " <hr style=\"margin-top: 0px; margin-bottom: 0px;\">sync: " . \app\models\Sale::TYPE_OF_SYNC[$model->sync];
 
                 }
             ],
 
 
-           /* [
+            [
                 'label' => 'log',
                 'format' => 'raw',
                 'value' => function ($model) {
 
-                    return $model->RenderLog();
+                    return $model->RenderProcessingLog();
 
                 }
-            ],*/
+            ],
 
             [
                 'label' => "admin",
@@ -110,14 +110,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     $buttons = '';
                     $buttons .= "<a class='change-status' data-status_name='geocodated' data-id_item=" . $model->id . "><i class='fa fa-map-marker fa-2x' aria-hidden='true'></i></a>";
-                    $buttons .= "<hr><a class='change-status' data-status_name='load_analized' data-id_item=" . $model->id . "><i class='fa fa-area-chart fa-2x' aria-hidden='true'></i></a>";
-                    $buttons .= "<hr><a class='change-status' data-status_name='parsed' data-id_item=" . $model->id . "><i class='fa fa-clone fa-2x' aria-hidden='true'></i></a>";
-                    $buttons .= "<hr><a class='change-status' data-status_name='processed' data-id_item=" . $model->id . "><i class='fa fa-spinner fa-2x' aria-hidden='true'></i></a>";
-                    $buttons .= "<hr><a class='change-status' data-status_name='sync' data-id_item=" . $model->id . "><i class='fa fa-link fa-2x' aria-hidden='true'></i></a>";
-                    $buttons .= "<hr><a class='change-statuses' data-model='sync' data-value='6' data-attrname='disactive' data-id=" . $model->id . "><i class='fa fa-play fa-2x' aria-hidden='true'></i></a>";
-                    $buttons .= "<hr>".\app\models\Actions::renderChangeStatus($model->id,\app\models\Actions::SYNC, \app\models\Actions::SALE_PROCESSED,2,'PROCESSED');
-                    $buttons .= "<hr><a class='change-statuses' data-model='sync' data-value='0' data-attrname='id_similar' data-id=" . $model->id . ">SIMILAR</a>";
-                    $buttons .= "<hr><a class='change-statuses' data-model='sync' data-value='' data-attrname='phone1' data-id=" . $model->id . "><i class='fa fa-phone fa-2x' aria-hidden='true'></i></a>";
+                    $buttons .= "<hr style=\"margin-top: 0px; margin-bottom: 0px;\"><a class='change-status' data-status_name='load_analized' data-id_item=" . $model->id . "><i class='fa fa-area-chart fa-2x' aria-hidden='true'></i></a>";
+                    $buttons .= "<hr style=\"margin-top: 0px; margin-bottom: 0px;\"><a class='change-status' data-status_name='parsed' data-id_item=" . $model->id . "><i class='fa fa-clone fa-2x' aria-hidden='true'></i></a>";
+                    $buttons .= "<hr style=\"margin-top: 0px; margin-bottom: 0px;\"><a class='change-status' data-status_name='processed' data-id_item=" . $model->id . "><i class='fa fa-spinner fa-2x' aria-hidden='true'></i></a>";
+                    $buttons .= "<hr style=\"margin-top: 0px; margin-bottom: 0px;\"><a class='change-status' data-status_name='sync' data-id_item=" . $model->id . "><i class='fa fa-link fa-2x' aria-hidden='true'></i></a>";
+                    $buttons .= "<hr style=\"margin-top: 0px; margin-bottom: 0px;\"><a class='change-statuses' data-model='sync' data-value='6' data-attrname='disactive' data-id=" . $model->id . "><i class='fa fa-play fa-2x' aria-hidden='true'></i></a>";
+                    $buttons .= "<hr style=\"margin-top: 0px; margin-bottom: 0px;\">".\app\models\Actions::renderChangeStatus($model->id,\app\models\Actions::SYNC, \app\models\Actions::SALE_PROCESSED,2,'PROCESSED');
+                    $buttons .= "<hr style=\"margin-top: 0px; margin-bottom: 0px;\"><a class='change-statuses' data-model='sync' data-value='0' data-attrname='id_similar' data-id=" . $model->id . ">SIMILAR</a>";
+                    $buttons .= "<hr style=\"margin-top: 0px; margin-bottom: 0px;\"><a class='change-statuses' data-model='sync' data-value='' data-attrname='phone1' data-id=" . $model->id . "><i class='fa fa-phone fa-2x' aria-hidden='true'></i></a>";
 
                     return $buttons;
                 }

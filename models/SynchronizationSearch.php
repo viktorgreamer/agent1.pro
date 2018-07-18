@@ -20,6 +20,7 @@ class SynchronizationSearch extends Synchronization
     public $date_of_start_up;
     public $date_of_start_down;
     public $sort_by;
+    public $log;
 
     /**
      * @inheritdoc
@@ -27,7 +28,7 @@ class SynchronizationSearch extends Synchronization
     public function rules()
     {
         return [
-            [['id', 'id_sources', 'disactive', 'price', 'rooms_count','sort_by'], 'integer'],
+            [['id', 'id_sources', 'disactive', 'price', 'rooms_count', 'sort_by', 'log'], 'integer'],
             [['id_in_source'], 'string'],
             [['url', 'title', 'address', 'status', 'sync', 'geocodated', 'processed', 'load_analized', 'tags_autoload', 'parsed', 'moderated', 'id_in_source', 'disactive',
                 'date_of_check_up', 'date_of_check_down', 'date_of_die_up', 'date_of_die_down', 'date_of_start_up', 'date_of_start_down'], 'safe'],
@@ -89,10 +90,11 @@ class SynchronizationSearch extends Synchronization
         $query = Synchronization::find();
         $query->from(['sync' => Synchronization::tableName()]);
         // присоединяем связи
-       // $query->joinWith(['agent AS agent']);
-       // $query->joinWith(['addresses AS address']);
-       // $query->joinWith(['similar AS sim']);
-      //  $query->joinWith(['logs AS logs']);
+        // $query->joinWith(['agent AS agent']);
+        // $query->joinWith(['addresses AS address']);
+        // $query->joinWith(['similar AS sim']);
+          $query->joinWith(['logs AS logs']);
+          $query->joinWith(['plogs AS plogs']);
 
         // add conditions that should always apply here
 
@@ -110,6 +112,7 @@ class SynchronizationSearch extends Synchronization
         }
 
         if ($this->id) $query->andFilterWhere(['sync.id' => $this->id]);
+        if ($this->log) $query->andFilterWhere(['logs.type' => $this->log]);
 
         if ($this->id_sources) $query->andFilterWhere(['sync.id_sources' => $this->id_sources]);
         //
@@ -144,7 +147,7 @@ class SynchronizationSearch extends Synchronization
         if ($this->date_of_die_up) $query->andFilterWhere(['<', 'sync.date_of_die', $this->date_of_die_up + 86400]);
         if ($this->date_of_die_down) $query->andFilterWhere(['>', 'sync.date_of_die', $this->date_of_die_down]);
 
-      //  $query->orderBy(['sync.date_of_check' => SORT_DESC]);
+        //  $query->orderBy(['sync.date_of_check' => SORT_DESC]);
 
         switch ($this->sort_by) {
             case SaleFilters::SORTING_ID:
@@ -163,6 +166,13 @@ class SynchronizationSearch extends Synchronization
 
             case SaleFilters::SORTING_DATE_START_DESC:
                 $query->orderBy(['sync.date_start' => SORT_ASC]);
+                break;
+            case SaleFilters::SORTYNG_DATE_OF_CHECK_ASC:
+                $query->orderBy(['sync.date_of_check' => SORT_ASC]);
+                break;
+
+            case SaleFilters::SORTYNG_DATE_OF_CHECK_DESC:
+                $query->orderBy(['sync.date_of_check' => SORT_DESC]);
                 break;
 
             case SaleFilters::SORTING_ID_ADDRESS_ASC:

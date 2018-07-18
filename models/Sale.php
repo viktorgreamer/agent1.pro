@@ -66,6 +66,45 @@ use app\models\Renders;
  */
 class Sale extends \yii\db\ActiveRecord
 {
+
+    const NEW_ITEM = 3;
+    const PRICE_CHANGED = 4;
+    const ADDRESS_CHANGED = 5;
+    const THE_SAME = 6;
+    const DATESTART_UPDATE = 7;
+    const REINCARNED = 8;
+    const PARSED = 10;
+    const GEOCODATED = 11;
+    const ANALYSED = 12;
+    const SALEFILTER_CHECKED = 13;
+    const SIMILARED = 14;
+    const SYNC_UP = 15;
+    const SYNC_DOWN = 16;
+    const MODERATED = 17;
+    const PROCESSED = 18;
+
+
+    public static function mapProcessingLogs()
+    {
+        return [
+            self::NEW_ITEM => "NEW_ITEM",
+            self::PRICE_CHANGED => "PRICE_CHANGED",
+            self::ADDRESS_CHANGED => "ADDRESS_CHANGED",
+            self::THE_SAME => "THE_SAME",
+            self::DATESTART_UPDATE => "DATESTART_UPDATE",
+            self::REINCARNED => "REINCARNED",
+            self::PARSED => "PARSED",
+            self::GEOCODATED => "GEOCODATED",
+            self::ANALYSED => "ANALYSED",
+            self::SALEFILTER_CHECKED => "SALEFILTER_CHECKED",
+            self::SIMILARED => "SIMILARED",
+            self::SYNC_UP => "SYNC_UP",
+            self::SYNC_DOWN => "SYNC_DOWN",
+            self::MODERATED => "MODERATED",
+            self::PROCESSED => "PROCESSED",
+        ];
+    }
+
     const DISACTIVE_CONDITIONS_ARRAY = [
         0 => 'ACTIVE',
         1 => 'DELETED',
@@ -349,6 +388,17 @@ class Sale extends \yii\db\ActiveRecord
 
     }
 
+    public function setProccessingLog($type, $was = null, $now = null)
+    {
+        $ProcessingLog = new ProcessingLog();
+        $ProcessingLog->sale_id = $this->id;
+        $ProcessingLog->type = $type;
+        $ProcessingLog->time = time();
+        $ProcessingLog->was = $was;
+        $ProcessingLog->now = $now;
+        if (!$ProcessingLog->save()) my_var_dump($ProcessingLog->errors);
+    }
+
     public function getAddress()
     {
         return $this->hasOne(Addresses::className(), ['id' => 'id_address']);
@@ -359,6 +409,11 @@ class Sale extends \yii\db\ActiveRecord
     public function getLog()
     {
         return $this->hasMany(SaleLog::className(), ['sale_id' => 'id'])->all();
+
+    }
+    public function getPlogs()
+    {
+        return $this->hasMany(ProcessingLog::className(), ['sale_id' => 'id'])->all();
 
     }
 
@@ -375,7 +430,20 @@ class Sale extends \yii\db\ActiveRecord
         $body = '';
         if ($logs) {
             foreach ($logs as $log) {
-                $body .= span(Sale::STATUSES_ARRAY[$log->type] . " " . date("d.m.y H:i:s", (int)$log->date) . " '" . $log->was . "'->'" . $log->now);
+                $body .= "<br>" . span(Sale::STATUSES_ARRAY[$log->type] . " " . date("d.m.y H:i:s", (int)$log->date) . " '" . $log->was . "'->'" . $log->now);
+            }
+        }
+        return $body;
+    }
+    public function RenderProcessingLog()
+
+    {
+        $logs = $this->getPlogs()->all();
+        $body = '';
+        if ($logs) {
+            foreach ($logs as $log) {
+                $body .= "<br>" . span(Sale::mapProcessingLogs()[$log->type] . " " . date("d.m.y H:i:s", (int)$log->time));
+                // . " '" . $log->was . "'->'" . $log->now);
             }
         }
         return $body;
@@ -397,6 +465,8 @@ class Sale extends \yii\db\ActiveRecord
             // если пришла новая модель, то готовим ее к парсингу
             case "NEW" :
                 $this->parsed = 2;
+                $this->setProccessingLog(self::NEW_ITEM);
+
                 // info("меняем статус на NEW", 'info');
                 return 'NEW';
             // если спарсили модель, то можно отправлять на геокодирование
@@ -404,6 +474,7 @@ class Sale extends \yii\db\ActiveRecord
                 // info("провели парсинг", 'info');
                 $this->parsed = 3;
                 $this->geocodated = 8;
+                $this->setProccessingLog(self::PARSED);
                 return 'PARSED';
             // если геокодирование прошло, то готовимся в анализу и обработке если статус не равен 9, если нет то ставим стутус невозможности анализа
             case "GEOCODATED" :
@@ -412,6 +483,8 @@ class Sale extends \yii\db\ActiveRecord
                     if ($this->geocodated != 9) $this->load_analized = 2; else $this->load_analized = 4;
                     $this->id_similar = 0;
                     $this->processed = 2;
+                    $this->setProccessingLog(self::GEOCODATED);
+
                     return 'GEOCODATED';
                 }
             case "PROCESSED" :
@@ -424,6 +497,8 @@ class Sale extends \yii\db\ActiveRecord
                     }
                     // в случае если PRICE_CHANGED морерацию не проводим
                     if ($this->status != 4) $this->moderated = 2;
+                    $this->setProccessingLog(self::PROCESSED);
+
                     return "PROCESSED";
                 }
             case "MANUAL_GEOCODATION" :
@@ -432,6 +507,8 @@ class Sale extends \yii\db\ActiveRecord
                     $this->geocodated = 7;
                     $this->load_analized = 2;
                     $this->sync = 2;
+                    $this->setProccessingLog(self::GEOCODATED);
+
                     return 'MANUAL_GEOCODATION';
                 }
             case "LOAD_ANALIZED" :
@@ -439,12 +516,16 @@ class Sale extends \yii\db\ActiveRecord
                     // info("проводим анализ", 'info');
                     $this->load_analized = 3;
                     $this->sync = 2;
+                    $this->setProccessingLog(self::ANALYSED);
+
                     return "LOAD_ANALIZED";
                 }
             case "SYNC" :
                 {
                     // info("синхронизируемся", 'info');
                     $this->sync = 3;
+                    $this->setProccessingLog(self::SYNC_UP);
+
                     break;
                 }
             case "MODERATED" :
@@ -453,6 +534,8 @@ class Sale extends \yii\db\ActiveRecord
                     $this->moderated = 3;
                     // для download синхронизации
                     $this->sync = 2;
+                    $this->setProccessingLog(self::MODERATED);
+
                     return "MODERATED";
                 }
             case "ADDRESS_CHANGED" :
@@ -469,7 +552,12 @@ class Sale extends \yii\db\ActiveRecord
                         $log = [9, time(), '', ''];
                         $this->addLog($log);
                         $this->disactive = 0;
+                        $this->setProccessingLog(self::REINCARNED);
+
+
                     }
+                    $this->setProccessingLog(self::ADDRESS_CHANGED);
+
 
                     /*$similar = SaleSimilar::findOne($this->id_similar);
                     if ($similar) {
@@ -490,11 +578,15 @@ class Sale extends \yii\db\ActiveRecord
                             $log = [9, time(), '', ''];
                             $this->addLog($log);
                             $this->disactive = 0;
+                            $this->setProccessingLog(self::REINCARNED);
+
                         }
                         $this->status = 4;
                         $this->processed = 2;
                     }
                     $this->sync = 1;
+                    $this->setProccessingLog(self::PRICE_CHANGED);
+
                     return "PRICE_CHANGED";
                 }
             case "THE_SAME" :
@@ -507,6 +599,8 @@ class Sale extends \yii\db\ActiveRecord
                         info("REINCARNATION OF ITEM");
                         $this->status = 9;
                         $this->sync = 2;
+                        $this->setProccessingLog(self::REINCARNED);
+
                     }
                     return "THE_SAME";
                 }
@@ -521,7 +615,11 @@ class Sale extends \yii\db\ActiveRecord
                         $log = [9, time(), '', ''];
                         $this->addLog($log);
                         $this->disactive = 0;
+                        $this->setProccessingLog(self::REINCARNED);
+
                     }
+                    $this->setProccessingLog(self::DATESTART_UPDATE);
+
                     return "DATESTART_UPDATED";
                 }
             case "DELETED" :

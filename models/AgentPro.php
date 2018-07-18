@@ -125,7 +125,7 @@ class AgentPro extends \yii\db\ActiveRecord
         info("PROGRAMM IS ACTIVE");
         \Yii::$app->params['agent_pro'] = $agentpro;
 
-        $root = Yii::getAlias('@app');
+        $root = Yii::getAlias('@app')."/..";
         $server_name_dir = array_shift(array_filter(scandir($root), function ($name) {
             return preg_match("/SERVER_NAME/", $name);
         }));

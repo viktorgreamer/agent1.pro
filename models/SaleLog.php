@@ -16,6 +16,12 @@ use Yii;
  */
 class SaleLog extends \yii\db\ActiveRecord
 {
+
+    const PRICE_CHANGED = 4;
+    const ADDRESS_CHANGED = 5;
+    const DATESTART_UPDATED = 7;
+
+
     /**
      * @inheritdoc
      */
@@ -23,6 +29,16 @@ class SaleLog extends \yii\db\ActiveRecord
     {
         return 'Velikiy_Novgorod_sale_log';
     }
+
+    public static function mapTypes()
+    {
+        return [
+            self::PRICE_CHANGED => "PRICE_CHANGED",
+            self::ADDRESS_CHANGED => "ADDRESS_CHANGED",
+            self::DATESTART_UPDATED => "DATESTART_UPDATED",
+        ];
+    }
+
 
     /**
      * @inheritdoc

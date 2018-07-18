@@ -149,6 +149,9 @@ class SaleFilters extends \yii\db\ActiveRecord
     const SORTING_PRICE_DESC = 4;
     const SORTING_ID_ADDRESS_ASC = 5;
     const SORTING_ID_ADDRESS_DESC = 6;
+    const SORTYNG_DATE_OF_CHECK_ASC = 7;
+    const SORTYNG_DATE_OF_CHECK_DESC = 8;
+
     const TYPE_OF_SORTING_ARRAY = [
         SaleFilters::SORTING_PRICE_ASC => "Цена &uarr;",
         SaleFilters::SORTING_ID => 'ID &uarr;',
@@ -177,6 +180,22 @@ class SaleFilters extends \yii\db\ActiveRecord
         0 => 'Список',
         1 => 'Карта'
     ];
+
+    public static function mapSorting()
+    {
+      return   [
+            SaleFilters::SORTING_PRICE_ASC => "Цена &uarr;",
+            SaleFilters::SORTING_ID => 'ID &uarr;',
+            SaleFilters::SORTING_DATE_START_ASC => 'Дата &uarr;',
+            SaleFilters::SORTING_DATE_START_DESC => 'Дата &darr;',
+            SaleFilters::SORTING_PRICE_DESC => 'Цена &darr;',
+            SaleFilters::SORTING_ID_ADDRESS_ASC => 'Адрес &uarr;',
+            SaleFilters::SORTING_ID_ADDRESS_DESC => 'Адрес &darr;',
+            SaleFilters::SORTYNG_DATE_OF_CHECK_ASC => 'Дата &uarr;',
+            SaleFilters::SORTYNG_DATE_OF_CHECK_DESC => 'Дата &darr;',
+
+        ];
+    }
 
     public static function mapBalcon()
     {
@@ -657,7 +676,7 @@ class SaleFilters extends \yii\db\ActiveRecord
     }
 
     public
-    function notify($income_message,$type = true)
+    function notify($income_message, $type = true)
     {
         if ($income_message) {
             $message = " По фильтру " . $this->name;
@@ -767,7 +786,6 @@ class SaleFilters extends \yii\db\ActiveRecord
         }
 
 
-
         // tags
 
         if (empty(\Yii::$app->cache->get('tags'))) {
@@ -781,13 +799,13 @@ class SaleFilters extends \yii\db\ActiveRecord
         info($tags_string = Tags::convertToString($tags_sale));
         $plus_tags = Tags::convertToArray($this->plus_tags);
 
-        $all_tags =  array_filter($all_tags, function ($tag) use ($plus_tags) {
-            return in_array($tag['id'],$plus_tags);
+        $all_tags = array_filter($all_tags, function ($tag) use ($plus_tags) {
+            return in_array($tag['id'], $plus_tags);
         });
 
-        $all_tags = array_group_by($all_tags,'a_type');
+        $all_tags = array_group_by($all_tags, 'a_type');
 
-        info(" COUNT OF GROUPS = ".count($all_tags));
+        info(" COUNT OF GROUPS = " . count($all_tags));
 
         // проверка на наличие + tas
         if ($all_tags) {
@@ -803,7 +821,7 @@ class SaleFilters extends \yii\db\ActiveRecord
 
                     }
                 }
-                if (!$is_plus_tag) return $this->log_check("plus_tag = ".$tag['name']);
+                if (!$is_plus_tag) return $this->log_check("plus_tag = " . $tag['name']);
 
             }
             if (!$is_plus_tag) return $this->log_check("plus_tags");;
@@ -813,8 +831,8 @@ class SaleFilters extends \yii\db\ActiveRecord
         // проверка на отсутствие -tags
         if ($tags = Tags::convertToArray($this->minus_tags)) {
             foreach ($tags as $tag) {
-                if (strpos("START".$tags_string,",".$tag.",")) {
-                    info(" TAG ".$tag." IS IN SALE -TAGS ",DANGER);
+                if (strpos("START" . $tags_string, "," . $tag . ",")) {
+                    info(" TAG " . $tag . " IS IN SALE -TAGS ", DANGER);
                     return $this->log_check("minus_tags");
                     break;
                 }

@@ -59,8 +59,8 @@ function mb_ucfirst($str, $encoding='UTF-8')
 function span($message, $type = '')
 {
     if (in_array($type, ['success', 'primary', 'danger', 'info', 'warning', 'black'])) {
-        return "<span class='badge badge-".$type." h5-responsive'>" . $message . "</span>";
-    } else return "<span class='badge badge-default h5-responsive'>" . $message . "</span>";
+        return "<span class='badge badge-".$type."'>" . $message . "</span>";
+    } else return "<span class='badge badge-default'>" . $message . "</span>";
 }
 
 function info($message = "Hello", $type = '')
