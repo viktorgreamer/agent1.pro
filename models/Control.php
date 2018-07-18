@@ -488,12 +488,14 @@ class Control extends \yii\db\ActiveRecord
             // изменилась только цена то обработку на телефон и похожие вариенты не проводим
             if ($sale->status != 4) {
                 $sale->checkForAgents();
+                $sale->setProccessingLog(Sale::CHECK_FOR_AGENTS);
                 // $sale->similarCheckNewer();
 
                 // $sale->getSimilar_ids();
             }
             //   $sale->AutoLoadTags();
             $sale->SalefiltersCheck();
+            $sale->setProccessingLog(Sale::SALEFILTER_CHECKED);
             $sale->changingStatuses('PROCESSED');
             if (!$sale->save()) my_var_dump($sale->getErrors());
 
@@ -521,6 +523,7 @@ class Control extends \yii\db\ActiveRecord
             }
             // изменилась только цена то обработку на телефон и похожие вариенты не проводим
             $sale->similarCheckNewer();
+            $sale->setProccessingLog(Sale::SIMILARED);
             // $sale->save();
 
 

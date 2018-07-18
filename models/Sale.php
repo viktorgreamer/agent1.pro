@@ -73,6 +73,7 @@ class Sale extends \yii\db\ActiveRecord
     const THE_SAME = 6;
     const DATESTART_UPDATE = 7;
     const REINCARNED = 8;
+    const CHECK_FOR_AGENTS = 9;
     const PARSED = 10;
     const GEOCODATED = 11;
     const ANALYSED = 12;
@@ -93,6 +94,7 @@ class Sale extends \yii\db\ActiveRecord
             self::THE_SAME => "THE_SAME",
             self::DATESTART_UPDATE => "DATESTART_UPDATE",
             self::REINCARNED => "REINCARNED",
+            self::CHECK_FOR_AGENTS => "CHECK_FOR_AGENTS",
             self::PARSED => "PARSED",
             self::GEOCODATED => "GEOCODATED",
             self::ANALYSED => "ANALYSED",
@@ -413,7 +415,7 @@ class Sale extends \yii\db\ActiveRecord
     }
     public function getPlogs()
     {
-        return $this->hasMany(ProcessingLog::className(), ['sale_id' => 'id'])->all();
+        return $this->hasMany(ProcessingLog::className(), ['sale_id' => 'id']);
 
     }
 
@@ -465,7 +467,6 @@ class Sale extends \yii\db\ActiveRecord
             // если пришла новая модель, то готовим ее к парсингу
             case "NEW" :
                 $this->parsed = 2;
-                $this->setProccessingLog(self::NEW_ITEM);
 
                 // info("меняем статус на NEW", 'info');
                 return 'NEW';
