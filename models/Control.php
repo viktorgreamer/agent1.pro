@@ -789,6 +789,7 @@ class Control extends \yii\db\ActiveRecord
             return false;
         }
         $cashed_items = Synchronization::getCachedCategory($config->id);
+        $checked_ids = [];
         info(" THIS CATEGORY HAD " . count($cashed_items) . " ITEMS INSIDE YOURSELF", DANGER);
 
         if ($config->id_sources == 1) {
@@ -908,8 +909,15 @@ class Control extends \yii\db\ActiveRecord
                         $active_item = $cashed_items[$parsing->id_in_source];
                         //  my_var_dump($parsing->toArray());
 
+                        if (!in_array($active_item->id_in_source, $checked_ids)) $SynchResponse = Synchronization::TODO_NEW($parsing, $config, ['active_item' => $active_item]);
+                        else {
+                            info(" THIS ITEM HAS BEEN CHECKED YET IN THIS CHECKING...SKIP", DANGER);
+                            continue;
+                        }
 
-                        $SynchResponse = Synchronization::TODO_NEW($parsing, $config, ['active_item' => $active_item]);
+                        $SynchResponse = $SynchResponse['raw'];
+                        $checked_ids[] = $SynchResponse['id_in_source'];
+
 
                         if (preg_match("/ADDRESS_CHANGED/", $SynchResponse)) $counterADDRESS_CHANGE++;
                         if (preg_match("/PRICE_CHANGED/", $SynchResponse)) $counterPRICE_CHANGED++;
@@ -1384,8 +1392,14 @@ class Control extends \yii\db\ActiveRecord
                             $active_item = $cashed_items[$parsing->id_in_source];
                             //  my_var_dump($parsing->toArray());
 
+                            if (!in_array($active_item->id_in_source, $checked_ids)) $SynchResponse = Synchronization::TODO_NEW($parsing, $config, ['active_item' => $active_item]);
+                            else {
+                                info(" THIS ITEM HAS BEEN CHECKED YET IN THIS CHECKING...SKIP", DANGER);
+                                continue;
+                            }
 
-                            $SynchResponse = Synchronization::TODO_NEW($parsing, $config, ['active_item' => $active_item]);
+                            $SynchResponse = $SynchResponse['raw'];
+                            $checked_ids[] = $SynchResponse['id_in_source'];
 
                             if (preg_match("/ADDRESS_CHANGED/", $SynchResponse)) $counterADDRESS_CHANGE++;
                             if (preg_match("/PRICE_CHANGED/", $SynchResponse)) $counterPRICE_CHANGED++;
