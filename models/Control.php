@@ -915,9 +915,8 @@ class Control extends \yii\db\ActiveRecord
                             continue;
                         }
 
-                        $SynchResponse = $SynchResponse['raw'];
-                        $checked_ids[] = $SynchResponse['id_in_source'];
-
+                        $checked_ids[] = $SynchResponse[0];
+                        $SynchResponse = $SynchResponse[1];
 
                         if (preg_match("/ADDRESS_CHANGED/", $SynchResponse)) $counterADDRESS_CHANGE++;
                         if (preg_match("/PRICE_CHANGED/", $SynchResponse)) $counterPRICE_CHANGED++;
@@ -1399,8 +1398,8 @@ class Control extends \yii\db\ActiveRecord
                                 continue;
                             }
 
-                            $SynchResponse = $SynchResponse['raw'];
-                            $checked_ids[] = $SynchResponse['id_in_source'];
+                            $checked_ids[] = $SynchResponse[0];
+                            $SynchResponse = $SynchResponse[1];
 
                             if (preg_match("/ADDRESS_CHANGED/", $SynchResponse)) $counterADDRESS_CHANGE++;
                             if (preg_match("/PRICE_CHANGED/", $SynchResponse)) $counterPRICE_CHANGED++;

@@ -547,8 +547,9 @@ class Synchronization extends Sale
         }
 
         return [
-            'id_in_source' => $active_item->id_in_source,
-            'raw' => $return];
+            0 => $active_item->id_in_source,
+            1 => $return
+        ];
     }
 
 
