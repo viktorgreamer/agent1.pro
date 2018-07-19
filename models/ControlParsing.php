@@ -391,7 +391,7 @@ class ControlParsing extends \yii\db\ActiveRecord
             if (($options['id_session']) and ($options['id_session'] != $parsingController->id_session)) {
                 info(" UPDATE ID_SESSION",SUCCESS);
             }
-            if (($options['ip']) and ($options['id_session'] != $parsingController->ip)) {
+            if (($options['ip']) and ($options['ip'] != $parsingController->ip)) {
                 info(" UPDATE IP",SUCCESS);
             }
             $parsingController->date_check = time();

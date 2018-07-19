@@ -114,7 +114,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             ],
             'ip',
-            'error'
+            'id_session'
 
             // ['class' => 'yii\grid\ActionColumn'],
         ],
