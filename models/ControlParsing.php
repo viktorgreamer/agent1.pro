@@ -376,7 +376,7 @@ class ControlParsing extends \yii\db\ActiveRecord
             $parsingController->date_finish = time();
             $parsingController->status = $status;
             $parsingController->params = $error;
-            $parsingController->save();
+            if (!$parsingController->save()) my_var_dump($parsingController->errors);
             info("updatingTime&ClOSING",SUCCESS);
         }
 
@@ -396,7 +396,7 @@ class ControlParsing extends \yii\db\ActiveRecord
             }
             $parsingController->date_check = time();
             $parsingController->status = ControlParsing::ACTIVE;
-            $parsingController->save();
+           if (!$parsingController->save()) my_var_dump($parsingController->errors);
             info("updatingTime",SUCCESS);
         }
 
