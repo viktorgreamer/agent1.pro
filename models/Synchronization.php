@@ -539,8 +539,8 @@ class Synchronization extends Sale
             $active_item->original_date = time();
             // echo "<br>" . $parsing['url'] . " новый объект";
 
-            //  if (!$active_item->save()) my_var_dump($active_item->getErrors());
-            //  $active_item->setProccessingLog(Sale::NEW_ITEM);
+              if (!$active_item->save()) my_var_dump($active_item->getErrors());
+              $active_item->setProccessingLog(Sale::NEW_ITEM);
             //  Notifications::VKMessage($active_item->id);
 
             $return .= " NEW";
