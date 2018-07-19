@@ -789,6 +789,8 @@ class Control extends \yii\db\ActiveRecord
             Notifications::VKMessage(" ONE SERVER SESSIONS LIMIT");
             return false;
         }
+        ControlParsing::updatingTime($id_parsingController, ['id_session' => $driver->getSessionID(),'ip' => $driver->ip]);
+
         $cashed_items = Synchronization::getCachedCategory($config->id);
         $checked_ids = [];
         info(" THIS CATEGORY HAD " . count($cashed_items) . " ITEMS INSIDE YOURSELF", DANGER);
@@ -1286,6 +1288,8 @@ class Control extends \yii\db\ActiveRecord
             Notifications::VKMessage(" ONE SERVER SESSIONS LIMIT");
             return false;
         }
+        ControlParsing::updatingTime($id_parsingController, ['id_session' => $driver->getSessionID(),'ip' => $driver->ip]);
+
         $time_start = time();
 
         // обнуление счетчиков
@@ -1488,7 +1492,7 @@ class Control extends \yii\db\ActiveRecord
             return false;
         }
         $id_parsingController = ControlParsing::create($type, $sales, $driver->ip);
-
+        ControlParsing::updatingTime($id_parsingController, ['id_session' => $driver->getSessionID(),'ip' => $driver->ip]);
 
         // $driver->getMyIp();
 

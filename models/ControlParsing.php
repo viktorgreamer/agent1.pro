@@ -377,18 +377,27 @@ class ControlParsing extends \yii\db\ActiveRecord
             $parsingController->status = $status;
             $parsingController->params = $error;
             $parsingController->save();
+            info("updatingTime&ClOSING",SUCCESS);
         }
 
 
     }
 
-    public static function updatingTime($id)
+    public static function updatingTime($id,$options = [])
     {
         $parsingController = ControlParsing::findOne($id);
         if ($parsingController) {
+
+            if (($options['id_session']) and ($options['id_session'] != $parsingController->id_session)) {
+                info(" UPDATE ID_SESSION",SUCCESS);
+            }
+            if (($options['ip']) and ($options['id_session'] != $parsingController->ip)) {
+                info(" UPDATE IP",SUCCESS);
+            }
             $parsingController->date_check = time();
             $parsingController->status = ControlParsing::ACTIVE;
             $parsingController->save();
+            info("updatingTime",SUCCESS);
         }
 
 

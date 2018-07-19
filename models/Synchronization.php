@@ -446,6 +446,15 @@ class Synchronization extends Sale
 
             // делаем update
             $return = '';
+            // if DATESTART_UPDATED
+            if (!$active_item->TimeBetween($parsing['date_start'], 5000)) {
+                $log = [7, time(), date("d.m.y H:i:s", $active_item->date_start), date("d.m.y H:i:s", $parsing['date_start'])];
+                info(Sale::RenderOneLog($log));
+                $active_item->changingStatuses('DATESTART_UPDATED');
+                $return .= ' DATESTART_UPDATED';
+                $active_item->date_start = $parsing['date_start'];
+                $active_item->addLog($log);
+            }
             // если PRICE_CHANGED
             if (!$active_item->PriceBetween($parsing['price'], 5)) {
                 $log = [4, time(), $active_item->price, $parsing['price']];
@@ -457,17 +466,12 @@ class Synchronization extends Sale
 
             }
 
-
-            // значит ничего не изменилось
-
-
-            // TODO ОТМЕНИТЬ КОГДА ВСЕ СВЕРИМ
             // если ADDRESS_CHANGED
             if (trim($active_item->address_line) != $parsing['address_line']) {
                 if ($active_item->id_address) {
                     if ($address = Addresses::findOne($active_item->id_address)) {
                         $pattern = $address->getPattern();
-                       // info(" pattern = " . $pattern);
+                        // info(" pattern = " . $pattern);
                         if ($pattern) {
                             if (!preg_match($address->getPattern() . "iu", $parsing['address_line'], $output)) {
                                 $log = [Sale::ADDRESS_CHANGED, time(), trim($active_item->address_line), $parsing['address_line']];
@@ -501,14 +505,7 @@ class Synchronization extends Sale
                 $manual_save = true;
             }
 
-            if (!$active_item->TimeBetween($parsing['date_start'], 5000)) {
-                $log = [7, time(), date("d.m.y H:i:s", $active_item->date_start), date("d.m.y H:i:s", $parsing['date_start'])];
-                info(Sale::RenderOneLog($log));
-                $active_item->changingStatuses('DATESTART_UPDATED');
-                $return .= ' DATESTART_UPDATED';
-                $active_item->date_start = $parsing['date_start'];
-                $active_item->addLog($log);
-            }
+
             if (!preg_match("/PRICE_CHANGED|ADDRESS_CHANGED|DATESTART_UPDATED/", $return)) {
                 info($active_item->changingStatuses('THE_SAME'), PRIMARY);
                 $return .= ' THE_SAME';
