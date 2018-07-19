@@ -179,6 +179,10 @@ class Control extends \yii\db\ActiveRecord
 
                 if (!$module->parsing_status) {
                     info("PARSING IS NOT STOPPED");
+                    if ($agentpro->status_detailed_parsing) {
+                        if ($module->DetaledParsing(50) !== false) continue;
+                    }
+
                     if ($agentpro->status_parsingsync) {
                         if ($module->MyParsingSyncNewer() !== false) continue;
                     }
@@ -186,9 +190,6 @@ class Control extends \yii\db\ActiveRecord
                         if ($module->ParsingAvitoPhones1() !== false) continue;
                     }
 
-                    if ($agentpro->status_detailed_parsing) {
-                        if ($module->DetaledParsing(50) !== false) continue;
-                    }
                     if ($agentpro->status_parsing_new) {
                         if ($module->MyParsingNewNewer() !== false) continue;
                     }
@@ -1341,8 +1342,8 @@ class Control extends \yii\db\ActiveRecord
                 $countCheckedPageConfig = 0;
                 for ($page = ($config->success_stop + 1); $page <= $total_pages; $page++) {
                     $countCheckedPageConfig++;
-                    if ($countCheckedPageConfig > 3) {
-                        info("GOT PAGE NUMBER 3", DANGER);
+                    if ($countCheckedPageConfig > 9) {
+                        info("GOT PAGE NUMBER 9", DANGER);
                         break;
                     }
 
