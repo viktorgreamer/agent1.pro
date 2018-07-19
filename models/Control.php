@@ -232,8 +232,8 @@ class Control extends \yii\db\ActiveRecord
                 if ($agentpro->status_geocogetion) {
                     if ($module->geocodetion(100) !== false) continue;
                 }
-                if ($agentpro->status_processing) $module->processing(50);
                 if ($agentpro->status_similar_check) $module->similarCheck(50);
+                if ($agentpro->status_processing) $module->processing(50);
                 if ($agentpro->status_analizing) $module->load_sale_statistic(50);
                 if ($agentpro->status_sync) $module->Synchronisation(500);
 
