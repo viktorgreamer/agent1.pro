@@ -1300,6 +1300,7 @@ class Control extends \yii\db\ActiveRecord
 
         foreach ($configs as $config) {
             $cashed_items = Synchronization::getCachedCategory($config->id);
+            $checked_ids = [];
             info(" THIS CATEGORY HAD " . count($cashed_items) . " ITEMS INSIDE YOURSELF", DANGER);
 
             if ($config->id_sources == 1) {
