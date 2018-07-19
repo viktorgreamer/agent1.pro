@@ -143,7 +143,7 @@ use app\components\Mdb;
 
                         </div>
                         <div class="col-12">
-                            <?= Mdb::ActiveSelect($model, 'log',\app\models\SaleLog::mapTypes()) ?>
+                            <?= Mdb::ActiveSelect($model, 'log',[ 0 => "ANY"] + \app\models\SaleLog::mapTypes()) ?>
 
                         </div>
                     </div>

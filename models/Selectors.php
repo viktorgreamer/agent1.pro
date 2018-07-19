@@ -95,6 +95,8 @@ class Selectors extends \yii\db\ActiveRecord
 
             }
             Selectors::setSelectors(Selectors::TYPE_TABLE, $id_source);
+        } else {
+            info("THE CONTAINER NOT FOUND", DANGER);
         }
 
 
@@ -155,173 +157,185 @@ class Selectors extends \yii\db\ActiveRecord
     }
 
 
-
-
-
     public function check($pageSource)
     {
+        $patterns = preg_split("/<--OR-->/", $this->pattern);
+        foreach ($patterns as $pattern) {
+            $pattern = "/" . $pattern . "/isU";
 
-        $pattern = "/" . $this->pattern . "/isU";
-        echo span(htmlspecialchars("pattern = " . $pattern));
-        if ($this->count == 2) {
-            if (preg_match_all($pattern, $pageSource, $output_array)) {
-                if (count($output_array[1]) > 1) {
-                    my_var_dump($output_array);
-                    info("SELECTOR EXISTS IN COUNT " . count($output_array[1]), 'success');
-                    $this->selector = $output_array[1][0];
-                    if (!$this->save()) my_var_dump($this->errors);
-                    return true;
+            echo span(htmlspecialchars("pattern = " . $pattern));
+            if ($this->count == 2) {
+                if (preg_match_all($pattern, $pageSource, $output_array)) {
+                    if (count($output_array[1]) > 1) {
+                        my_var_dump($output_array);
+                        info("SELECTOR EXISTS IN COUNT " . count($output_array[1]), 'success');
+                        $this->selector = $output_array[1][0];
+                        if (!$this->save()) my_var_dump($this->errors);
+                        return true;
+
+                    }
+                    //  return $output_array[1];
+                } else {
+
 
                 }
-                //  return $output_array[1];
-            } else {
-                info("SELECTOR DO NOT EXIST " . $this->error->name, 'danger');
-                self::throwError($this->error, $pageSource);
+            } elseif ($this->count == 1) {
+                if (preg_match_all($pattern, $pageSource, $output_array)) {
+                    if (count($output_array[1]) == 1) {
+                        my_var_dump($output_array[1]);
+                        info("SELECTOR EXISTS IN COUNT" . count($output_array[1]), 'success');
+                        $this->selector = $output_array[1][0];
+                        if (!$this->save()) my_var_dump($this->errors);
+                        return true;
 
-                $this->selector = "____ERROR____";
-                if (!$this->save()) my_var_dump($this->errors);
-
-            }
-        } elseif ($this->count == 1) {
-            if (preg_match_all($pattern, $pageSource, $output_array)) {
-                if (count($output_array[1]) == 1) {
-                    my_var_dump($output_array[1]);
-                    info("SELECTOR EXISTS IN COUNT" . count($output_array[1]), 'success');
-                    $this->selector = $output_array[1][0];
-                    if (!$this->save()) my_var_dump($this->errors);
-                    return true;
-
+                    } else {
+                    //    my_var_dump($output_array[1]);
+                    //    info("SELECTOR DO NOT EXIST", 'danger');
+                    }
                 } else {
-                  //  my_var_dump($output_array[1]);
                     info("SELECTOR DO NOT EXIST", 'danger');
-                }
-            } else {
-                info("SELECTOR DO NOT EXIST", 'danger');
-                self::throwError($this->error, $pageSource);
-                $this->selector = "____ERROR____";
-                if (!$this->save()) my_var_dump($this->errors);
-            }
-        } elseif ($this->count == Selectors::SELECTOR_CIAN_10) {
-            if (preg_match_all($pattern, $pageSource, $output_array)) {
-                if (count($output_array[1]) == 2) {
-                   // my_var_dump($output_array);
-                    info("SELECTOR EXISTS IN COUNT  " . count($output_array[1]), 'success');
-                    $this->selector = $output_array[1][0];
+                    self::throwError($this->error, $pageSource);
+                    $this->selector = "____ERROR____";
                     if (!$this->save()) my_var_dump($this->errors);
-                    return true;
+                }
+            } elseif ($this->count == Selectors::SELECTOR_CIAN_10) {
+                if (preg_match_all($pattern, $pageSource, $output_array)) {
+                    if (count($output_array[1]) == 2) {
+                        // my_var_dump($output_array);
+                        info("SELECTOR EXISTS IN COUNT  " . count($output_array[1]), 'success');
+                        $this->selector = $output_array[1][0];
+                        if (!$this->save()) my_var_dump($this->errors);
+                        return true;
 
+                    } else {
+                        // my_var_dump($output_array);
+                       // info("SELECTOR DO NOT EXIST", 'danger');
+                    }
                 } else {
+            /*        info("SELECTOR DO NOT EXIST", 'danger');
+                    self::throwError($this->error, $pageSource);
+                    $this->selector = "____ERROR____";
+                    if (!$this->save()) my_var_dump($this->errors);*/
+                }
+            } elseif ($this->count == Selectors::SELECTOR_CIAN_11) {
+                if (preg_match_all($pattern, $pageSource, $output_array)) {
                     // my_var_dump($output_array);
-                    info("SELECTOR DO NOT EXIST", 'danger');
+                    info("SELECTOR EXISTS IN COUNT " . count($output_array[1]), 'success');
+                    $this->selector = $output_array[1][1];
+                    if (!$this->save()) my_var_dump($this->errors);
+                    return true;
+
+                } else {
+                   /* info("SELECTOR DO NOT EXIST", 'danger');
+                    self::throwError($this->error, $pageSource);
+                    $this->selector = "____ERROR____";
+                    if (!$this->save()) my_var_dump($this->errors);*/
                 }
-            } else {
-                info("SELECTOR DO NOT EXIST", 'danger');
-                self::throwError($this->error, $pageSource);
-                $this->selector = "____ERROR____";
-                if (!$this->save()) my_var_dump($this->errors);
-            }
-        } elseif ($this->count == Selectors::SELECTOR_CIAN_11) {
-            if (preg_match_all($pattern, $pageSource, $output_array)) {
-               // my_var_dump($output_array);
-                info("SELECTOR EXISTS IN COUNT " . count($output_array[1]), 'success');
-                $this->selector = $output_array[1][1];
-                if (!$this->save()) my_var_dump($this->errors);
-                return true;
+            } elseif ($this->count == Selectors::SELECTOR_YANDEX_00) {
+                if (preg_match_all($pattern, $pageSource, $output_array)) {
+                    my_var_dump($output_array[0][0]);
+                    info("SELECTOR EXISTS IN COUNT " . count($output_array[1]), 'success');
+                    $this->selector = $output_array[0][0];
+                    if (!$this->save()) my_var_dump($this->errors);
+                    return true;
 
-            } else {
-                info("SELECTOR DO NOT EXIST", 'danger');
-                self::throwError($this->error, $pageSource);
-                $this->selector = "____ERROR____";
-                if (!$this->save()) my_var_dump($this->errors);
+                } else {
+                 /*   info("SELECTOR DO NOT EXIST", 'danger');
+                    self::throwError($this->error, $pageSource);
+                    $this->selector = "____ERROR____";
+                    if (!$this->save()) my_var_dump($this->errors);*/
+                }
             }
-         } elseif ($this->count == Selectors::SELECTOR_YANDEX_00) {
-            if (preg_match_all($pattern, $pageSource, $output_array)) {
-                my_var_dump($output_array[0][0]);
-                info("SELECTOR EXISTS IN COUNT " . count($output_array[1]), 'success');
-                $this->selector = $output_array[0][0];
-                if (!$this->save()) my_var_dump($this->errors);
-                return true;
 
-            } else {
-                info("SELECTOR DO NOT EXIST", 'danger');
-                self::throwError($this->error, $pageSource);
-                $this->selector = "____ERROR____";
-                if (!$this->save()) my_var_dump($this->errors);
-            }
+
+        }
+
+        if (!$this->selector) {
+            info("SELECTOR DO NOT EXIST " . $this->error->name, 'danger');
+            self::throwError($this->error, $pageSource);
+
+            $this->selector = "____ERROR____";
+            if (!$this->save()) my_var_dump($this->errors);
+            return false;
+        }
+    }
+
+        // перехват нерабочих страниц
+
+        public
+        static function throwError($error, $pageSource, $options = [])
+        {
+            $ip = \Yii::$app->params['ip'];
+            $time = str2url(date("Y-m-d H:i:s"));
+            $dir = Yii::getAlias('@app');
+            file_put_contents($dir . "/web/errors/" . $ip . "_" . $time . "_error_" . $error->name . ".html", $pageSource);
+            AgentPro::throwError($error);
         }
 
 
+        /**
+         * @inheritdoc
+         */
+        public
+        function rules()
+        {
+            return [
+                [['id_sources', 'type', 'pattern', 'count', 'id_error'], 'required'],
+                [['id_sources', 'type', 'count', 'id_error', 'id_parent'], 'integer'],
+                [['pattern', 'alias', 'selector'], 'string', 'max' => 256],
+            ];
+        }
+
+        public
+        static function findByAlias($alias)
+        {
+            return self::find()->where(['alias' => $alias])->one();
+        }
+
+        public
+        static function setSelectors($type, $id_source)
+        {
+            Yii::$app->cache->set("SELECTORS_" . $type . "_" . $id_source,
+                ArrayHelper::map(Selectors::find()
+                    ->where(['id_sources' => $id_source])
+                    ->andWhere(['type' => $type])
+                    ->indexBy('alias')->asArray()
+                    ->all(), 'alias', 'selector'), 10000);
+        }
+
+
+        public
+        static function getSelectors($type, $id_source)
+        {
+            //$selectors = Yii::$app->cache->get("SELECTORS_" . $type . "_" . $id_source);
+            if (!$selectors) {
+                self::setSelectors($type, $id_source);
+                $selectors = Yii::$app->cache->get("SELECTORS_" . $type . "_" . $id_source);
+            };
+
+            return $selectors;
+        }
+
+        public
+        function getError()
+        {
+            return $this->hasOne(Errors::className(), ['id' => 'id_error']);
+        }
+
+        /**
+         * @inheritdoc
+         */
+        public
+        function attributeLabels()
+        {
+            return [
+                'id' => 'ID',
+                'id_sources' => 'Source',
+                'id_parent' => 'Parent',
+                'type' => 'Type',
+                'pattern' => 'Pattern',
+                'count' => 'count',
+                'id_error' => 'Error',
+            ];
+        }
     }
-
-    // перехват нерабочих страниц
-
-    public static function throwError($error, $pageSource,$options = [])
-    {
-        $ip = \Yii::$app->params['ip'];
-        $time = str2url(date("Y-m-d H:i:s"));
-        $dir = Yii::getAlias('@app');
-        file_put_contents($dir."/web/errors/".$ip."_".$time."_error_" . $error->name . ".html", $pageSource);
-        AgentPro::throwError($error);
-    }
-
-
-    /**
-     * @inheritdoc
-     */
-    public function rules()
-    {
-        return [
-            [['id_sources', 'type', 'pattern', 'count', 'id_error'], 'required'],
-            [['id_sources', 'type', 'count', 'id_error', 'id_parent'], 'integer'],
-            [['pattern', 'alias', 'selector'], 'string', 'max' => 256],
-        ];
-    }
-
-    public static function findByAlias($alias)
-    {
-        return self::find()->where(['alias' => $alias])->one();
-    }
-
-    public static function setSelectors($type, $id_source)
-    {
-        Yii::$app->cache->set("SELECTORS_" . $type . "_" . $id_source,
-            ArrayHelper::map(Selectors::find()
-                ->where(['id_sources' => $id_source])
-                ->andWhere(['type' => $type])
-                ->indexBy('alias')->asArray()
-                ->all(), 'alias', 'selector'), 10000);
-    }
-
-
-    public static function getSelectors($type, $id_source)
-    {
-        //$selectors = Yii::$app->cache->get("SELECTORS_" . $type . "_" . $id_source);
-        if (!$selectors) {
-            self::setSelectors($type, $id_source);
-            $selectors = Yii::$app->cache->get("SELECTORS_" . $type . "_" . $id_source);
-        };
-
-        return $selectors;
-    }
-
-    public function getError()
-    {
-        return $this->hasOne(Errors::className(), ['id' => 'id_error']);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'id_sources' => 'Source',
-            'id_parent' => 'Parent',
-            'type' => 'Type',
-            'pattern' => 'Pattern',
-            'count' => 'count',
-            'id_error' => 'Error',
-        ];
-    }
-}

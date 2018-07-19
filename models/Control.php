@@ -168,26 +168,6 @@ class Control extends \yii\db\ActiveRecord
             \Yii::$app->params['module'] = $module;
 
             if ($module->status != 9) {
-//                $last_check_controlparsing = time() - $module->last_check_controlparsing;
-//                info(" LAST CHECK CONTROL PARSING " . $last_check_controlparsing . " sec ago");
-//                if ($last_check_controlparsing > 20 * 60) {
-//                    info(" 20 minutes lost... ");
-//                    $module->last_check_controlparsing = time();
-//                    if ($module->ParsingControl() == 3) {
-//                        if ($module->parsing_status == 1) {
-//                            info("START_PARSING");
-//                            $module->parsing_status = 0;
-//                            Yii::$app->mailer->compose()
-//                                ->setTo('an.viktory@gmail.com')
-//                                ->setFrom(['viktorgreamer1@yandex.ru' => 'agent1.pro'])
-//                                ->setSubject("START_PARSING")
-//                                ->setTextBody("START_PARSING")
-//                                ->send();
-//
-//                        }
-//                    }
-//                    $module->save();
-//                }
                 $module->setPrefixies($module->region);
                 // удаляем сброшенные контроллеры
                 ControlParsing::deleteMissedControllers(60);
@@ -486,14 +466,11 @@ class Control extends \yii\db\ActiveRecord
             }
             $sale = Synchronization::findOne($sale->id);
             // изменилась только цена то обработку на телефон и похожие вариенты не проводим
-            if ($sale->status != 4) {
+            if ($sale->status == Sale::NEW_ITEM) {
                 $sale->checkForAgents();
                 $sale->setProccessingLog(Sale::CHECK_FOR_AGENTS);
-                // $sale->similarCheckNewer();
-
-                // $sale->getSimilar_ids();
             }
-            //   $sale->AutoLoadTags();
+
             $sale->SalefiltersCheck();
             $sale->setProccessingLog(Sale::SALEFILTER_CHECKED);
             $sale->changingStatuses('PROCESSED');
@@ -1683,6 +1660,7 @@ class Control extends \yii\db\ActiveRecord
                 {
                     $query = Synchronization::find()
                         ->where(['id_similar' => 0]);
+                    $query->andWhere(['parsed' => Sale::DONE]);
                     // удаляем критически занятые id
                     $query->andFilterWhere(['not in', 'id', ControlParsing::getBusyIds($type)]);
                     $objects = $query->limit($limit)->all();
@@ -2162,6 +2140,8 @@ class Control extends \yii\db\ActiveRecord
                     $sale->save();
                 }
                 $sync->changingStatuses('SYNC');
+                $sync->setProccessingLog(Sale::SYNC_UP);
+
                 $sync->save();
             }
             ControlParsing::updating($id_parsingController);
@@ -2190,6 +2170,8 @@ class Control extends \yii\db\ActiveRecord
 
             }
             $sync->changingStatuses('SYNC');
+            $sync->setProccessingLog(Sale::SYNC_UP);
+
             $sync->save();
         }
         ControlParsing::updating($id_parsingController);

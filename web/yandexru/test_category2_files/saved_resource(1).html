@@ -1,0 +1,105 @@
+
+<!-- saved from url=(0072)https://realty.yandex.ru/moskva/kupit/kvartira/odnokomnatnaya/?rgid=1833 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><script onerror="window.onPrepareCodeError()" charset="utf-8" src="./prepareCode"></script><!--1.0.4 - 233-06042016-01-->
+<script type="text/javascript">
+(function(URLs) {
+	for (var i = 0; i < URLs.length && URLs[i]; i++) {
+		if (!URLs[i].match(/adfox\.ru\/transparent\.gif$/)) {
+			(function(url, img) {
+				img.src = url;
+			})(URLs[i], new Image());
+		}
+	}
+})('https://banners.adfox.ru/transparent.gif|https://wcm.solution.weborama.fr/fcgi-bin/dispatch.fcgi?a.A=im&a.si=2956&a.te=14372&a.he=1&a.wi=1&a.hr=p&a.ra=%aw_random%'.split('|'));
+
+    (function() {
+        var 
+            _pr1 = 3602950396 || 1658688609,
+            _async = !!3602950396,
+            _win = (3602950396?parent:window),
+            _width = ('300'.indexOf('%')!=-1?'300':parseInt('300')+'px'),
+            _height = ('300'.indexOf('%')!=-1?'300':parseInt('300')+'px'),
+            _clientStyle = '',
+            _doc = _win.document,
+            _container = null;
+
+        if (!_async) {
+            _doc.write('<div id="adfoxHtml5_pseudoPlaceholder_' + _pr1 + '">\n');
+            _doc.write('    <iframe id="adfoxHtml5_iframe_' + _pr1 + '" marginwidth="0" marginheight="0" scrolling="no" frameborder="0"></iframe>\n');
+            _doc.write('</div>\n');
+        } else {
+            _doc.getElementById('AdFox_banner_' + _pr1).innerHTML='<iframe id="adfoxHtml5_iframe_' + _pr1 + '" marginwidth="0" marginheight="0" scrolling="no" frameborder="0"></iframe>';
+        }
+
+        _container = _doc.getElementById('adfoxHtml5_iframe_' + _pr1);
+        _container.style.cssText = 'width: 1px;min-width:100%; height: '+_height+';';
+        _container.parentNode.style.cssText = 'width: ' + _width + '; height: ' + _height + '; position: relative;' + _clientStyle;
+    })();
+</script>
+</head><body>
+<script type="text/javascript">
+    (function(){
+        var
+            _htmlContainer = document.getElementById('adfoxHtml5_s_tempContainer_1658688609'),
+            _pr1 = 3602950396 || 1658688609,
+            _async = !!3602950396,
+            _win = (_async?parent:window),
+            _interval,
+            win = null,
+            doc = null;
+
+        function checkRemoveFrame() {
+            var checkWin = false;
+            try {
+                if (document.all && !window.opera) {
+                    checkWin = _win.frames['adfoxHtml5_iframe_'+_pr1];
+                } else if (document.getElementById) {
+                    checkWin = _win.document.getElementById('adfoxHtml5_iframe_'+_pr1).contentWindow;
+                }
+            } catch (e) {}
+            if (checkWin == win || checkWin===false) {
+                return;
+            }
+            _win.eval('(new Image()).src = \'https://ads.adfox.ru/243420/event?hash=1e22286e1acc7d07&pm=be&sj=Q_ELB90Ou1qFnMgBsLn3iZmSXCol4-Qt-HPl6lehx6PEGm-9msq6WMi0nCIrrb8DbIGjBUhiWyemWZTPvy6Xr7lwtEvEKF5h_NN7jZRHBw%3D%3D&p5=ejwej&p1=bvxyp&pr=jewqeso&ytt=3621&rand=bxdqnwo&rqs=MhzVHwMAAACcYVBb9EHZiL8ijrq03tko&lts=eyymaci&ylv=0.908&ad-session-id=673711531994522900&p2=fhwz&ybv=0.908&utg=oxum&htmlRnd=\' + Math.random();');
+            writeHTML();
+        }
+
+        function writeHTML() {
+            try {
+                if (document.all && !window.opera) {
+                    win = _win.frames['adfoxHtml5_iframe_'+_pr1];
+                } else if (document.getElementById) {
+                    win = _win.document.getElementById('adfoxHtml5_iframe_'+_pr1).contentWindow;
+                }
+                doc = win.document;
+            } catch (e) {}
+
+            if (doc.readyState !== 'complete' && doc.readyState !== 'interactive') {
+                _win.setTimeout(writeHTML, 50);
+                return;
+            }
+
+            doc.write(_htmlContainer.value.replace(/<\\\/textarea>/g, '</textarea>'));
+            win.setTimeout(function() {doc.close()}, 10);
+            _win.clearInterval(_interval);
+            _interval = _win.setInterval(checkRemoveFrame, 150);
+        }
+        writeHTML();
+        _htmlContainer.parentNode.removeChild(_htmlContainer);
+
+        if (_async) {
+            self.adfoxRemoveBanner = function() {
+                _win.clearInterval(_interval);
+                _win.eval(''+
+                    '(function() {\n'+
+                    '    var _iframe = document.getElementById(\'AdFox_iframe_3602950396\'),\n'+
+                    '        _parent = _iframe.parentNode;\n'+
+                    '    _parent.removeChild(_iframe);\n'+
+                    '    _parent.appendChild(_iframe);\n'+
+                    '})()'+
+                '');
+            }
+            setTimeout(function() {document.close()}, 10);
+        }
+    })();
+</script><script>if(window.onPrepareCodeLoad){window.onPrepareCodeLoad()}</script></body></html>

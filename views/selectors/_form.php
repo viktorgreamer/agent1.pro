@@ -29,7 +29,7 @@ use app\models\Sources;
             <?= $form->field($model, 'id_parent')->dropDownList([0 => 'NO' ] + \app\models\Selectors::getParents(), ['class' => 'mdb-select']) ?>
         </div>
         <div class="col-lg-4">
-            <?= $form->field($model, 'pattern')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'pattern')->textarea(['maxlength' => true]) ?>
         </div>
         <div class="col-lg-6">
             <?= $form->field($model, 'alias')->textInput(['maxlength' => true]) ?>

@@ -103,6 +103,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 }
             ],
+ [
+                'label' => 'log',
+                'format' => 'raw',
+                'value' => function ($model) {
+
+                    return $model->RenderLog();
+
+                }
+            ],
 
             [
                 'label' => "admin",

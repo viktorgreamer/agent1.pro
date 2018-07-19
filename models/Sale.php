@@ -84,6 +84,12 @@ class Sale extends \yii\db\ActiveRecord
     const MODERATED = 17;
     const PROCESSED = 18;
 
+    // STOP READY DONE STATUSES
+    const STOP = 1;
+    const READY = 2;
+    const DONE = 3;
+
+
 
     public static function mapProcessingLogs()
     {
@@ -428,7 +434,7 @@ class Sale extends \yii\db\ActiveRecord
     public function RenderLog()
 
     {
-        $logs = $this->getLogs()->all();
+        $logs = $this->getLogs()->orderBy('date')->all();
         $body = '';
         if ($logs) {
             foreach ($logs as $log) {
@@ -440,7 +446,7 @@ class Sale extends \yii\db\ActiveRecord
     public function RenderProcessingLog()
 
     {
-        $logs = $this->getPlogs()->all();
+        $logs = $this->getPlogs()->orderBy('time')->all();
         $body = '';
         if ($logs) {
             foreach ($logs as $log) {
@@ -525,7 +531,6 @@ class Sale extends \yii\db\ActiveRecord
                 {
                     // info("синхронизируемся", 'info');
                     $this->sync = 3;
-                    $this->setProccessingLog(self::SYNC_UP);
 
                     break;
                 }
@@ -542,13 +547,13 @@ class Sale extends \yii\db\ActiveRecord
             case "ADDRESS_CHANGED" :
                 {
                     // info("ADDRESS_CHANGED", 'primery');
-                    $this->status = 5;
-                    $this->parsed = 2;
-                    $this->load_analized = 1;
-                    $this->geocodated = 5;
-                    $this->processed = 1;
-                    $this->sync = 1;
-                    $this->moderated = 1;
+                    $this->status = self::ADDRESS_CHANGED;
+                    $this->parsed = self::READY;
+                    $this->load_analized = self::STOP;
+                    $this->geocodated = Geocodetion::STOP;
+                    $this->processed = self::STOP;
+                    $this->sync = self::STOP;
+                    $this->moderated = self::STOP;
                     if (in_array($this->disactive, [1, 2])) {
                         $log = [9, time(), '', ''];
                         $this->addLog($log);
@@ -574,7 +579,7 @@ class Sale extends \yii\db\ActiveRecord
             case "PRICE_CHANGED" :
                 {
                     //  info("PRICE_CHANGED", 'primery');
-                    if ($this->status != 5) {
+                    if ($this->status != self::ADDRESS_CHANGED) {
                         if (in_array($this->disactive, [1, 2])) {
                             $log = [9, time(), '', ''];
                             $this->addLog($log);
@@ -582,10 +587,10 @@ class Sale extends \yii\db\ActiveRecord
                             $this->setProccessingLog(self::REINCARNED);
 
                         }
-                        $this->status = 4;
-                        $this->processed = 2;
+                        $this->status = self::PRICE_CHANGED;
+                        $this->processed = self::READY;
                     }
-                    $this->sync = 1;
+                    $this->sync = self::STOP;
                     $this->setProccessingLog(self::PRICE_CHANGED);
 
                     return "PRICE_CHANGED";

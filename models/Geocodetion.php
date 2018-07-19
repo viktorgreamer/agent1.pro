@@ -46,6 +46,8 @@ class Geocodetion extends Model
     public $log;
     const ERROR = 9;
 
+    const STOP = 5;
+
     const GEOCODATED_STATUS_ARRAY = [
         0 => 'NO GEOCODATION',
         1 => 'FULL EXACT',
