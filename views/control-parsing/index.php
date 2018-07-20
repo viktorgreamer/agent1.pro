@@ -30,10 +30,23 @@ $this->params['breadcrumbs'][] = $this->title;
             // ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'module',
-            'server',
-            'date_start:time',
-            'date_check:time',
+            [
+                'label' => 'set',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return $model->module
+                        ."<hr style='margin-top: 0px;margin-bottom: 0px;'>".$model->server
+                        ."<hr style='margin-top: 0px;margin-bottom: 0px;'>".$model->id_session
+                        ."<hr style='margin-top: 0px;margin-bottom: 0px;'>".$model->ip;
+                }
+            ], [
+                'label' => 'timing',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return Yii::$app->formatter->asRelativeTime($model->date_start)
+                        ."<br>".Yii::$app->formatter->asRelativeTime($model->date_check);
+                }
+            ],
             [
                 'label' => 'type',
                 'format' => 'raw',
@@ -113,8 +126,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
 
             ],
-            'ip',
-            'id_session'
 
             // ['class' => 'yii\grid\ActionColumn'],
         ],

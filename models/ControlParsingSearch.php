@@ -71,7 +71,7 @@ class ControlParsingSearch extends ControlParsing
         if ($this->status)  $query->andFilterWhere(['in', 'status', $this->status]);
         if ($this->server)  $query->andFilterWhere(['server' => $this->server]);
         if ($this->type)  $query->andFilterWhere(['in', 'type', $this->type]);
-        $query->orderBy(['id' => SORT_DESC]);
+        $query->orderBy(['date_check' => SORT_DESC]);
         return $dataProvider;
     }
 }

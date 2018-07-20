@@ -851,7 +851,7 @@ class Control extends \yii\db\ActiveRecord
                     // формируем ссылку по правилам для данной конфигурации в зависимости от текущей страницы
                     $url = ParsingConfiguration::RuleOfUrl($config, $page);
                     info(" GETTING PAGE '" . $url . "'");
-                    $driver->get($url);
+                    $driver->getWithCookies($url);
                     // ждем на странице какое-то время имитируя пользователя
                     $config->sleeping();
 
@@ -1319,7 +1319,7 @@ class Control extends \yii\db\ActiveRecord
 
             // echo "<br> next link = <a href='" . ParsingConfiguration::RuleOfUrl($config, $config->success_stop + 1) . "'> " . ParsingConfiguration::RuleOfUrl($config, $config->success_stop + 1) . " </a>";
             // открываем ссылку ( если нет открывается то выходим)
-            $driver->get($config->start_link);
+            $driver->getWithCookies($config->start_link);
             $pageSource = $driver->getPageSource();
 
             // проводим проверку селекторов
