@@ -62,6 +62,11 @@ class YandexController extends \yii\web\Controller
         } else {
 
         }
+        $SELECTORS = \Yii::$app->params['selectors'];
+
+        my_var_dump($SELECTORS);
+       info("YANDEX_TABLE_CONTAINER_DIV_CLASS = ".$SELECTORS['YANDEX_TABLE_CONTAINER_DIV_CLASS']);
+
 
 
         Selectors::loadStatClasses($pageSource, $id_source);
@@ -87,6 +92,8 @@ class YandexController extends \yii\web\Controller
 
         return $this->render('index');
     }
+
+
 
 
 }

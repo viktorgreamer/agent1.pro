@@ -67,7 +67,8 @@ class ParsingSync extends Model
     public function extractTabledYandex($pq_div)
     {
 
-        $selectors = Selectors::getSelectors(Selectors::TYPE_TABLE, YANDEX_ID_SOURCE);
+        $selectors = \Yii::$app->params['selectors'];
+
         // my_var_dump($selectors);
         $this->title = $pq_div->find("a." . $selectors['YANDEX_TABLE_TITLE_DIV_CLASS'])->text();
         $div_prices = $pq_div->find("div." . $selectors['YANDEX_TABLE_PRICE_DIV_CLASS'])->text();
@@ -113,7 +114,8 @@ class ParsingSync extends Model
     public function extractTabledIrr($pq_div)
     {
 
-        $selectors = Selectors::getSelectors(Selectors::TYPE_TABLE, IRR_ID_SOURCE);
+        $selectors = \Yii::$app->params['selectors'];
+
         // my_var_dump($selectors);
         $this->title = $pq_div->find("div." . $selectors['IRR_TABLE_TITLE_DIV_CLASS'])->text();
         $this->price = preg_replace("/\D+/", "", $pq_div->find("div." . $selectors['IRR_TABLE_PRICE_DIV_CLASS'])->text());
@@ -141,7 +143,8 @@ class ParsingSync extends Model
     public function extractTabledCian($pq_div)
     {
 
-        $selectors = Selectors::getSelectors(Selectors::TYPE_TABLE, CIAN_ID_SOURCE);
+        $selectors = \Yii::$app->params['selectors'];
+
         //  my_var_dump($selectors);
 
         //  echo "<br>\$title_div_class=" . "div." . $title_div_class;
@@ -184,7 +187,7 @@ class ParsingSync extends Model
     public function extractTabledAvito($pq_div)
     {
 
-        $selectors = Selectors::getSelectors(Selectors::TYPE_TABLE, AVITO_ID_SOURCE);
+        $selectors = \Yii::$app->params['selectors'];
         //    my_var_dump($selectors);
 
 

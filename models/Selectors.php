@@ -42,6 +42,16 @@ class Selectors extends \yii\db\ActiveRecord
         ];
     }
 
+    public function setToRam() {
+       if (!($selectors = Yii::$app->params['selectors'])) {
+           $selectors = [];
+       }
+           $selectors[$this->alias] = $this->selector;
+           Yii::$app->params['selectors'] = $selectors;
+
+
+    }
+
     public static function getParents()
     {
         return ArrayHelper::map(Selectors::find()->where(['type' => self::TYPE_TABLE_CONTAINER])->all(), 'id', 'alias');
@@ -170,6 +180,7 @@ class Selectors extends \yii\db\ActiveRecord
                         my_var_dump($output_array);
                         info("SELECTOR EXISTS IN COUNT " . count($output_array[1]), 'success');
                         $this->selector = $output_array[1][0];
+                        $this->setToRam();
                         if (!$this->save()) my_var_dump($this->errors);
                         return true;
 
@@ -185,6 +196,7 @@ class Selectors extends \yii\db\ActiveRecord
                         my_var_dump($output_array[1]);
                         info("SELECTOR EXISTS IN COUNT" . count($output_array[1]), 'success');
                         $this->selector = $output_array[1][0];
+                        $this->setToRam();
                         if (!$this->save()) my_var_dump($this->errors);
                         return true;
 
@@ -204,6 +216,7 @@ class Selectors extends \yii\db\ActiveRecord
                         // my_var_dump($output_array);
                         info("SELECTOR EXISTS IN COUNT  " . count($output_array[1]), 'success');
                         $this->selector = $output_array[1][0];
+                        $this->setToRam();
                         if (!$this->save()) my_var_dump($this->errors);
                         return true;
 
@@ -222,6 +235,7 @@ class Selectors extends \yii\db\ActiveRecord
                     // my_var_dump($output_array);
                     info("SELECTOR EXISTS IN COUNT " . count($output_array[1]), 'success');
                     $this->selector = $output_array[1][1];
+                    $this->setToRam();
                     if (!$this->save()) my_var_dump($this->errors);
                     return true;
 
@@ -236,6 +250,7 @@ class Selectors extends \yii\db\ActiveRecord
                     my_var_dump($output_array[0][0]);
                     info("SELECTOR EXISTS IN COUNT " . count($output_array[1]), 'success');
                     $this->selector = $output_array[0][0];
+                    $this->setToRam();
                     if (!$this->save()) my_var_dump($this->errors);
                     return true;
 
