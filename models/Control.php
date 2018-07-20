@@ -179,15 +179,16 @@ class Control extends \yii\db\ActiveRecord
 
                 if (!$module->parsing_status) {
                     info("PARSING IS NOT STOPPED");
+                    if ($agentpro->status_parsing_avito_phones) {
+                        if ($module->ParsingAvitoPhones1() !== false) continue;
+                    }
+
                     if ($agentpro->status_detailed_parsing) {
                         if ($module->DetaledParsing(50) !== false) continue;
                     }
 
                     if ($agentpro->status_parsingsync) {
                         if ($module->MyParsingSyncNewer() !== false) continue;
-                    }
-                    if ($agentpro->status_parsing_avito_phones) {
-                        if ($module->ParsingAvitoPhones1() !== false) continue;
                     }
 
                     if ($agentpro->status_parsing_new) {
@@ -1936,19 +1937,23 @@ class Control extends \yii\db\ActiveRecord
         $type = self::P_APHONES;
         $time_start = time();
         // берем объекты
-        $sales = $this->getREADY($type, 5);
+        $sales = $this->getREADY($type, 20);
         if (!$sales) return false;
         $id_parsingController = ControlParsing::create($type, $sales);
-        if ($proxy = Proxy::find()->where(['status' => 1])->orderBy('time')->one()) {
-            info(" PROXY " . $proxy->fulladdress . " WAS USED " . Yii::$app->formatter->asRelativeTime($proxy->time), SUCCESS);
-            $proxy->time = time();
-            $proxy->save();
-            \Yii::$app->params['ip'] = $proxy->fulladdress;
-        };
+
 
 
         // $sales = [];
-        foreach ($sales as $sale) {
+        foreach ($sales as $key => $sale) {
+            if ($key % 5 == 0) {
+                ControlParsing::updatingTime($id_parsingController);
+                if ($proxy = Proxy::find()->where(['status' => 1])->orderBy('time')->one()) {
+                    info(" PROXY " . $proxy->fulladdress . " WAS USED " . Yii::$app->formatter->asRelativeTime($proxy->time), SUCCESS);
+                    $proxy->time = time();
+                    $proxy->save();
+                    \Yii::$app->params['ip'] = $proxy->fulladdress;
+                };
+            }
             // открываем ссылку ( если нет открывается то выходим)
 
             $url = $sale->url;
@@ -1997,10 +2002,12 @@ class Control extends \yii\db\ActiveRecord
             } else {
                 $error = Errors::findOne(AVITO_CANNOT_FIND_PHONEBUTTON_DIV_CLASS);
                 if (!$response) $response = "THE RESPONSE IS EMPTY";
+                info("single-item-details".$response->find(".single-item-details")->eq(0)->html());
                 AgentPro::throwError($error, $response);
                 $counterERROR++;
                 info(" DELETING THE ITEM", DANGER);
-                $sale->delete();
+                $sale->disactive = Sale::BROKEN_AVITO_PHONES;
+                $sale->save();
                 continue;
 
             }

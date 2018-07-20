@@ -12,6 +12,9 @@ use app\models\Sessions;
 use app\models\WdCookies;
 use app\utils\MyCurl;
 use Facebook\WebDriver\Cookie;
+use Facebook\WebDriver\Exception\NoSuchElementException;
+use Facebook\WebDriver\Exception\WebDriverCurlException;
+use Facebook\WebDriver\WebDriverBy;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -31,6 +34,27 @@ class WebdriverController extends \yii\web\Controller
 
         // $driver->get('https://yandex.ru/internet/');
 
+        return $this->render('index');
+    }
+
+    public function actionTestCurlPostExceptions()
+    {
+        AgentPro::getActive();
+        $driver = MyChromeDriver::Open();
+        info("IP=" . $driver->ip);
+
+        $driver->get('https://yandex.ru/internet/');
+        try {
+            $driver->findElement(WebDriverBy::className("promo-button_js_i_nited"))->click();
+        } catch (\Exception $exception) {
+            if ($exception instanceof NoSuchElementException) {
+                info("NoSuchElementException");
+            }
+            if ($exception instanceof WebDriverCurlException) {
+                info("WebDriverCurlException");
+            }
+         //   my_var_dump($exception);
+        }
         return $this->render('index');
     }
 
@@ -119,44 +143,44 @@ class WebdriverController extends \yii\web\Controller
 
     public function actionErrorControl()
     {
-      /*  $interval = 90;
-        $brokenControls = ControlParsing::find()
-            ->select(['id','type','date_start','ids','ids_sources'])
-            ->where(['in', 'status', [ControlParsing::BROKEN]])
-            ->andWhere([">", 'date_start', (time() - $interval * 60)])
-            // ->groupBy('type')
-            ->asArray()
-            ->all();
+        /*  $interval = 90;
+          $brokenControls = ControlParsing::find()
+              ->select(['id','type','date_start','ids','ids_sources'])
+              ->where(['in', 'status', [ControlParsing::BROKEN]])
+              ->andWhere([">", 'date_start', (time() - $interval * 60)])
+              // ->groupBy('type')
+              ->asArray()
+              ->all();
 
-        my_var_dump($brokenControls);
-        foreach (Control::mapTypesControls() as $key => $control) {
-            if ($array = array_filter($brokenControls, function ($item) use ($key) {
-                return $item['type'] == $key;
-            })) {
-                if (count($array) > 5) {
-                    $message = " CONTROL ".$control." IS BROKEN ".count($array)." РАЗ ЗА ПОСЛЕДНИЕ ".$interval." МИНУТ";
-                    info($message);
-                    if ($ids_broken = ArrayHelper::getColumn($array,'id')) {
-                        $ids = [];
-                        foreach ($ids_broken as $item) {
+          my_var_dump($brokenControls);
+          foreach (Control::mapTypesControls() as $key => $control) {
+              if ($array = array_filter($brokenControls, function ($item) use ($key) {
+                  return $item['type'] == $key;
+              })) {
+                  if (count($array) > 5) {
+                      $message = " CONTROL ".$control." IS BROKEN ".count($array)." РАЗ ЗА ПОСЛЕДНИЕ ".$interval." МИНУТ";
+                      info($message);
+                      if ($ids_broken = ArrayHelper::getColumn($array,'id')) {
+                          $ids = [];
+                          foreach ($ids_broken as $item) {
 
-                            array_push($ids,intval($item));
-                        }
+                              array_push($ids,intval($item));
+                          }
 
-                    }
+                      }
 
 
-                    my_var_dump($ids_broken = array_values ($ids_broken));
-                    ControlParsing::updateAll(['status' => ControlParsing::FULL_BROKEN],['in','id',$ids]);
-                   // AgentPro::throwError();
+                      my_var_dump($ids_broken = array_values ($ids_broken));
+                      ControlParsing::updateAll(['status' => ControlParsing::FULL_BROKEN],['in','id',$ids]);
+                     // AgentPro::throwError();
 
+                  }
                 }
-              }
 
 
-        }
+          }
 
-        info("COUNT = " . count($brokenControls));*/
+          info("COUNT = " . count($brokenControls));*/
 
 
         $Broken_Controls = ControlParsing::find()
@@ -171,11 +195,11 @@ class WebdriverController extends \yii\web\Controller
         if ($Broken_Controls) {
             $total = '';
             foreach ($Broken_Controls as $broken_Control) {
-                $total .= ",".$broken_Control;
+                $total .= "," . $broken_Control;
             }
             $total = explode(",", $total);
             $total = array_values(array_unique($total));
-            $total =  array_diff($total, array('',0,null));
+            $total = array_diff($total, array('', 0, null));
 
         }
 
@@ -194,11 +218,11 @@ class WebdriverController extends \yii\web\Controller
         if ($Broken_Controls) {
             $total = '';
             foreach ($Broken_Controls as $broken_Control) {
-                $total .= ",".$broken_Control;
+                $total .= "," . $broken_Control;
             }
             $total = explode(",", $total);
             $total = array_values(array_unique($total));
-            $total =  array_diff($total, array('',0,null));
+            $total = array_diff($total, array('', 0, null));
 
         }
 
@@ -210,7 +234,8 @@ class WebdriverController extends \yii\web\Controller
     }
 
 
-    public function actionMyCurlTest() {
+    public function actionMyCurlTest()
+    {
         if ($proxy = Proxy::find()->where(['status' => 1])->orderBy('time')->one()) {
             info(" PROXY WAS USED " . Yii::$app->formatter->asRelativeTime($proxy->time), SUCCESS);
             $proxy->time = time();
@@ -218,7 +243,7 @@ class WebdriverController extends \yii\web\Controller
         };
         $curl = new MyCurl();
         if ($proxy) {
-            $curl->ipPort = $proxy->fulladdress ;
+            $curl->ipPort = $proxy->fulladdress;
             $curl->setOpt(CURLOPT_HTTPPROXYTUNNEL, 1);
             $curl->setOpt(CURLOPT_PROXY, $curl->ipPort);
             $curl->setOpt(CURLOPT_PROXYUSERPWD, $proxy->login . ":" . $proxy->password);
@@ -230,7 +255,6 @@ class WebdriverController extends \yii\web\Controller
         return $this->render('index');
 
     }
-
 
 
 }

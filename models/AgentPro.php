@@ -186,7 +186,7 @@ class AgentPro extends \yii\db\ActiveRecord
     public static function throwError($error,$pageSource = '')
     {
         if ($pageSource) {
-            info($pageSource);
+           // info($pageSource);
             $ip = \Yii::$app->params['ip'];
             $time = str2url(date("Y-m-d H:i:s"));
             $dir = Yii::getAlias('@app');

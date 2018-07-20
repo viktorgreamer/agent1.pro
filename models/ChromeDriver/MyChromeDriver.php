@@ -322,7 +322,7 @@ class MyChromeDriver extends RemoteWebDriver
      *this method is waiting for an element to click and if it exists click to it.
      *  */
 
-    protected
+    public
     function WaitAndClick($name, $selector_type)
     {
         if ($selector_type == 'class') {

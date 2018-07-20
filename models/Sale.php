@@ -89,6 +89,9 @@ class Sale extends \yii\db\ActiveRecord
     const READY = 2;
     const DONE = 3;
 
+    //
+    const BROKEN_AVITO_PHONES = 5;
+
 
 
     public static function mapProcessingLogs()
@@ -119,6 +122,7 @@ class Sale extends \yii\db\ActiveRecord
         2 => 'DISABLED',
         3 => 'MAN_SOLD',
         4 => 'ACTIVE - SOLD',
+        5 => "BROKEN_AVITO_PHONES"
 //        3 => 'NEW',
 //        4 => 'PRICE_CHANGED',
 //        5 => 'ADDRESS_CHANGED',
