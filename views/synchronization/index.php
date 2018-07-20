@@ -94,7 +94,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
 
 
-            [
+          /*  [
                 'label' => 'log',
                 'format' => 'raw',
                 'value' => function ($model) {
@@ -111,7 +111,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $model->RenderLog();
 
                 }
-            ],
+            ],*/
 
             [
                 'label' => "admin",

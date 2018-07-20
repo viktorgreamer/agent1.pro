@@ -2002,7 +2002,14 @@ class Control extends \yii\db\ActiveRecord
             } else {
                 $error = Errors::findOne(AVITO_CANNOT_FIND_PHONEBUTTON_DIV_CLASS);
                 if (!$response) $response = "THE RESPONSE IS EMPTY";
-                info("single-item-details".$response->find(".single-item-details")->html());
+                $responses = $response->find(".single-item-details");
+                if (count($responses) > 1) {
+                    foreach ($responses as $respons) {
+                        info("single-item-details".$respons->html());
+
+                    }
+
+                }
                 AgentPro::throwError($error, $response);
                 $counterERROR++;
                 info(" DELETING THE ITEM", DANGER);

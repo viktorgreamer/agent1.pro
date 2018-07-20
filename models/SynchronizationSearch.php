@@ -93,8 +93,8 @@ class SynchronizationSearch extends Synchronization
         // $query->joinWith(['agent AS agent']);
         // $query->joinWith(['addresses AS address']);
         // $query->joinWith(['similar AS sim']);
-          $query->joinWith(['logs AS logs']);
-          $query->joinWith(['plogs AS plogs']);
+       //   $query->joinWith(['logs AS logs']);
+       //   $query->joinWith(['plogs AS plogs']);
 
         // add conditions that should always apply here
 
