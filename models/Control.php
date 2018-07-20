@@ -1571,7 +1571,7 @@ class Control extends \yii\db\ActiveRecord
 //
 //        ]);
         //   $driver->quit();
-        return true;
+        if (count($sales) < 15) return false; else return true;
 
     }
 
@@ -2002,7 +2002,7 @@ class Control extends \yii\db\ActiveRecord
             } else {
                 $error = Errors::findOne(AVITO_CANNOT_FIND_PHONEBUTTON_DIV_CLASS);
                 if (!$response) $response = "THE RESPONSE IS EMPTY";
-                info("single-item-details".$response->find(".single-item-details")->eq(0)->html());
+                info("single-item-details".$response->find(".single-item-details")->html());
                 AgentPro::throwError($error, $response);
                 $counterERROR++;
                 info(" DELETING THE ITEM", DANGER);
@@ -2074,7 +2074,7 @@ class Control extends \yii\db\ActiveRecord
         ];
         ControlParsing::updating($id_parsingController, 2, serialize($counts_array));
         //  $driver->quit();
-        return true;
+       if (count($sales) < 15) return false; else return true;
 
     }
 
