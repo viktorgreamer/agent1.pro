@@ -634,7 +634,7 @@ class Parsing extends ParsingSync
         $sale->coords_y = $this->coords_y;
         info($this->coords_x . " " . $this->coords_y);
         if ($sale->house_type == 0) $sale->house_type = $this->house_type;
-        if ((!$sale->phone1) or ($sale->phone1 == 'no phone')) $sale->phone1 = $this->phone1;
+        if ($this->phone1) $sale->phone1 = $this->phone1;
         if (!$sale->phone2) $sale->phone2 = $this->phone2;
         if ((($sale->price + 1 < $this->price) or ($sale->price - 1 > $this->price)) and ($this->price != '')) {
             info('Произошло существенное изменение цены во время детального парсинга', 'alert');
