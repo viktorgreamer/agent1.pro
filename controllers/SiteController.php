@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 
+use app\models\Renders;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -31,17 +32,25 @@ class SiteController extends Controller
             ],
         ];
     }
+    public function actionScreenSize() {
+      if ($_POST['screen']) {
+          Yii::$app->params['screen-width'] = $_POST['screen'];
+      }
+    }
 
     /**
      * @inheritdoc
      */
 
-    public function beforeAction($action)
+   /* public function beforeAction($action)
     {
+        Renders::StaticView('layouts/_screensize');
         $this->enableCsrfValidation = false;
 
         return parent:: beforeAction($action);
-    }
+    }*/
+
+
 
     public function actions()
     {
@@ -64,7 +73,9 @@ class SiteController extends Controller
     public function actionIndex($status = 0)
 
     {
-        if (isset($_COOKIE['user_id'])) $user_id = $_COOKIE['user_id'];
+
+        $this->layout = 'intro';
+       /* if (isset($_COOKIE['user_id'])) $user_id = $_COOKIE['user_id'];
         if ($user_id) {
             $user = User::findOne($user_id);
             $user->to_session();
@@ -79,7 +90,7 @@ class SiteController extends Controller
 
             return $this->redirect(['/user/profile']);
         }
-
+*/
 
         return $this->render('index');
     }
@@ -138,12 +149,16 @@ class SiteController extends Controller
             if ($found_user) {
                 $found_user->to_session();
                 return $this->redirect(['/user/profile']);
+
             } else {
-                return $this->redirect(['/site/index']);
+              //  return $this->redirect(['/site/index']);
+                return $this->render('index');
+
             }
 
 
-        return $this->redirect(['/site/index']);
+      //  return $this->redirect(['/site/index']);
+            return $this->render('index');
     }
 
     /**
@@ -200,6 +215,12 @@ class SiteController extends Controller
      */
     public
     function actionAbout()
+    {
+        return $this->render('about');
+    }
+
+    public
+    function actionAdminCanView()
     {
         return $this->render('about');
     }

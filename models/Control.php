@@ -168,7 +168,7 @@ class Control extends \yii\db\ActiveRecord
             \Yii::$app->params['module'] = $module;
 
             if ($module->status != 9) {
-                $module->setPrefixies($module->region);
+                Control::setPrefixies($module->region);
                 // удаляем сброшенные контроллеры
                 ControlParsing::deleteMissedControllers(60);
                 ControlParsing::deleteOverControllersNew(ControlParsing::ACTIVE);
@@ -205,6 +205,53 @@ class Control extends \yii\db\ActiveRecord
         }
     }
 
+    public function checkLost()
+    {
+        $agentpro = \Yii::$app->params['agentpro'];
+        $parsingConfigurations = ParsingConfiguration::find()->where(['active' => 1])->andWhere(['module_id' => $this->id])->all();
+
+        if ($parsingConfigurations) {
+            foreach ($parsingConfigurations as $parsingConfiguration) {
+                $time_check = $parsingConfiguration->last_timestamp;
+                info(" ParsingCongiguration Name =" . $parsingConfiguration->name . " WAS CHECKED " . \Yii::$app->formatter->asRelativeTime($time_check));
+                $countToUpdate = Synchronization::find()->where(['id_category' => $parsingConfiguration->id])
+                    ->andWhere(['<', 'date_of_check', ($time_check - $agentpro->period_check * 2 * 60 * 60)])
+                    ->andWhere(['disactive' => 0])
+                    ->count();
+                info(" ITEMS TO LOST = " . $countToUpdate, DANGER);
+                Sale::updateAll(['date_of_die' => time(), 'disactive' => 2],
+                    ['AND',
+                        ['<', 'date_of_check', ($time_check - $agentpro->period_check * 2 * 60 * 60)],
+                        ['disactive' => 0],
+                        ['id_category' => $parsingConfiguration->id]
+                    ]
+                );
+                Synchronization::updateAll(['date_of_die' => time(), 'disactive' => 2],
+                    ['AND',
+                        ['<', 'date_of_check', ($time_check - $agentpro->period_check * 2 * 60 * 60)],
+                        ['disactive' => 0],
+                        ['id_category' => $parsingConfiguration->id]
+                    ]
+                );
+                Sale::updateAll(['date_of_die' => time(), 'disactive' => 2],
+                    ['AND',
+                        ['<', 'date_of_check', ($time_check - $agentpro->period_check * 3 * 60 * 60)],
+                        ['disactive' => 1],
+                        ['id_category' => $parsingConfiguration->id]
+                    ]
+                );
+                Synchronization::updateAll(['date_of_die' => time(), 'disactive' => 2],
+                    ['AND',
+                        ['<', 'date_of_check', ($time_check - $agentpro->period_check * 3 * 60 * 60)],
+                        ['disactive' => 1],
+                        ['id_category' => $parsingConfiguration->id]
+                    ]
+                );
+            }
+        }
+
+    }
+
     public static function mainScriptCloud()
     {
         /* @var $agentpro AgentPro */
@@ -222,27 +269,25 @@ class Control extends \yii\db\ActiveRecord
 
             // присваиваем определяем регион в котором работаем на данный момент
             \Yii::$app->params['module'] = $module;
-
-            if ($module->status != 9) {
-                $module->setPrefixies($module->region);
-                // удаляем сброшенные контроллеры
-                ControlParsing::deleteMissedControllers(60);
-                ControlParsing::deleteOverControllersNew(ControlParsing::ACTIVE);
-                ControlParsing::deleteOverControllersNew(ControlParsing::SUCCESS);
-                ControlParsing::deleteOverControllersNew(ControlParsing::BROKEN);
-                if ($agentpro->status_geocogetion) {
-                    if ($module->geocodetion(100) !== false) continue;
-                }
-                if ($agentpro->status_similar_check) $module->similarCheck(50);
-                if ($agentpro->status_processing) $module->processing(50);
-                if ($agentpro->status_analizing) $module->load_sale_statistic(50);
-                if ($agentpro->status_sync) $module->Synchronisation(500);
-
-                $module->save();
-
-
+            Control::setPrefixies($module->region);
+            // удаляем сброшенные контроллеры
+            ControlParsing::deleteMissedControllers(60);
+            ControlParsing::deleteOverControllersNew(ControlParsing::ACTIVE);
+            ControlParsing::deleteOverControllersNew(ControlParsing::SUCCESS);
+            ControlParsing::deleteOverControllersNew(ControlParsing::BROKEN);
+            if ($agentpro->status_geocogetion) {
+                if ($module->geocodetion(100) !== false) continue;
             }
+            if ($agentpro->status_similar_check) $module->similarCheck(50);
+            if ($agentpro->status_processing) $module->processing(50);
+            if ($agentpro->status_analizing) $module->load_sale_statistic(50);
+            if ($agentpro->status_sync) $module->Synchronisation(500);
 
+            if ($agentpro->time_lost < time()) {
+                $module->checkLost();
+                $module->time_lost = time() + 24 * 3600;
+            }
+            $module->save();
 
         }
     }
@@ -302,7 +347,7 @@ class Control extends \yii\db\ActiveRecord
 
     /*
      * установке всех префиксов для таблиц*/
-    public function setPrefixies($prefix)
+    public static function setPrefixies($prefix)
     {
         Sale::setTablePrefix($prefix);
         Synchronization::setTablePrefix($prefix);
@@ -790,7 +835,7 @@ class Control extends \yii\db\ActiveRecord
             Notifications::VKMessage(" ONE SERVER SESSIONS LIMIT");
             return false;
         }
-        ControlParsing::updatingTime($id_parsingController, ['id_session' => $driver->getSessionID(),'ip' => $driver->ip]);
+        ControlParsing::updatingTime($id_parsingController, ['id_session' => $driver->getSessionID(), 'ip' => $driver->ip]);
 
         $cashed_items = Synchronization::getCachedCategory($config->id);
         $checked_ids = [];
@@ -893,6 +938,7 @@ class Control extends \yii\db\ActiveRecord
 
                 if (count($pq_containers) == 0) {
                     info("NOTHING TO SCRAPE ... EXITING", 'danger');
+                    AgentPro::logPageSource($pageSource);
                     $config->UpdateAndSave($page, $total_pages, $ItemsCounter);
                     break;
 
@@ -1289,7 +1335,7 @@ class Control extends \yii\db\ActiveRecord
             Notifications::VKMessage(" ONE SERVER SESSIONS LIMIT");
             return false;
         }
-        ControlParsing::updatingTime($id_parsingController, ['id_session' => $driver->getSessionID(),'ip' => $driver->ip]);
+        ControlParsing::updatingTime($id_parsingController, ['id_session' => $driver->getSessionID(), 'ip' => $driver->ip]);
 
         $time_start = time();
 
@@ -1493,7 +1539,7 @@ class Control extends \yii\db\ActiveRecord
             return false;
         }
         $id_parsingController = ControlParsing::create($type, $sales, $driver->ip);
-        ControlParsing::updatingTime($id_parsingController, ['id_session' => $driver->getSessionID(),'ip' => $driver->ip]);
+        ControlParsing::updatingTime($id_parsingController, ['id_session' => $driver->getSessionID(), 'ip' => $driver->ip]);
 
         // $driver->getMyIp();
 
@@ -1541,6 +1587,7 @@ class Control extends \yii\db\ActiveRecord
 
                     }
                     if ($parsing) $parsing->UpdateSale($sale);
+                    else info(" SOMETHING WRONG", DANGER);
                     info($sale->renderLong_title() . " " . $sale->phone1, PRIMARY);
                     $sale->changingStatuses('PARSED');
 
@@ -1942,7 +1989,6 @@ class Control extends \yii\db\ActiveRecord
         $id_parsingController = ControlParsing::create($type, $sales);
 
 
-
         // $sales = [];
         foreach ($sales as $key => $sale) {
             if ($key % 5 == 0) {
@@ -2073,7 +2119,7 @@ class Control extends \yii\db\ActiveRecord
         ];
         ControlParsing::updating($id_parsingController, 2, serialize($counts_array));
         //  $driver->quit();
-       if (count($sales) < 15) return false; else return true;
+        if (count($sales) < 15) return false; else return true;
 
     }
 
@@ -2145,7 +2191,7 @@ class Control extends \yii\db\ActiveRecord
             foreach ($syncs as $sync) {
                 $sale = Sale::findOne($sync->id);
                 if ($sale) {
-                    $sale->setAttributes($sync->getAttributes());
+                    $sale->setAttributes($sync->getAttributes(), false);
                     $sale->grossarea = $sync->grossarea;
                     $sale->similar_ids = $sync->similar_ids;
                     $sale->id_similar = $sync->id_similar;
@@ -2155,7 +2201,7 @@ class Control extends \yii\db\ActiveRecord
                     $sale->save();
                 } else {
                     $sale = new Sale();
-                    $sale->setAttributes($sync->getAttributes());
+                    $sale->setAttributes($sync->getAttributes(), false);
                     $sale->grossarea = $sync->grossarea;
                     $sale->similar_ids = $sync->similar_ids;
                     $sale->id_similar = $sync->id_similar;

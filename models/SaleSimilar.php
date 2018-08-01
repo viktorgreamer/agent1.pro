@@ -55,6 +55,8 @@ class SaleSimilar extends \yii\db\ActiveRecord
         SaleSimilar::SOLD => 'ПРОДАН',
     ];
 
+    const SELECT_FIELDS = 's.id,s.id_address,s.grossarea,s.id,s.id,s.id,s.id,s.id,s.id,s.id,';
+
 
     /**
      * @inheritdoc

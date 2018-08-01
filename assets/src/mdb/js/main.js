@@ -934,7 +934,29 @@ $('.tags-action-button').on('click', function (e) {
     var type = $(this).data('type');
     var a_type = $(this).data('a_type');
     var selector = '.tag_' + type + '_' + parent_id + '_' + tag_id;
-    console.log('type=' + type + ', parent_id =' + parent_id + ', tag_id=' + tag_id + ', a_type =' + a_type + ', selector = ' + selector);
+  //  console.log('type=' + type + ', parent_id =' + parent_id + ', tag_id=' + tag_id + ', a_type =' + a_type + ', selector = ' + selector);
+
+    // изменение свойств
+    if (a_type) {
+           console.log('РАБОТАЕМ С A_TYpe');
+
+        if ($("." + a_type).hasClass('animated pulse infinite z-depth-5')) {
+            if ((type != 'plus_search') && (a_type != 'minus_search')) {
+                if (!$(selector).hasClass('animated pulse infinite z-depth-5')) addClass = true; else addClass = false;
+                $("." + a_type).removeClass('animated pulse infinite z-depth-5');
+                if (addClass) $(selector).addClass('animated pulse infinite z-depth-5');
+            } else {
+                 console.log('РАБОТАЕМ С type=' + type);
+                $(selector).toggleClass('animated pulse infinite z-depth-5');
+            }
+        }
+        else {
+            $(selector).toggleClass('animated pulse infinite z-depth-5');
+        }
+
+
+    } else $(selector).toggleClass('animated pulse infinite z-depth-5');
+
 
     $.ajax({
         url: '/real-tags/tag',
@@ -942,26 +964,6 @@ $('.tags-action-button').on('click', function (e) {
         type: 'get',
         success: function (res) {
             // toastr.success(res);
-            if (a_type) {
-                console.log('РАБОТАЕМ С A_TYpe');
-
-                if ($("." + a_type).hasClass('animated pulse infinite z-depth-5')) {
-                    if ((type != 'plus_search') && (a_type != 'minus_search')) {
-                        if (!$(selector).hasClass('animated pulse infinite z-depth-5')) addClass = true; else addClass = false;
-                        $("." + a_type).removeClass('animated pulse infinite z-depth-5');
-                        if (addClass) $(selector).addClass('animated pulse infinite z-depth-5');
-                    } else {
-                        // console.log('РАБОТАЕМ С type=' + type);
-                        $(selector).toggleClass('animated pulse infinite z-depth-5');
-                    }
-                }
-                else {
-                    $(selector).toggleClass('animated pulse infinite z-depth-5');
-                }
-
-
-            } else $(selector).toggleClass('animated pulse infinite z-depth-5');
-
             if (type == 'plus_search') {
                 $("#plus_searching_tags").val(res);
                 $('.searching_tags_div').load(encodeURI('/tags/render-tags'));
@@ -971,6 +973,8 @@ $('.tags-action-button').on('click', function (e) {
                 $("#minus_searching_tags").val(res);
                 $('.searching_tags_div').load(encodeURI('/tags/render-tags'));
             }
+
+
         }
         ,
 

@@ -96,7 +96,6 @@ class SaleFiltersController extends Controller
 
     }
 
-
     public function actionIndex()
     {
 
@@ -109,6 +108,18 @@ class SaleFiltersController extends Controller
         ]);
     }
 
+    public function actionIndexList()
+    {
+
+        $searchModel = new SaleFiltersSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index-list', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
 
     public function actionSaveCurrentSalefilter($name = '', $type = 1, $params = [])
     {
@@ -116,7 +127,7 @@ class SaleFiltersController extends Controller
         if ($name == '') $name = "Фильтр_" . date('Y-m-d H:i:s', time());
         $session = Yii::$app->session;
         $salefilter = $session->get('current_filter');
-        $params = json_decode($params,true);
+        $params = json_decode($params, true);
         $is_existed_salefilter = SaleFilters::find()->where(['user_id' => $session['user_id']])->andWhere(['name' => $name])->one();
         if ($is_existed_salefilter) {
             //  my_var_dump($is_existed_salefilter);
@@ -148,7 +159,8 @@ class SaleFiltersController extends Controller
             if (!$is_existed_salefilter->save(false)) return my_var_dump($is_existed_salefilter->getErrors());
             else {
                 Mdb::Alert(" Успешно обновили Фильтр: " . $is_existed_salefilter->name, 'success');
-                return Html::a("Поиск по фильтру '" . span($is_existed_salefilter->name, 'success') . "'", ['sale/search-by-filter', 'id' => $is_existed_salefilter->id]);
+                return "<div class=\"alert alert-primary mt-0 pt-0 mb-0 pb-0 \" role=\"alert\">" . Html::a("Поиск по фильтру " . $salefilter->name, ['sale/search-by-filter', 'id' => $salefilter->id]) . "</div>";
+
             }
         } else {
             if ($params['vk_inform']) $salefilter->vk_inform = 1;
@@ -161,7 +173,8 @@ class SaleFiltersController extends Controller
             if (!$salefilter->save(false)) return my_var_dump($salefilter->getErrors());
             else {
                 Mdb::Alert(" Успешно Сохранили Фильтр: " . $salefilter->name, 'success');
-                return Html::a("Поиск по фильтру '" . span($salefilter->name, 'success') . "'", ['sale/search-by-filter', 'id' => $salefilter->id]);
+                return "<div class=\"alert alert-primary mt-0 pt-0 mb-0 pb-0 \" role=\"alert\">" . Html::a("Поиск по фильтру " . $salefilter->name, ['sale/search-by-filter', 'id' => $salefilter->id]) . "</div>";
+
             }
         }
         // return $this->render('@app/views/console/processing');

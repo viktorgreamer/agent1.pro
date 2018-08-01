@@ -90,10 +90,10 @@ class SynchronizationSearch extends Synchronization
         $query = Synchronization::find();
         $query->from(['sync' => Synchronization::tableName()]);
         // присоединяем связи
-        // $query->joinWith(['agent AS agent']);
-        // $query->joinWith(['addresses AS address']);
+         $query->joinWith(['agent AS agent']);
+         $query->joinWith(['addresses AS address']);
         // $query->joinWith(['similar AS sim']);
-       //   $query->joinWith(['logs AS logs']);
+        //  $query->joinWith(['logs AS logs']);
        //   $query->joinWith(['plogs AS plogs']);
 
         // add conditions that should always apply here
@@ -185,11 +185,12 @@ class SynchronizationSearch extends Synchronization
 
         }
 
-//
-//        $query->andFilterWhere(['like', 'url', $this->url])
-//            ->andFilterWhere(['like', 'title', $this->title])
-//            ->andFilterWhere(['like', 'address', $this->address]);
+       $session = Yii::$app->session;
+        $dataProviderQuery = clone $dataProvider->query;
+    if ($synchronisations = $dataProviderQuery->select('sync.id')->column()) {
 
+        $session->set('synchronisations', $synchronisations);
+    }
         return $dataProvider;
     }
 }

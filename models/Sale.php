@@ -402,6 +402,7 @@ class Sale extends \yii\db\ActiveRecord
 
     public function setProccessingLog($type, $was = null, $now = null)
     {
+        if (!LOG_OF_ALGHOTITM) return false;
         $ProcessingLog = new ProcessingLog();
         $ProcessingLog->sale_id = $this->id;
         $ProcessingLog->type = $type;
@@ -468,6 +469,10 @@ class Sale extends \yii\db\ActiveRecord
         return $body;
     }
 
+    public function getSimilarSales1() {
+        return $this->hasMany(Sale::className(),['id_similar' => 'id'])->viaTable(SaleSimilar::tableName(),['id' => 'id_similar']);
+    }
+
     /*
     * основной сортировочный метод при последовательной обработке  модели
     */
@@ -516,6 +521,8 @@ class Sale extends \yii\db\ActiveRecord
                 {
                     // info("изменили адрес", 'info');
                     $this->geocodated = 7;
+                    $this->id_similar = 0;
+                    $this->processed = 2;
                     $this->load_analized = 2;
                     $this->sync = 2;
                     $this->setProccessingLog(self::GEOCODATED);
@@ -1926,14 +1933,17 @@ class Sale extends \yii\db\ActiveRecord
     public function getSimilarsales()
     {
 
-        return Sale::find()
+         if ($this->id_similar) return Sale::find()
             ->from(['s' => Sale::tableName()])
             ->joinWith(['agent AS agent'])
             ->joinWith(['addresses AS address'])
             ->joinWith(['similar AS sim'])
-            ->where(['s.id_similar' => $this->id_similar])
+           //  ->select(SaleSimilar::SELECT_FIELDS)
+            ->Where(['s.id_similar' => $this->id_similar])
             ->andWhere(['<>', 's.id', $this->id])
             ->all();
+         else return false;
+
     }
 
 
@@ -2051,11 +2061,11 @@ class Sale extends \yii\db\ActiveRecord
     {
         if ($this->agent->person_type == 1) {
             $color = 'danger';
-            $fa = "<i class=\"fa fa-user-secret\" aria-hidden=\"true\"></i>";
+            $fa = "<i class=\"fa fa-user-secret d-none d-lg-block d-xl-none\" aria-hidden=\"true\"></i>";
             $title = "title = \"Агент (" . $this->agent->count_ads . ")\"";
         } else {
 
-            $fa = "<i class=\"fa fa-user text-primary\" aria-hidden=\"true\"></i>";
+            $fa = "<i class=\"fa fa-user text-primary d-none d-lg-block d-xl-none\" aria-hidden=\"true\"></i>";
             $color = 'primary';
             $title = "title = \"Собственник\"";
         }
@@ -2064,13 +2074,13 @@ class Sale extends \yii\db\ActiveRecord
         if ($type == 'mini') {
             $body .= "<div style=\"font-size:  0.9rem\">" . $this->renderPerson() . "<span class=\"badge badge-pill pink\">" . $this->agent->count_ads . "</span></div>";
             //$body .= "<h6>" . $fa . "<span class=\"badge badge-" . $color . "\">" . $this->renderPhone() . "</span></h6>";
-            $body .= "<h6><span class=\"badge badge-" . $color . "\">" . $this->renderPhone() . "</span></h6>";
+            $body .= Html::a("<h6><span class=\"badge badge-" . $color . "\">" . $this->renderPhone() . "</span></h6>","tel:".$this->renderPhone());
         } elseif ($type == 'map') {
             $body .= "<span class=\"badge badge-" . $color . "\">" . $this->renderPhone() . "</span>";
 
         } else {
             $body .= "<h6>" . $this->renderPerson() . "</h6>";
-            $body .= "<h4>" . $fa . "<span class=\"badge badge-" . $color . "\">" . $this->renderPhone() . "</span></h4>";
+            $body .= "<h4>" . $fa . Html::a("<span class=\"badge badge-" . $color . "\">" . $this->renderPhone() . "</span></h4>","tel:".$this->renderPhone());
         }
         $body .= "</div>";
 
@@ -2161,7 +2171,7 @@ class Sale extends \yii\db\ActiveRecord
                     }
                 }
                 $body = preg_replace("/<my_selection_end>.{100,}<my_selection_start>/xuU", "<my_selection_end>    <my_selection_start>", $body);;
-                echo $body = preg_replace("/<my_selection_end>.{150,}$/uU", "<my_selection_end>    ", $body);;
+                echo $body = "<small>".preg_replace("/<my_selection_end>.{150,}$/uU", "<my_selection_end>    ", $body)."</small>";
 
             }
 

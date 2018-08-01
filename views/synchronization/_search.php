@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\components\Mdb;
+use app\models\Actions;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\SynchronizationSearch */
@@ -147,6 +148,9 @@ use app\components\Mdb;
 
                         </div>
                     </div>
+                </div>
+                <div class="col-md-2  col-lg-1 col-sm-2 col-2">
+                    <?= Actions::renderChangeStatus(Actions::TO_MANY_SYNCRONISATIONS, Actions::SYNC, Actions::SALE_PARSED, \app\models\Sale::READY, Html::button("PARSED_READY")); ?>
                 </div>
             </div>
 

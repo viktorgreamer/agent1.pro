@@ -91,4 +91,57 @@ div.no-padding-right-left {
     padding-right: 0px;
 }
 
+table#user_detail_view td {
+    padding: 0px;
+!important;
+    padding-left: 10px;
+!important;
+    margin: 5px;
+!important;
+}
 
+table#user_detail_view tr {
+    padding: 2px;
+!important;
+    margin: 2px;
+!important;
+}
+
+table#user_detail_view th {
+    padding: 2px;
+!important;
+    margin: 2px;
+!important;
+}
+
+.pricing-card .price h1:before, .pricing-card .price h2:before {
+    content: "";
+    font-size: 30px;
+    position: absolute;
+    margin-left: -1.2rem;
+    margin-top: 0.7rem;
+}
+
+.pricing-card .price h1:after, .pricing-card .price h2:after {
+    content: "руб";
+    font-size: 30px;
+    position: absolute;
+    margin-top: 3rem;
+}
+
+.statistic table.table-sm th, table.table-sm td {
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+}
+
+.on-non-mobile {
+.d-none;
+.d-lg-block;
+.d-xl-block;
+}
+
+.on-mobile {
+.d-block;
+.d-sm-block;
+.d-md-none
+}

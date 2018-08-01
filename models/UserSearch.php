@@ -59,7 +59,7 @@ class UserSearch extends User
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'user_id' => $this->user_id,
+            'id' => $this->id,
             'auth_date' => $this->auth_date,
             'test_date' => $this->test_date,
             'exp_date' => $this->exp_date,

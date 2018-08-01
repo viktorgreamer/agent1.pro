@@ -33,7 +33,8 @@ class Actions
     const ADDRESSES = 11;
 
     // Массовые Действия
-    const TO_MANY_ADDRESSES = 1;
+    const TO_MANY_ADDRESSES = 'yter';
+    const TO_MANY_SYNCRONISATIONS = 'wewr';
 
     // список Actions
     const  DELETE = 1;
@@ -70,6 +71,7 @@ class Actions
     const  SALE_GEOCODATED = 6;
     const  SALE_GEOCODATION_ERROR = 7;
     const SALE_PROCESSED = 8;
+    const SALE_PARSED = 9;
 
     // Parsing-Control
     const PARSING_CONTROL_DELETE = 1;
@@ -100,9 +102,6 @@ class Actions
 
     // ADDRESSES
     const ADDRESSES_BALCON = 1;
-
-
-
 
 
     public static function getNameAttribute($id_model, $id_attr = 0)
@@ -143,6 +142,7 @@ class Actions
                 Actions::SALESIMILAR_MODERATED => 'moderated',
                 Actions::SALESIMILAR_STATUS => 'status',
                 Actions::SALE_PROCESSED => 'processed',
+                Actions::SALE_PARSED => 'parsed',
             ],
             Actions::PARSING_CONFIGURATION => [
                 Actions::PARSING_CONFIGURATION_ACTIVE => 'active',
@@ -307,12 +307,21 @@ class Actions
     public
     static function ChangeStatus($id_parent, $id_model, $id_attr, $id_status)
     {
-        if ($id_parent == Actions::TO_MANY_ADDRESSES) {
+        if ($id_parent === Actions::TO_MANY_ADDRESSES) {
             $attrname = Actions::getNameAttribute($id_model, $id_attr);
             $session = \Yii::$app->session;
             $id_addresses = $session->get('addresses');
 
-          if ($id_addresses)  Addresses::updateAll([$attrname => $id_status],['in','id',$id_addresses]);
+            if ($id_addresses) $count = Addresses::updateAll([$attrname => $id_status], ['in', 'id', $id_addresses]);
+            return $count;
+
+        }
+        if ($id_parent === Actions::TO_MANY_SYNCRONISATIONS) {
+            $attrname = Actions::getNameAttribute($id_model, $id_attr);
+            $session = \Yii::$app->session;
+            $id_synchronisations = $session->get('synchronisations');
+            if ($id_synchronisations) $count = Synchronization::updateAll([$attrname => $id_status], ['in', 'id', $id_synchronisations]);
+            return $count;
         }
 
         $model = Actions::getModel($id_model, $id_parent);

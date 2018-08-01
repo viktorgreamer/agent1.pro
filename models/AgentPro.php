@@ -31,7 +31,6 @@ class AgentPro extends \yii\db\ActiveRecord
     }
 
 
-
     const DISACTIVE = 0;
     const ACTIVE = 1;
     const  DEBUG_MODE = 1;
@@ -57,12 +56,13 @@ class AgentPro extends \yii\db\ActiveRecord
     const ERROR_CANNOT_CALCULATE_PAGE_DIV_INFO_BLOCK_CLASS_CIAN = 69;
     const ERROR_CANNOT_CALCULATE_PAGE_DIV_INFO_BLOCK2_CLASS_CIAN = 70;
 
-    public static function mapStatuses() {
+    public static function mapStatuses()
+    {
         return [
             self::ACTIVE => "YES",
             self::DISACTIVE => "NO"
         ];
-        }
+    }
 
 
     public static function ErrorLogs()
@@ -95,7 +95,7 @@ class AgentPro extends \yii\db\ActiveRecord
 
         $agentpro = self::find()->where(['status' => self::ACTIVE])->one();
         if ($agentpro) {
-             $agentpro->status = self::DISACTIVE;
+            $agentpro->status = self::DISACTIVE;
             Notifications::VKMessage(AgentPro::ErrorLogs()[$id_error]);
             if ($id_error) $agentpro->id_error = $id_error;
             $agentpro->time = time();
@@ -125,12 +125,12 @@ class AgentPro extends \yii\db\ActiveRecord
         info("PROGRAMM IS ACTIVE");
         \Yii::$app->params['agent_pro'] = $agentpro;
 
-        $root = Yii::getAlias('@app')."/..";
+        $root = Yii::getAlias('@app') . "/..";
         $server_name_dir = array_shift(array_filter(scandir($root), function ($name) {
             return preg_match("/SERVER_NAME/", $name);
         }));
 
-        $server_name = array_shift(array_filter(scandir($root."/".$server_name_dir), function ($name) {
+        $server_name = array_shift(array_filter(scandir($root . "/" . $server_name_dir), function ($name) {
             return preg_match("/SERVER_NAME/", $name);
         }));
 
@@ -157,7 +157,7 @@ class AgentPro extends \yii\db\ActiveRecord
         return [
             [['status'], 'required'],
             [['id_sources'], 'string'],
-            [['status', 'id_error','period_check','period_check_new' , 'page_limit','time', 'status_parsingsync', 'status_detailed_parsing', 'status_processing', 'status_parsing_avito_phones', 'status_analizing', 'status_parsing_new', 'status_sync', 'status_geocogetion'], 'integer'],
+            [['status', 'id_error', 'period_check', 'period_check_new', 'page_limit', 'time', 'status_parsingsync', 'status_detailed_parsing', 'status_processing', 'status_parsing_avito_phones', 'status_analizing', 'status_parsing_new', 'status_sync', 'status_geocogetion'], 'integer'],
         ];
     }
 
@@ -183,24 +183,55 @@ class AgentPro extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function throwError($error,$pageSource = '')
+    public static function throwError($error, $pageSource = '')
     {
         if ($pageSource) {
-           // info($pageSource);
+            // info($pageSource);
             $ip = \Yii::$app->params['ip'];
             $time = str2url(date("Y-m-d H:i:s"));
             $dir = Yii::getAlias('@app');
-            file_put_contents($dir."/web/errors/".$ip."_".$time."_error_" . $error->name . ".html", $pageSource);
+            self::FtpLog($dir . "/web/errors/" . $ip . "_" . $time . "_error_" . $error->name . ".html", $pageSource);
+            // file_put_contents($dir . "/web/errors/" . $ip . "_" . $time . "_error_" . $error->name . ".html", $pageSource);
 
         }
 
         info($error->name, 'danger');
         if ($error->fatality == Errors::FATAL_ERROR) {
-            info("STOP THE APPLICATION",DANGER);
+            info("STOP THE APPLICATION", DANGER);
             AgentPro::stop($error->id);
 
             if (!self::DEBUG_MODE) die();
         }
 
     }
+
+    public static function FtpLog($fileName, $filebody)
+    {
+        $directory = '/./domains/mirs.pro/public_html/web/errors/';
+
+        $ftp_server = '141.8.195.92';
+        $ftp_user_name = 'a0086640';
+        $ftp_user_pass = 'ucbueptuke';
+
+
+        file_put_contents("ftp://" . $ftp_user_name . ":" . $ftp_user_pass . "@" . $ftp_server . $directory . "/" . $fileName, $filebody);
+
+
+    }
+
+    public static function logPageSource($pageSource)
+    {
+        if ($pageSource) {
+            // info($pageSource);
+            $ip = \Yii::$app->params['ip'];
+            $time = str2url(date("Y-m-d H:i:s"));
+            $dir = Yii::getAlias('@app');
+            self::FtpLog($dir . "/web/errors/" . $ip . "_" . $time . ".html", $pageSource);
+            // file_put_contents($dir . "/web/errors/" . $ip . "_" . $time . "_error_" . $error->name . ".html", $pageSource);
+
+        }
+
+    }
+
+
 }

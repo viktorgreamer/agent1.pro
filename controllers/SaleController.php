@@ -47,7 +47,7 @@ class SaleController extends Controller
         return $this->render('test');
     }
 
-    public function actionModerate()
+    public function actionModerate($id = 0)
     {
 
         $session = Yii::$app->session;
@@ -60,13 +60,13 @@ class SaleController extends Controller
 
         $query = new SaleQuery();
         $query->search($salefilter, $_GET['type_of_show']);
-
+        $query->orderBy(new Expression('rand()'));
         $salefilter->user_id = $session->get('user_id');
         $session->set('current_filter', $salefilter);
 
         return $this->render('moderate',
             [
-                'query' => $query->limit(1),
+                'query' => $query->limit(7),
                 'salefilter' => $salefilter
             ]);
 
@@ -77,14 +77,10 @@ class SaleController extends Controller
     public
     function actionSearch()
     {
-
         $session = Yii::$app->session;
-
         $searchModel = new SaleSearch();
         $salefilter = new SaleFilters();
-
         $salefilter->load(Yii::$app->request->get());
-
         if ($_GET['regions'] != 10) {
             $region = SaleFilters::findOne($_GET['regions']);
             $salefilter->polygon_text = $region->polygon_text;
@@ -249,7 +245,6 @@ class SaleController extends Controller
     public
     function actionSaleTest()
     {
-
 
         $tags_array = [44, 52, 85, 90, 93, 96, 102];
         echo Tags::render($tags_array);
@@ -523,6 +518,7 @@ class SaleController extends Controller
      * Finds the Sale model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
+     * @return Sale the loaded model
      * @return Sale the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */

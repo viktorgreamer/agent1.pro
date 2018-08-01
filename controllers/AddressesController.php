@@ -6,6 +6,7 @@ use app\models\Geocodetion;
 use app\models\Renders;
 use app\models\Sale;
 use app\models\SaleHistory;
+use app\models\Synchronization;
 use Yii;
 use app\models\Addresses;
 use app\models\AddressesSearch;
@@ -63,10 +64,10 @@ class AddressesController extends Controller
 
     public function actionSetIdAddress($id, $id_address)
     {
-        $sale = Sale::findOne($id);
+        $sale = Synchronization::findOne($id);
         $sale->id_address = $id_address;
-        $sale->sync = 1;
-        $sale->geocodated = 7;
+        $sale->changingStatuses("MANUAL_GEOCODATION");
+
         $address = Addresses::findOne($id_address);
         if ($sale->save()) return "успешно присволили адрес:<br> " . $address->address . "<br>" . $address->floorcount . " этанжн. <br>" . $address->RenderHouseType();
         else return "не удалось присвоить адрес: " . Addresses::findOne($id_address)->address;

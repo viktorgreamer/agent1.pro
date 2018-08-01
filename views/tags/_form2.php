@@ -32,7 +32,7 @@ use app\models\Tags;
                     <?php echo Mdb::ActiveSelect($model, 'type', Tags::TYPES_ARRAY, ['id' => 'type']); ?>
                 </div>
                 <div class="col-2">
-                    <?php echo Mdb::ActiveSelect($model, 'id_parent', Tags::mapParents(), ['id' => 'a_type']); ?>
+                    <?php echo Mdb::ActiveSelect($model, 'id_parent', [0 => "Нет"] + Tags::mapParents(), ['id' => 'a_type']); ?>
                 </div>
                 <div class="col-2">
                     <?php echo Mdb::ActiveSelect($model, 'publish', Tags::PUBLIC_ARRAY); ?>

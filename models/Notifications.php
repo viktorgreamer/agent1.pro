@@ -57,7 +57,7 @@ class Notifications
         if ($message) {
             \Yii::$app->mailer->compose()
                 ->setTo($toEmail)
-                ->setFrom(['viktorgreamer1@yandex.ru' => 'agent1.pro'])
+                ->setFrom(['info@mirs.pro' => 'agent1.pro'])
                 ->setSubject("NEW ITEM")
                 ->setTextBody($message)
                 ->send();

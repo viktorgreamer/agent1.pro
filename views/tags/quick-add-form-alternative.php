@@ -23,8 +23,6 @@ if (!$realtags) $realtags = [];
 
 
 <div class="tags-quick-add-form">
-
-
     <ul class="nav  nav-tabs nav-justified">
         <? foreach ($tags_groups as $key => $tags_group) { ?>
             <li class="nav-item">

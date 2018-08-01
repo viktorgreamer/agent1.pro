@@ -8,9 +8,8 @@ use yii\base\Widget;
 use app\models\User;
 use yii\helpers\Url;
 
-$session = Yii::$app->session;
-$user_id = $session->get('user_id');
-if ($user_id == 1) {
+
+if (Yii::$app->user->can('programmer')) {
     $sections = [
         '0' => [
             'name' => 'Продажа',
@@ -118,12 +117,12 @@ if ($user_id == 1) {
                         'name' => 'Selectors',
                         'link' => Url::to(['selectors/index'])
                     ], '9' => [
-                        'name' => 'Sessions',
-                        'link' => Url::to(['sessions/index'])
-                    ],'10' => [
-                        'name' => 'Agent1.pro',
-                        'link' => Url::to(['agent-pro/index'])
-                    ],
+                    'name' => 'Sessions',
+                    'link' => Url::to(['sessions/index'])
+                ], '10' => [
+                    'name' => 'Agent1.pro',
+                    'link' => Url::to(['agent-pro/index'])
+                ],
 
                 ],
         ],
@@ -179,13 +178,23 @@ if ($user_id == 1) {
                     ]
                 ],
         ],
-        'p' => [
+        '9' => [
             'name' => 'console',
             'subsections' =>
                 [
                     '0' => [
                         'name' => 'main-script',
                         'link' => Url::to(['console/mainer'])
+                    ]
+                ],
+        ],
+        '10' => [
+            'name' => 'ProgrammerModule',
+            'subsections' =>
+                [
+                    '0' => [
+                        'name' => 'tests',
+                        'link' => Url::to(['programmer/tests'])
                     ]
                 ],
         ],
@@ -262,13 +271,15 @@ if ($user_id == 1) {
     ];
 }
 
+$user = \Yii::$app->user->identity;
 
 ?>
 
 <header>
-    <!-- SideNav slide-out button -->
-    <a href="#" data-activates="slide-out" class="btn btn-primary p-3 button-collapse"><i
-                class="fa fa-bars"></i></a> <?php if ($_SESSION['moderated_mode']) echo span('РЕЖИМ МОДЕРАЦИИ', 'danger'); ?>
+
+
+    <!--/.Navbar-->
+
 
     <!-- SideNav Menu -->
     <ul id="slide-out" class="side-nav custom-scrollbar" style="width: 210px">
@@ -276,11 +287,7 @@ if ($user_id == 1) {
         <!-- Logo -->
         <li>
             <div class="text-center">
-                <h3>Agent1.pro</h3>
-                <?php $module = $_SESSION['module'];
-                $user = User::findOne($user_id);
-                echo "<h5 class='text-primary'>" . $module->region_rus . "</h5>"; ?>
-                <?php echo "<h6>" . $user->first_name . " " . $user->last_name . "</h6>"; ?>
+                <h3>Mirs.pro</h3>
             </div>
         </li>
         <!--/. Logo -->
@@ -298,8 +305,7 @@ if ($user_id == 1) {
                                         class="fa fa-angle-down rotate-icon"></i></a>
                             <div class="collapsible-body">
                                 <ul>
-                                    <?php
-                                    if (count($section['subsections']) > 0) {
+                                    <?php if (count($section['subsections']) > 0) {
                                         foreach ($section['subsections'] as $subsection) { ?>
 
                                             <li>

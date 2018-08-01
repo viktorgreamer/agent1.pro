@@ -15,15 +15,15 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Обновить', ['update', 'id' => $model->user_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('РЕЖИМ MОДЕРАЦИИ', ['change', 'user_id' => $model->user_id,'moderated_mode' => true ], ['class' => 'btn btn-danger']) ?>
-        <?= Html::a('Великий Новгород', ['change', 'user_id' => 1], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Тверь', ['change', 'user_id' => 2], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Псков', ['change', 'user_id' => 3], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Старая Русса', ['change', 'user_id' => 4], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Боровичи', ['change', 'user_id' => 5], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Кириши', ['change', 'user_id' => 6], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Великий Новгород - тест', ['change', 'user_id' => 7], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Обновить', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('РЕЖИМ MОДЕРАЦИИ', ['change', 'id' => $model->id,'moderated_mode' => true ], ['class' => 'btn btn-danger']) ?>
+        <?= Html::a('Великий Новгород', ['change', 'id' => 1], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Тверь', ['change', 'id' => 2], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Псков', ['change', 'id' => 3], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Старая Русса', ['change', 'id' => 4], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Боровичи', ['change', 'id' => 5], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Кириши', ['change', 'id' => 6], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Великий Новгород - тест', ['change', 'id' => 7], ['class' => 'btn btn-primary']) ?>
 
 
     </p>

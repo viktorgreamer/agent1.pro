@@ -26,7 +26,10 @@
     "facebook/webdriver": "^1.4",
     "eventviva/php-image-resize": "1.6.*",
     "jakezatecky/array_group_by": "^1.0.0",
-    "php-curl-class/php-curl-class": "^8.0"
+    "php-curl-class/php-curl-class": "^8.0",
+    "mdmsoft/yii2-admin": "~2.0",
+    "himiklab/yii2-recaptcha-widget": "*",
+    "yii2mod/yii2-ftp": "*"
   },
   "repositories": [
     {

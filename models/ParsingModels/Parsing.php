@@ -641,6 +641,7 @@ class Parsing extends ParsingSync
             info(" было " . $sale->price . " стало " . $this->price, 'alert');
             $sale->price = $this->price;
         }
+        $sale->address = $this->address;
         $sale->disactive = $this->disactive;
         $sale->description = $this->description;
         $sale->person = $this->person;
@@ -656,7 +657,7 @@ class Parsing extends ParsingSync
                 $sale->id_address = 0;
                 $sale->geocodated = 8;
                 $sale->load_analized = 0;
-            } // else  $session->setFlash('address', "<h6>ADDRESS IS THE SAME</h6>");
+            } else  info(" ADDRESS IS THE SAME",SUCCESS);
 
         }
 
@@ -988,7 +989,8 @@ class Parsing extends ParsingSync
         $this->price = (int)trim(substr($price, strlen($price) / 2));
 
         // достаем параметр $street
-        $this->address = trim($pq->find('div.item-map-location > span > span')->find('span')->attr('itemprop', 'streetAddress')->text());
+        $this->address = trim($pq->find('div.item-map-location > span')->find('span')->attr('itemprop', 'streetAddress')->text());
+        echo "ADDRESS = ".$this->address;
 
         // достаем параметр $house
         preg_match_all("/Дом:.+/", $item_params, $output_array);

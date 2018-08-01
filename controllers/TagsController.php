@@ -88,8 +88,8 @@ class TagsController extends Controller
         $plus_tags = $session->get('tags_id_to_search_sale');
         $minus_tags = $session->get('minus_tags_id_to_search_sale');
         $tags = '';
-        if ($plus_tags) $tags .= "<a class='remove-plus-tags' href='#'> <i class='fa fa-plus  fa-fw text-primary'></i>" . TagsWidgets::widget(['tags' => Tags::convertToArray($plus_tags), 'br' => false]) . "</a><br>";
-        if ($minus_tags) $tags .= "<a class='remove-minus-tags' href='#'> <i class='fa fa-minus  fa-fw text-danger'></i>" . TagsWidgets::widget(['tags' => Tags::convertToArray($minus_tags), 'br' => false]) . "</a><br>";
+        if ($plus_tags) $tags .= "<i class='fa fa-plus  fa-fw text-success remove-plus-tags'></i>" . TagsWidgets::widget(['tags' => Tags::convertToArray($plus_tags), 'br' => false]) . "<br>";
+        if ($minus_tags) $tags .= "<i class='fa fa-minus  fa-fw text-danger remove-minus-tags'></i>" . TagsWidgets::widget(['tags' => Tags::convertToArray($minus_tags), 'br' => false]) . "<br>";
 
         return $tags;
 
@@ -130,7 +130,6 @@ class TagsController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
 
         } else {
-            my_var_dump($model->errors);
             return $this->render('update', [
                 'model' => $model,
             ]);

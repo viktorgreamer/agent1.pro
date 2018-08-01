@@ -38,6 +38,15 @@ class SaleFilterWidgets extends Widget
                     'options' => $this->options,
 
                 ]);
+        } elseif ($this->type == 'web') {
+            return $this->render('_salefilters_view_promo',
+                [
+
+                    'salefilter' => $this->salefilter,
+
+                    'options' => $this->options,
+
+                ]);
         } else {
             return $this->render('salefilter-view',
                 [

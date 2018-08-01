@@ -17,11 +17,12 @@ class ControlParsingSearch extends ControlParsing
      */
 
     public $server;
+    public $sort_by;
 
     public function rules()
     {
         return [
-            [['id', 'date_start', 'date_finish','config_id'], 'integer'],
+            [['id', 'date_start', 'date_finish','config_id','sort_by'], 'integer'],
             [['type','status'], 'safe'],
             [['server'], 'string'],
         ];
@@ -71,7 +72,8 @@ class ControlParsingSearch extends ControlParsing
         if ($this->status)  $query->andFilterWhere(['in', 'status', $this->status]);
         if ($this->server)  $query->andFilterWhere(['server' => $this->server]);
         if ($this->type)  $query->andFilterWhere(['in', 'type', $this->type]);
-        $query->orderBy(['date_check' => SORT_DESC]);
+       if ($this->sort_by == 1) $query->orderBy(['date_check' => SORT_DESC]);
+       if ($this->sort_by == 0) $query->orderBy(['date_start' => SORT_DESC]);
         return $dataProvider;
     }
 }

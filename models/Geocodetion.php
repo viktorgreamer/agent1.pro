@@ -171,6 +171,7 @@ class Geocodetion extends Model
                 }
             } else $this->fulladdress = $this->module->region_rus . "," . $this->model->address;
             $this->log .= span('SALE GEOCODATION', 'primary') . "<br>";
+            info(" ADDRESS = ".$this->model->address,SUCCESS);
         }
         if ($type == 'address') {
             $this->fulladdress = $this->model->AdministrativeAreaName . "," . $this->model->locality . "," . $this->model->address;

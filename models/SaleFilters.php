@@ -183,7 +183,7 @@ class SaleFilters extends \yii\db\ActiveRecord
 
     public static function mapSorting()
     {
-      return   [
+        return [
             SaleFilters::SORTING_PRICE_ASC => "Цена &uarr;",
             SaleFilters::SORTING_ID => 'ID &uarr;',
             SaleFilters::SORTING_DATE_START_ASC => 'Дата &uarr;',
@@ -610,12 +610,9 @@ class SaleFilters extends \yii\db\ActiveRecord
     static function getMyFiltersAsArray($types = 0)
     {
         if (!$types) {
-            $session = Yii::$app->session;
-            $user_id = $session->get('user_id');
-            return ArrayHelper::map(SaleFilters::find()->all(), 'id', 'name');
+            $user_id = Yii::$app->user->id;
+            return ArrayHelper::map(SaleFilters::find()->where(['user_id' => $user_id])->all(), 'id', 'name');
         } else {
-            $session = Yii::$app->session;
-            $user_id = $session->get('user_id');
             return ArrayHelper::map(SaleFilters::find()->andWhere(['in', 'type', $types])->all(), 'id', 'name');
         }
 

@@ -5,13 +5,22 @@ $db = require(__DIR__ . '/db.php');
 
 $config = [
     'id' => 'basic',
+    //'language' => 'ru-RU',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm' => '@vendor/npm-asset',
     ],
+
     'components' => [
+        'reCaptcha' => [
+            'name' => 'reCaptcha',
+            'class' => 'himiklab\yii2\recaptcha\ReCaptcha',
+            'siteKey' => 'your siteKey',
+            'secret' => 'your secret key',
+        ],
+
         'settings' => [
             'class' => '\app\components\Settings'
         ],
@@ -32,7 +41,13 @@ $config = [
             'errorAction' => 'site/error',
         ],
 
-        'formatter' => [ 'class' => 'yii\i18n\Formatter', 'dateFormat' => 'php:d F Y', 'datetimeFormat' => 'php:j F, H:i', 'timeFormat' => 'php:H:i:s', 'defaultTimeZone' => 'Europe/Moscow', 'locale' => 'ru-RU' ]
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+            'dateFormat' => 'php:d F Y',
+            'datetimeFormat' => 'php:j F, H:i',
+            'timeFormat' => 'php:H:i:s',
+            'defaultTimeZone' => 'Europe/Moscow',
+            'locale' => 'ru-RU' ]
 //        'mailer' => [
 //            'class' => 'yii\swiftmailer\Mailer',
 //            // send all mails to a file by default. You have to set
@@ -47,10 +62,10 @@ $config = [
             'useFileTransport' => false,
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
-                'host' => 'ssl://smtp.yandex.com',
-                'username' => 'viktorgreamer1@yandex.ru',
-                'password' => 'WibdU160',
-                'port' => '465',
+                'host' => 'smtp.mirs.pro',
+                'username' => 'info@mirs.pro',
+                'password' => 'WindU160',
+                'port' => '587',
                // 'encryption' => 'SSL',
             ],
         ],
@@ -67,7 +82,11 @@ $config = [
             'dsn' => 'mysql:host=141.8.195.92;dbname=a0086640_sz',
             'username' => 'a0086640_pr',
             'password' => 'WindU160',
-            'charset' => 'utf8'],
+            'charset' => 'utf8',
+       /*     'schemaCache' => 'cache',
+            'schemaCacheDuration' => '3600',
+           'enableSchemaCache' => true*/
+        ],
 //        'db' => ['class' => 'yii\db\Connection',
 //            'dsn' => 'mysql:host=localhost;dbname=cloud1',
 //            'username' => 'root',
@@ -78,6 +97,9 @@ $config = [
             'username' => 'a0086640_pr',
             'password' => 'WindU160',
             'charset' => 'utf8',
+           /* 'schemaCache' => 'cache',
+            'schemaCacheDuration' => '3600',
+            'enableSchemaCache' => true*/
 //            'cloud' => ['class' => 'yii\db\Connection',
 //            'dsn' => 'mysql:host=141.8.195.92;dbname=a0086640_cloud',
 //                'username' => 'a0086640_pr',
@@ -96,17 +118,50 @@ $config = [
                 '<controller>/<action>' => '<controller>/<action>'
                 ]
         ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager'
+        ]
 
     ],
+    'as access' => [
+        'class' => 'mdm\admin\components\AccessControl',
+        'allowActions' => [
+            'site/*',
+              'admin/*',
+            "*",
+//          //  'some-controller/some-action',
+            // The actions listed here will be allowed to everyone including guests.
+            // So, 'admin/*' should not appear here in the production, of course.
+            // But in the earlier stages of your development, you may probably want to
+            // add a lot of actions here until you finally completed setting up rbac,
+            // otherwise you may not even take a first step.
+        ]
+    ],
+
     'modules' => [
-
         'admin' => [
+            'class' => 'mdm\admin\Module',
+            'layout' => 'left-menu',
+            'controllerMap' => [
+                'assignment' => [
+                    'class' => 'mdm\admin\controllers\AssignmentController',
+                    /* 'userClassName' => 'app\models\User', */
+                    'idField' => 'id',
+                    'usernameField' => 'email',
 
-            'class' => 'app\modules\admin\Test',
+                ],
+            ],
+
+        ],
+
+        'programmer' => [
+
+            'class' => 'app\modules\programmer\Test',
 
         ],
 
     ],
+
     'params' => $params,
 ];
 

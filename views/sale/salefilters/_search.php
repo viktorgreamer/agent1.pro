@@ -14,9 +14,14 @@ use app\models\Sale;
 <div class="sale-filters-search">
     <form method="get" id="w0">
         <div class="row">
+
+            <?php   if (Yii::$app->user->can('admin')) {?>
+
             <div class="col-sm-8 col-md-6 col-lg-4 col-12">
                 <?php echo Mdb::ActiveSelect($model, 'user_id',[ 0 => 'Любой'] + User::getAvailableUsersAsArray() ) ?>
             </div>
+
+            <?php } ?>
 
             <div class="col-sm-4 col-md-3 col-lg-2 col-6">
                 <?php echo Mdb::ActiveSelect($model, 'rooms_count',[ 0 => 'Любой'] + Sale::ROOMS_COUNT_ARRAY ); ?>

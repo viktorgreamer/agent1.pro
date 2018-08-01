@@ -109,12 +109,25 @@ abstract class Renders
 
     public static function PriceFormat($price)
     {
-        return number_format($price, 0, ".", ".") . "руб.";
+        return number_format($price, 0, ".", ".") . "<small>руб.</small>";
     }
+
+    public static function Counter($id, $from, $to, $duration)
+    {
+        return \app\widgets\CounterWidget::widget([
+            'from' => $from,
+            'to' => $to,
+            'time' => $duration,
+            'id' => $id
+
+
+        ]);
+    }
+
 
     public static function Price($price)
     {
-        return "<strong class='red-text'><b>" . number_format($price, 0, ".", ".") . "</b></strong> руб.";
+        return "<strong class='red-text'><b>" . number_format($price, 0, ".", ".") . "</b></strong><small>руб.</small>";
     }
 
     public
@@ -162,17 +175,16 @@ abstract class Renders
 
     }
 
-    public static function toAlert($message = '')
+    public static function toAlert($message = '', $type = SUCCESS)
     {
-        return \Yii::$app->view->registerJs("toastr.success(" . $message . ");", yii\web\View::POS_READY);
+        return \Yii::$app->view->registerJs("toastr." . $type . "('" . $message . "');", yii\web\View::POS_READY);
 
     }
 
     public static function StaticView($type = '', $options = [])
     {
 
-        return \Yii::$app->view->render("@app/views/".$type, $options);
-
+        return \Yii::$app->view->render("@app/views/" . $type, $options);
 
 
     }
@@ -222,14 +234,16 @@ abstract class Renders
     {
 
         switch ($color) {
-            case COLOR_DISACTIVE: {
-                return "style='background-color: gainsboro'";
-            }
+            case COLOR_DISACTIVE:
+                {
+                    return "style='background-color: gainsboro'";
+                }
 
         }
 
 
     }
+
     public static function SOLD()
     {
 
@@ -240,10 +254,11 @@ abstract class Renders
         return Html::img("/web/icons/sold.png", ['width' => 128, 'class' => 'sold animated fadeInRightBig']);
 
     }
+
     public static function MODERATED()
     {
 
-       return "<i class=\"fa fa-check green-text fa-2x\" aria-hidden=\"true\" title=\"Проверен\"></i>";
+        return "<i class=\"fa fa-check green-text fa-2x\" aria-hidden=\"true\" title=\"Проверен\"></i>";
 
     }
 

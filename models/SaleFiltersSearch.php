@@ -49,6 +49,8 @@ class SaleFiltersSearch extends SaleFilters
             'query' => $query,
         ]);
 
+        if (!Yii::$app->user->can('admin')) $this->user_id = Yii::$app->user->id;
+
         $this->load($params);
 
         if (!$this->validate()) {

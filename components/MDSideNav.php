@@ -18,21 +18,8 @@ class MDSideNav extends Widget
 {
     public function run()
     {
+            return $this->render('mdb/side-nav-view');
 
-
-        $session = Yii::$app->session;
-        $id = $session->get('user_id');
-        if ($id != 0) {
-
-            $user = User::find()
-                ->where(['user_id' => $id])
-                ->one();
-
-            return $this->render('mdb/side-nav-view',
-                [
-                    'user' => $user
-                ]);
-        }
     }
 
 }

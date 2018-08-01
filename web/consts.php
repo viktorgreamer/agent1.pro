@@ -3,6 +3,7 @@
 define('READY_FOR_SALESIMILAR_CHECK', 1);
 define('SALESIMILAR_ALL', 2);
 define('SALESIMILAR_PUBLIC', 3);
+define('LOG_OF_ALGHOTITM', true);
 
 
 
