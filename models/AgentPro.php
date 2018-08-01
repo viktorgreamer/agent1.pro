@@ -189,8 +189,8 @@ class AgentPro extends \yii\db\ActiveRecord
             // info($pageSource);
             $ip = \Yii::$app->params['ip'];
             $time = str2url(date("Y-m-d H:i:s"));
-            $dir = Yii::getAlias('@app');
-            self::FtpLog($dir . "/web/errors/" . str2url($ip) . "_" . $time . "_error_" . $error->name . ".html", $pageSource);
+           // $dir = Yii::getAlias('@app');
+            self::FtpLog(str2url($ip) . "_" . $time . "_error_" . $error->name . ".html", $pageSource);
             // file_put_contents($dir . "/web/errors/" . $ip . "_" . $time . "_error_" . $error->name . ".html", $pageSource);
 
         }
@@ -226,7 +226,7 @@ class AgentPro extends \yii\db\ActiveRecord
             $ip = \Yii::$app->params['ip'];
             $time = str2url(date("Y-m-d H:i:s"));
             $dir = Yii::getAlias('@app');
-            self::FtpLog($dir . "/web/errors/" . $ip . "_" . $time . ".html", $pageSource);
+            self::FtpLog( str2url($ip) . "_" . $time . ".html", $pageSource);
             // file_put_contents($dir . "/web/errors/" . $ip . "_" . $time . "_error_" . $error->name . ".html", $pageSource);
 
         }
