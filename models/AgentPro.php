@@ -190,7 +190,7 @@ class AgentPro extends \yii\db\ActiveRecord
             $ip = \Yii::$app->params['ip'];
             $time = str2url(date("Y-m-d H:i:s"));
             $dir = Yii::getAlias('@app');
-            self::FtpLog($dir . "/web/errors/" . $ip . "_" . $time . "_error_" . $error->name . ".html", $pageSource);
+            self::FtpLog($dir . "/web/errors/" . str2url($ip) . "_" . $time . "_error_" . $error->name . ".html", $pageSource);
             // file_put_contents($dir . "/web/errors/" . $ip . "_" . $time . "_error_" . $error->name . ".html", $pageSource);
 
         }
