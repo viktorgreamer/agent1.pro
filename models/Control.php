@@ -1016,7 +1016,8 @@ class Control extends \yii\db\ActiveRecord
             'PRICE_CHANGED' => $counterPRICE_CHANGED,
             'DATESTART_UPDATED' => $counterDATESTART_UPDATED,
             'NEW' => $counterNEW,
-            'THE_SAME' => $counterTHE_SAME,];
+            'THE_SAME' => $counterTHE_SAME,
+            'STOP_PAGE' => $page];
         ControlParsing::updating($id_parsingController, 2, serialize($counts_array));
 
     }

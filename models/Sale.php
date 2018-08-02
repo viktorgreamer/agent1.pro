@@ -619,9 +619,10 @@ class Sale extends \yii\db\ActiveRecord
                         $this->sync = 2;
                         $this->setProccessingLog(self::REINCARNED);
                         $this->save();
+                        return " REINCARNED";
 
-                    }
-                    return "THE_SAME";
+
+                    } else return "THE_SAME";
                 }
             case "DATESTART_UPDATED" :
                 {
