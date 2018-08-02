@@ -13,16 +13,18 @@ use app\models\Methods;
 
 
     <div class="col-sm-1">
-        <?= Html::a("add=" . $sale->id_address, Url::toRoute(['/addresses/view', 'id' => $sale->id_address]), ['target' => '_blank']); ?>
+        <?= Html::a("add= " . $sale->id_address, Url::toRoute(['/addresses/view', 'id' => $sale->id_address]), ['target' => '_blank']); ?>
     </div>
     <div class="col-sm-2">
 
-        <?= Html::a("sim=" . $sale->id_similar, Url::toRoute(['/sale-similar/view', 'id' => $sale->id_similar]), ['target' => '_blank']); ?>
-        <?= Html::a("sale" . $sale->id, Url::toRoute(['/sale/view', 'id' => $sale->id]), ['target' => '_blank']); ?>
+        <?= Html::a("sim= " . $sale->id_similar, Url::toRoute(['/sale-similar/view', 'id' => $sale->id_similar]), ['target' => '_blank']); ?>
+        <?= Html::a("sale= " . $sale->id, Url::toRoute(['/sale/view', 'id' => $sale->id]), ['target' => '_blank']); ?>
 
     </div>
 
     <div class="col-sm-4">
+        <?= Html::a("sale= " . $sale->id_in_source, Url::toRoute(['/synchronization/index', 'id_in_source' => $sale->id_in_source]), ['target' => '_blank']); ?>
+
         <?php $body = "<span>TAGS_SALE" . "</span><br>" . $sale->tags_id . "<br> " . TagsWidgets::widget(['tags' => Methods::convertToArrayWithBorders($sale->tags_id), 'moderate' => true]) . "<br>"; ?>
         <?php $body .= "<span>TAGS_SIMILAR" . "</span>
 <br>" . $sale->similarNew->tags_id . "<br>" .

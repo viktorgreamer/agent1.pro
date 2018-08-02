@@ -209,16 +209,17 @@ class SaleQuery extends ActiveQuery
     //    info("UNIQUNSS = ".$this->salefilter->uniqueness);
         switch ($this->salefilter->uniqueness) {
             case SaleFilters::UNIQUE_MAIN :
+                $this->groupBy('s.id');
                 break;
 
             case SaleFilters::UNIQUE_ROW:
 
-                $this->groupBy('s.id_similar,s.phone1');
+                $this->groupBy('s.id,s.id_similar,s.phone1');
                 break;
 
             case SaleFilters::UNIQUE_OBJECT:
 
-                $this->groupBy('s.id_similar');
+                $this->groupBy('s.id,s.id_similar');
                 break;
 
         }

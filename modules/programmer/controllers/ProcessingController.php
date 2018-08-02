@@ -10,6 +10,7 @@ use app\models\Sale;
 use app\models\SaleSimilar;
 use app\models\SynchronizationQuery;
 use app\models\Synchronization;
+use yii\db\Expression;
 use yii\helpers\Url;
 use yii\helpers\Html;
 
@@ -136,44 +137,56 @@ class ProcessingController extends \yii\web\Controller
     }
 
 
-    public function actionSearchDuplicates() {
+    public function actionSearchDuplicates()
+    {
 
-       // $this->layout = "@app/views/layouts/main";
-        info(" Search duplucates",SUCCESS);
-        $debug_status = 'JJHKH';
-        $limit = 100;
+        // $this->layout = "@app/views/layouts/main";
+        info(" Search duplucates", SUCCESS);
+        $debug_status = 'efjcKH';
+        $limit = 50;
         $id_sources = 5;
-        $query = Synchronization::find()->where(['<>','debug_status',$debug_status])->andWhere(['id_sources' => $id_sources]);
-        info(" LOST = ".$query->count());
+        $query = Synchronization::find()
+            ->groupBy('id_sources,id_in_source')
+            ->having(new Expression('count(*) > 1'));
+          //  ->where(['<>', 'debug_status', $debug_status])
+           // ->andWhere(['id_sources' => $id_sources]);
+      //  $query->andWhere(['id_in_source' =>  186773446]);
+        info(" LOST = " . $query->count());
         if ($sales = $query->limit($limit)->all()) {
             foreach ($sales as $sale) {
+
                 $duplicates = Synchronization::find()
-                    ->where(['id_sources' => $id_sources])
+                    ->where(['id_sources' => $sale->id_sources])
                     ->andWhere(['id_in_source' => $sale->id_in_source])
-                    ->andWhere(['<>','id', $sale->id])
+                    ->andWhere(['<>', 'id', $sale->id])
                     ->all();
-            if ($duplicates) {
-                info(" ID_IN_SOURCE =".$sale->id_in_source." has ".count($duplicates));
-                echo Renders::StaticView('sale/_mini-sale',['sale' => $sale,'contacts' => true]);
+                if ($duplicates) {
+                    info(" ID_IN_SOURCE =" . $sale->id_in_source . " has " . count($duplicates));
+                 //  Notifications::VKMessage(" ID_IN_SOURCE =" . $sale->id_in_source . " has " . count($duplicates));
+                    echo Renders::StaticView('sale/_mini-sale', ['sale' => $sale, 'contacts' => true]);
+                    $toDelete = false;
+                    foreach ($duplicates as $duplicate) {
+                        if ($duplicate->date_start < $sale->date_start) {
+                            if ($sale->delete()) info("DELETE SALE", SUCCESS);
+                            else info(" CANNOT DELETE SYNC", DANGER);
+                            my_var_dump(Sale::deleteAll(['id' => $sale->id]));
+                            $toDelete = true;
+                            continue;
+                        } else {
+                            if ($duplicate->delete()) info("DELETE DUPLICATE", SUCCESS);
+                            else info(" CANNOT DELETE DUPLICATE", DANGER);
 
-                foreach ($duplicates as $duplicate) {
-                    if ($duplicate->date_start < $sale->date_start) {
-                        info("DELETE SALE",SUCCESS);
-                        $sale->delete();
-                        continue;
-                        Sale::deleteAll(['id' => $sale->id]);
-                    } else {
-                        info("DELETE DUPLICATE",SUCCESS);
-                        $duplicate->delete();
-                        Sale::deleteAll(['id' => $duplicate->id]);
+
+                            my_var_dump(Sale::deleteAll(['id' => $duplicate->id]));
+                        }
+                        info(" ID_IN_SOURCE =" . $duplicate->id_in_source);
+                        echo Renders::StaticView('sale/_mini-sale', ['sale' => $duplicate, 'contacts' => true]);
                     }
-                    info(" ID_IN_SOURCE =".$duplicate->id_in_source);
-                      echo Renders::StaticView('sale/_mini-sale',['sale' => $duplicate,'contacts' => true]);
+                    if ($toDelete) continue;
+                    echo "<hr>";
+
+
                 }
-                   echo "<hr>";
-
-
-            }
                 $sale->debug_status = $debug_status;
                 $sale->save();
             }
@@ -183,8 +196,9 @@ class ProcessingController extends \yii\web\Controller
         return $this->render('index');
     }
 
-    public function actionSendEmail() {
-        Notifications::Mail("SDSDSDSDS",'an.viktory@gmail.com');
+    public function actionSendEmail()
+    {
+        Notifications::Mail("SDSDSDSDS", 'an.viktory@gmail.com');
     }
 
 }

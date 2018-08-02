@@ -119,7 +119,11 @@ class SynchronizationSearch extends Synchronization
         if ($this->sync) $query->andFilterWhere(['sync.sync' => $this->sync]);
 
         // если надо вывести опреденного статуса
-        if ($this->disactive != 10) $query->andFilterWhere(['sync.disactive' => $this->disactive]);
+        if (($this->disactive != 10) and ($this->disactive != 6)) $query->andFilterWhere(['sync.disactive' => $this->disactive]);
+        if ($this->disactive == 6) {
+
+            $query->andWhere(['IS', 'sync.disactive',null]);
+        }
         // если надо вывести не удаленные
         if ($this->status) $query->andWhere(['sync.status' => $this->status]);
         // если надо определенный стасус геокодирования
@@ -184,6 +188,7 @@ class SynchronizationSearch extends Synchronization
 
 
         }
+        $query->groupBy('sync.id');
 
        $session = Yii::$app->session;
         $dataProviderQuery = clone $dataProvider->query;

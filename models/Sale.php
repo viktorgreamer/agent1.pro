@@ -122,7 +122,8 @@ class Sale extends \yii\db\ActiveRecord
         2 => 'DISABLED',
         3 => 'MAN_SOLD',
         4 => 'ACTIVE - SOLD',
-        5 => "BROKEN_AVITO_PHONES"
+        5 => "BROKEN_AVITO_PHONES",
+        6 => "IS NULL"
 //        3 => 'NEW',
 //        4 => 'PRICE_CHANGED',
 //        5 => 'ADDRESS_CHANGED',
@@ -617,6 +618,7 @@ class Sale extends \yii\db\ActiveRecord
                         $this->status = 9;
                         $this->sync = 2;
                         $this->setProccessingLog(self::REINCARNED);
+                        $this->save();
 
                     }
                     return "THE_SAME";

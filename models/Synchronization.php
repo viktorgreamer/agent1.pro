@@ -389,7 +389,7 @@ class Synchronization extends Sale
     {
         // поиск, что данный id уже есть в базе
         $active_item = Synchronization::find()
-            ->select('id,id_address, id_in_source, address_line, price,date_of_check,url,date_start,disactive,id_category')
+            ->select('id,id_address, id_in_source, address_line, price,date_of_check,url,date_start,disactive,id_category,id_sources')
             ->where(['id_in_source' => $parsing['id_in_source']])
             ->andwhere(['id_sources' => $parsing['id_sources']])
             ->one();

@@ -49,10 +49,16 @@ class Stats
             info("OPTIONS DISACTIVE");
             $query->where(['s.disactive' => $options['disactive']]);
         }
+        if ($options['disactive'] === null) {
+            info("OPTIONS DISACTIVE NULL");
+            $query->where(['IS', 's.disactive', $options['disactive']]);
+        }
         if ($options['id_sources']) $query->andWhere(['s.id_sources' => $options['id_sources']]);
         if ($options['date_from']) $query->andWhere(['>', 's.date_start', $options['date_from']]);
         if ($options['date_to']) $query->andWhere(['>', 's.date_start', $options['date_to']]);
         if ($options['status']) $query->andWhere(['similar.status' => $options['status']]);
+
+        $query->groupBy('s.id');
 
         return $query->count();
     }
