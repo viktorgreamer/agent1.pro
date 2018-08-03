@@ -268,6 +268,7 @@ JS;
     {
         return \Yii::$app->view->registerJs("toastr." . $type . "('" . $message . "')", View::POS_READY);
     }
+
     public static function checkBox($model, $attrName, $options = [])
     {
        return Html::activeCheckbox($model, $attrName, $options = []);

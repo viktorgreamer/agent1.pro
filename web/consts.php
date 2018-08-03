@@ -40,10 +40,11 @@ define('CLASS_BUTTON_SUCCESS', 'btn btn-success btn-rounded btn-sm');
 define('CLASS_BUTTON_DANGER', 'btn btn-danger btn-rounded btn-sm');
 
 // ICONS
-define('ICON_SEARCH', "<i class=\"fa fa-search\" aria-hidden=\"true\"></i>");
+define('ICON_SEARCH', "<i class=\"fa fa-search mirs_preloader\" aria-hidden=\"true\"></i>");
 define('ICON_NOSEARCH',"<i class=\"fa fa-search-minus\" aria-hidden=\"true\"></i>");
 define('ICON_PHONE', "<i class=\"fa fa-phone\" aria-hidden=\"true\"></i>");
 define('ICON_EDIT', "<i class=\"fa fa-edit\" aria-hidden=\"true\"></i>");
+define('ICON_EDIT_WHITE', "<i class=\"fa fa-edit text-white\" aria-hidden=\"true\"></i>");
 define('ICON_DELETE', "<i class=\"fa fa-erase\" aria-hidden=\"true\"></i>");
 define('ICON_DELETE2', "<i class=\"fa fa-erase fa-2x\" aria-hidden=\"true\"></i>");
 define('ICON_PLAY2', "<i class=\"fa fa-play fa-2x\" aria-hidden=\"true\"></i>");

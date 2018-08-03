@@ -105,9 +105,9 @@ $config = [
 //                'username' => 'a0086640_pr',
 //                'password' => 'WindU160',
 //            'charset' => 'utf8',
-//            'schemaCache' => 'cache',
-//            'schemaCacheDuration' => '3600',
-//            'enableSchemaCache' => true
+            'schemaCache' => 'cache',
+            'schemaCacheDuration' => '3600',
+            'enableSchemaCache' => true
 ]
         ,
 
@@ -119,7 +119,10 @@ $config = [
                 ]
         ],
         'authManager' => [
-            'class' => 'yii\rbac\DbManager'
+            'class' => 'yii\rbac\DbManager',
+            'cache'=>'cache'
+           // 'enableCaching' => true,
+          //  'cacheDuration' => 3600,
         ]
 
     ],

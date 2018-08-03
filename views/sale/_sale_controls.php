@@ -46,7 +46,7 @@ $moderate_list[] = Actions::renderChangeStatus($sale->id, Actions::SALE, Actions
 $moderate_list[] = Actions::renderChangeStatus($sale->id_similar, Actions::SALESIMILAR, Actions::SALESIMILAR_STATUS, Sale::MAN_SOLD,
     Actions::getIcons(Actions::SALESIMILAR, Actions::SALESIMILAR_STATUS_SOLD));
 
-if ($sale->agent->person_type == 0) $moderate_list[] = Actions::renderChangeStatus($sale->agent->id, Actions::AGENT, Actions::AGENT_PERSON_TYPE,
+if ($sale->agent->person_type == \app\models\Agents::PERSON_TYPE_HOUSEKEEPER) $moderate_list[] = Actions::renderChangeStatus($sale->agent->id, Actions::AGENT, Actions::AGENT_PERSON_TYPE,
     Actions::AGENT_PERSON_TYPE_AGENT, Actions::getIcons(Actions::AGENT, Actions::AGENT_PERSON_TYPE_AGENT));
 
 else $moderate_list[] = Actions::renderChangeStatus($sale->agent->id, Actions::AGENT, Actions::AGENT_PERSON_TYPE,

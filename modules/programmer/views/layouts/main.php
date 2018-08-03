@@ -28,7 +28,9 @@ use rmrevin\yii\ulogin\ULogin;
     <?php $this->head() ?>
 
 </head>
+
 <body>
+<div id="preloader"></div>
 <div class="container">
     <?php $this->beginBody() ?>
 

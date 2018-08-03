@@ -23,7 +23,7 @@ use yii\helpers\Html;
  */
 class Tags extends \yii\db\ActiveRecord
 {
-    const ACTIVE_TAG_CLASS = "animated";
+    const ACTIVE_TAG_CLASS = "border-tag z-depth-5";
     const ACTIVE_TAG_CLASS_EXIT = "animated slideOutLeft";
     const ACTIVE_TAG_CLASS_APPEARENCE = "animated pulse infinite z-depth-5";
     //  const TYPES = 'building,plan,object,locality,condition,deal';

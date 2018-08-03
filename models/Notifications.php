@@ -48,16 +48,17 @@ class Notifications
         ));
     }
 
-    public static function VKMessage($message)
+    public static function VKMessage($message,$toId = 0)
     {
-       Notifications::vkApi_messagesSend(self::VIKTOR_ID, $message);
+      if ($toId) Notifications::vkApi_messagesSend($toId, $message);
+      else Notifications::vkApi_messagesSend(self::VIKTOR_ID, $message);
     }
 
     public static function Mail($message = '',$toEmail = 'an.viktory@gmail.com') {
         if ($message) {
             \Yii::$app->mailer->compose()
                 ->setTo($toEmail)
-                ->setFrom(['info@mirs.pro' => 'agent1.pro'])
+                ->setFrom(['info@mirs.pro' => 'mirs.pro'])
                 ->setSubject("NEW ITEM")
                 ->setTextBody($message)
                 ->send();

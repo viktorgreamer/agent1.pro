@@ -72,6 +72,7 @@ class MyChromeDriver extends RemoteWebDriver
             $driver = self::createBySessionID($freesession, self::CHROME_HOST);
             $session = Sessions::find()->where(['id_session' => $freesession])->one();
             $session->status = Sessions::ACTIVE;
+            $session->datetime_check = time();
             $session->save();
             if (!$session->ip) {
                 $driver->getMyIp();

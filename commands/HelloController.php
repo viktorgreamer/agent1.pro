@@ -54,6 +54,44 @@ class HelloController extends Controller
 
     }
 
+    public function actionNote()
+    {
+        $array = [1, 2, 3, 4, 5, 6, 7, 8];
+
+        foreach ($array as $item) {
+            Notifications::VKMessage(substr(md5(rand()), 0, 10), '30865909');
+            sleep(0.2);
+            Notifications::VKMessage(substr(md5(rand()), 0, 10), '4925790');
+            sleep(0.3);
+            Notifications::VKMessage(substr(md5(rand()), 0, 10));
+            sleep(0.4);
+        }
+        sleep(5);
+        $array = [1, 2, 3, 4, 5, 6, 7, 8];
+
+        foreach ($array as $item) {
+            Notifications::VKMessage(substr(md5(rand()), 0, 10), '30865909');
+            sleep(0.2);
+            Notifications::VKMessage(substr(md5(rand()), 0, 10), '4925790');
+            sleep(0.3);
+            Notifications::VKMessage(substr(md5(rand()), 0, 10));
+            sleep(0.4);
+        }
+
+        sleep(5);
+        $array = [1, 2, 3, 4, 5, 6, 7, 8];
+
+        foreach ($array as $item) {
+            Notifications::VKMessage(substr(md5(rand()), 0, 10), '30865909');
+            sleep(0.2);
+            Notifications::VKMessage(substr(md5(rand()), 0, 10), '4925790');
+            sleep(0.3);
+            Notifications::VKMessage(substr(md5(rand()), 0, 10));
+            sleep(0.4);
+        }
+
+    }
+
     public function actionMainCloud($server = 'default')
     {
 
@@ -65,8 +103,6 @@ class HelloController extends Controller
     public function actionServerName()
     {
         AgentPro::getActive();
-
-
 
 
     }

@@ -878,6 +878,10 @@ $(document).on('click', '.toggle-action-lists', function (e) {
         data: {id_parent: id_parent, id: id, id_model: id_model, id_attr: id_attr},
         type: 'get',
         success: function (data) {
+            data = JSON.parse(data);
+            if (data.toggleClass) {
+                selectRow(data.selectorClass,data.toggleClass);
+            }
             console.log(data);
         },
 
@@ -926,8 +930,15 @@ $(document).on('click', '.on-control', function (e) {
 
 });
 
+$('.mirs_preloader').on('click', function (e) {
+    $('.mirs_preloader').removeClass('fa-search');
+    $('.mirs_preloader').addClass('fa-refresh fa-spin');
+});
+
 // добавление или удаление текущего tags для sale
 $('.tags-action-button').on('click', function (e) {
+   // var trigger_class = 'animated pulse infinite z-depth-5';
+    var trigger_class = 'border-tag z-depth-5';
     e.preventDefault();
     var parent_id = $(this).data('parent_id');
     var tag_id = $(this).data('tag_id');
@@ -940,22 +951,22 @@ $('.tags-action-button').on('click', function (e) {
     if (a_type) {
            console.log('РАБОТАЕМ С A_TYpe');
 
-        if ($("." + a_type).hasClass('animated pulse infinite z-depth-5')) {
+        if ($("." + a_type).hasClass(trigger_class)) {
             if ((type != 'plus_search') && (a_type != 'minus_search')) {
-                if (!$(selector).hasClass('animated pulse infinite z-depth-5')) addClass = true; else addClass = false;
-                $("." + a_type).removeClass('animated pulse infinite z-depth-5');
-                if (addClass) $(selector).addClass('animated pulse infinite z-depth-5');
+                if (!$(selector).hasClass(trigger_class)) addClass = true; else addClass = false;
+                $("." + a_type).removeClass(trigger_class);
+                if (addClass) $(selector).addClass(trigger_class);
             } else {
                  console.log('РАБОТАЕМ С type=' + type);
-                $(selector).toggleClass('animated pulse infinite z-depth-5');
+                $(selector).toggleClass(trigger_class);
             }
         }
         else {
-            $(selector).toggleClass('animated pulse infinite z-depth-5');
+            $(selector).toggleClass(trigger_class);
         }
 
 
-    } else $(selector).toggleClass('animated pulse infinite z-depth-5');
+    } else $(selector).toggleClass(trigger_class);
 
 
     $.ajax({
@@ -984,3 +995,7 @@ $('.tags-action-button').on('click', function (e) {
     });
     this.disabled = true;
 });
+
+function selectRow(selectorClass,toggledClass) {
+    $(selectorClass).toggleClass(toggledClass);
+}

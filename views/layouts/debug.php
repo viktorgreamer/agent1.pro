@@ -28,7 +28,7 @@ use rmrevin\yii\ulogin\ULogin;
     <?php $this->registerLinkTag(['rel' => 'icon', 'href' => 'icon.png']); ?>
 </head>
 <body>
-
+<div id="preloader" style="display: none"></div>
 <?php $this->beginBody() ?>
 
 <?= $content ?>

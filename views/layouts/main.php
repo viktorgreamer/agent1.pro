@@ -29,6 +29,7 @@ use app\components\NavWidget;
 
 </head>
 <body>
+<div id="preloader"></div>
 <div class="container-fluid">
     <?php $this->beginBody() ?>
     <?php  echo \app\widgets\MdbNavBar::widget(); ?>

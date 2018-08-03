@@ -77,6 +77,11 @@ class ViewsController extends \yii\web\Controller
         $salefilter->id = 898;
         return $this->render('_sale-table.php', compact(['model', 'controls', 'salefilter']));
     }
+
+    public function actionPreloader() {
+        $this->enableCsrfValidation = false;
+        return $this->render('tools/_preloader');
+    }
 public function actionOneSaleModerate()
     {
 

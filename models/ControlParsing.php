@@ -327,27 +327,31 @@ class ControlParsing extends \yii\db\ActiveRecord
         } else return [];
     }
 
-    public static function create($type, $sales, $ip = '')
+    public static function create($type, $sales = 0, $ip = '')
     {
         $parsingController = new ControlParsing();
         $module = \Yii::$app->params['module'];
         $server = \Yii::$app->params['server'];
         //$busies = ArrayHelper::toArray($sales);
         // my_var_dump($busies);
-        if ($sales instanceof ParsingConfiguration) {
-            $busy_id_sources = $sales['id_sources'];
-            $parsingController->ids_sources = $busy_id_sources;
-            $parsingController->ids = $sales->id;
-            info("busy_id_sources = " . $busy_id_sources);
-        } else {
-          //  my_var_dump($sales);
-            $busy_id_sources = array_unique(ArrayHelper::getColumn($sales, 'id_sources'));
-            if (!empty($busy_id_sources)) $parsingController->ids_sources = implode(",", $busy_id_sources);
-            info("busy_id_sources = " . implode(',', $busy_id_sources));
+        if ($sales) {
+            if ($sales instanceof ParsingConfiguration) {
+                $busy_id_sources = $sales['id_sources'];
+                $parsingController->ids_sources = $busy_id_sources;
+                $parsingController->ids = $sales->id;
+                info("busy_id_sources = " . $busy_id_sources);
+            } else {
+                //  my_var_dump($sales);
+                $busy_id_sources = array_unique(ArrayHelper::getColumn($sales, 'id_sources'));
+                if (!empty($busy_id_sources)) $parsingController->ids_sources = implode(",", $busy_id_sources);
+                info("busy_id_sources = " . implode(',', $busy_id_sources));
+            }
+            $busy_ids = array_diff(ArrayHelper::getColumn($sales, 'id'), array(0, null, ''));
+            // my_var_dump(array_unique(ArrayHelper::getColumn($busies,'id_sources')));
+            info("busy_ids '" . implode(",", $busy_ids) . "'");
+
         }
-        $busy_ids = array_diff(ArrayHelper::getColumn($sales, 'id'), array(0, null, ''));
-        // my_var_dump(array_unique(ArrayHelper::getColumn($busies,'id_sources')));
-        info("busy_ids '" . implode(",", $busy_ids) . "'");
+
 
         $parsingController->date_start = time();
         $parsingController->server = $server;

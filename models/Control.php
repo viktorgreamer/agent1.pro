@@ -56,6 +56,7 @@ class Control extends \yii\db\ActiveRecord
     const SIMILAR = 8;
     const DOWN_SYNC = 9;
     const UP_SYNC = 10;
+    const  CHECK_LOST =11;
 
     public static function mapTypesControls()
     {
@@ -70,6 +71,7 @@ class Control extends \yii\db\ActiveRecord
             self::SIMILAR => 'SIMILAR',
             self::DOWN_SYNC => 'DOWN_SYNC',
             self::UP_SYNC => 'UP_SYNC',
+            self::CHECK_LOST => 'CHECK_LOST',
         ];
     }
 
@@ -86,6 +88,7 @@ class Control extends \yii\db\ActiveRecord
             self::SIMILAR,
             self::DOWN_SYNC,
             self::UP_SYNC,
+            self::CHECK_LOST
         ];
     }
 
@@ -207,47 +210,87 @@ class Control extends \yii\db\ActiveRecord
 
     public function checkLost()
     {
+        $type = self::CHECK_LOST;
+        $id_parsingController = ControlParsing::create($type);
+
+
+
         $agentpro = \Yii::$app->params['agentpro'];
+        if (!$agentpro->period_check) {
+            $agentpro = new AgentPro();
+            $agentpro->period_check = 20;
+        }
         $parsingConfigurations = ParsingConfiguration::find()->where(['active' => 1])->andWhere(['module_id' => $this->id])->all();
 
         if ($parsingConfigurations) {
             foreach ($parsingConfigurations as $parsingConfiguration) {
                 $time_check = $parsingConfiguration->last_timestamp;
+
                 info(" ParsingCongiguration Name =" . $parsingConfiguration->name . " WAS CHECKED " . \Yii::$app->formatter->asRelativeTime($time_check));
-                $countToUpdate = Synchronization::find()->where(['id_category' => $parsingConfiguration->id])
-                    ->andWhere(['<', 'date_of_check', ($time_check - $agentpro->period_check * 2 * 60 * 60)])
+                $datetime_of_lost = ($time_check - $agentpro->period_check  * 60 * 60);
+                info(" DATE TO UNDERSTAND OF LOOSING =" . \Yii::$app->formatter->asDatetime($datetime_of_lost));
+                $datetime_of_die = ($time_check - $agentpro->period_check * 2 * 60 * 60);
+                info(" DATE TO UNDERSTAND OF DIE =" . \Yii::$app->formatter->asDatetime($datetime_of_die));
+
+                $countToUpdateLost = Synchronization::find()->where(['id_category' => $parsingConfiguration->id])
+                    ->andWhere(['<', 'date_of_check', $datetime_of_lost])
                     ->andWhere(['disactive' => 0])
                     ->count();
-                info(" ITEMS TO LOST = " . $countToUpdate, DANGER);
-                Sale::updateAll(['date_of_die' => time(), 'disactive' => 2],
+                info(" ITEMS TO LOST = " . $countToUpdateLost, DANGER);
+
+                $countToUpdateDie = Synchronization::find()->where(['id_category' => $parsingConfiguration->id])
+                    ->andWhere(['<', 'date_of_check', $datetime_of_die])
+                    ->andWhere( ['disactive' => 2])
+                    ->count();
+
+
+                info(" ITEMS TO DIE = " . $countToUpdateDie, DANGER);
+                if ($countToUpdateLost) {
+                    $countLostSale = Sale::updateAll(['date_of_die' => time(), 'disactive' => 2],
+                        ['AND',
+                            ['<', 'date_of_check', $datetime_of_lost],
+                            ['disactive' => 0],
+                            ['id_category' => $parsingConfiguration->id]
+                        ]
+                    );
+                    if ($countLostSale) my_var_dump($countLostSale);
+                    $countLostSync = Synchronization::updateAll(['date_of_die' => time(), 'disactive' => 2],
+                        ['AND',
+                            ['<', 'date_of_check', $datetime_of_lost],
+                            ['disactive' => 0],
+                            ['id_category' => $parsingConfiguration->id]
+                        ]
+                    );
+                    if ($countLostSync) my_var_dump($countLostSync);
+
+
+                }
+
+
+                $countDieSale =  Sale::updateAll(['disactive' => 1, 'date_of_die' => time()],
                     ['AND',
-                        ['<', 'date_of_check', ($time_check - $agentpro->period_check * 2 * 60 * 60)],
-                        ['disactive' => 0],
+                        ['<', 'date_of_check', $datetime_of_die],
+                        ['disactive' => 2],
                         ['id_category' => $parsingConfiguration->id]
                     ]
                 );
-                Synchronization::updateAll(['date_of_die' => time(), 'disactive' => 2],
+                if ($countDieSale) my_var_dump($countDieSale);
+
+                $countDieSync =  Synchronization::updateAll(['disactive' => 1,'date_of_die' => time()],
                     ['AND',
-                        ['<', 'date_of_check', ($time_check - $agentpro->period_check * 2 * 60 * 60)],
-                        ['disactive' => 0],
+                        ['<', 'date_of_check', $datetime_of_die],
+                        ['disactive' => 2],
                         ['id_category' => $parsingConfiguration->id]
                     ]
                 );
-                Sale::updateAll(['date_of_die' => time(), 'disactive' => 2],
-                    ['AND',
-                        ['<', 'date_of_check', ($time_check - $agentpro->period_check * 3 * 60 * 60)],
-                        ['disactive' => 1],
-                        ['id_category' => $parsingConfiguration->id]
-                    ]
-                );
-                Synchronization::updateAll(['date_of_die' => time(), 'disactive' => 2],
-                    ['AND',
-                        ['<', 'date_of_check', ($time_check - $agentpro->period_check * 3 * 60 * 60)],
-                        ['disactive' => 1],
-                        ['id_category' => $parsingConfiguration->id]
-                    ]
-                );
+                if ($countDieSync) my_var_dump($countDieSync);
+
+                $totalCountLost = $totalCountLost + $countToUpdateLost;
+                $totalCountDie = $totalCountDie + $countToUpdateDie;
+
+                //  break;
             }
+            ControlParsing::updating($id_parsingController,['LOST' => $totalCountLost,'DIE' => $totalCountDie]);
         }
 
     }
@@ -283,7 +326,7 @@ class Control extends \yii\db\ActiveRecord
             if ($agentpro->status_analizing) $module->load_sale_statistic(50);
             if ($agentpro->status_sync) $module->Synchronisation(500);
 
-            if ($agentpro->time_lost < time()) {
+            if ($module->time_lost < time()) {
                 $module->checkLost();
                 $module->time_lost = time() + 24 * 3600;
             }

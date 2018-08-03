@@ -12,6 +12,10 @@ class TagsController extends \yii\web\Controller
     {
         return $this->render('index');
     }
+public function actionActiveTag()
+    {
+        return $this->render('_active_tag');
+    }
 
     public function actionAddTagToAddresses()
     {

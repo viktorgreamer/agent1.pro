@@ -15,21 +15,28 @@ if ($model->year_down) $body .= ",дом нестарше <b>" . $model->year_do
 $body .= "<br>" . $model->komment;
 $body .= "<br><div style='background-color: #b0bec5'>" . $model->hidden_comment . "</div> ";
 $phone = ParsingExtractionMethods::findPhone($model->hidden_comment);
-
-
 ?>
-
 
 <div class="card">
     <div class="card-header primary-color white-text">
+        <?php echo yii\helpers\Html::a(\app\components\Mdb::Fa('search text-white'), ['sale/search-by-filter', 'id' => $model->id], ['target' => '_blank']); ?>
+        &nbsp
+
+        <?php echo \yii\helpers\Html::a(ICON_EDIT_WHITE, ['sale/index2', 'id' => $model->id], ['target' => '_blank']); ?>
+        &nbsp&nbsp&nbsp
+
         <?php echo $model->name; ?>
-        <div class="float-right white-text">
+
+
+        <div class=" float-right white-text">
             <a data-toggle="collapse" href="#collapseFilter<?= $model->id; ?>" aria-expanded="false"
                aria-controls="collapseFilter<?= $model->id; ?>">
                 <div class="white-text"><i class="fa fa-angle-down">Развернуть</i></div>
             </a>
         </div>
+
     </div>
+
     <div class="card-body">
         <div class="row">
             <div class="col-lg-10 col-md-10 col-sm-10 col-10">
@@ -92,5 +99,7 @@ $phone = ParsingExtractionMethods::findPhone($model->hidden_comment);
         </div>
         <div class="text-danger float-right"><?= Yii::$app->formatter->asRelativeTime($model->time); ?></div>
     </div>
+
+
 </div>
 

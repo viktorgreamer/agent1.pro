@@ -14,9 +14,11 @@ use app\components\Mdb;
 
 
 use yii\helpers\Html;
+use yii\web\View;
 
 class Actions
 {
+    static $registerJs;
 
     // список коротких обозначений
     const SALE = 1;
@@ -293,13 +295,29 @@ class Actions
                 if ($model[$attrname] == $attrWas) $model[$attrname] = $attrWas . "" . $id . ",";
 
             } else $model[$attrname] = "," . $id . ",";
-            $return = " Успешно изменили " . $id_model . ":" . $id_attr . " c " . $attrWas . " на '" . $model[$attrname] . "'";
+            $return = " Успешно изменили " . $id_model . ":" . $attrname . " c " . $attrWas . " на '" . $model[$attrname] . "'";
             //  if (!$model->validate()) my_var_dump($model->getErrors());
             if (!$model->save(false)) my_var_dump($model->getErrors());
         } else echo "<br>" . span(" PARENT IS NOT EXISTS", 'danger');
 
+        $array = [];
+        if (preg_match("/black/", $attrname)) {
+            $return .= " PREGMATCH_BLANK";
+            $array = [
+                'selectorClass' => ".sim_id_" . $id,
+                'toggleClass' => 'row-checked-ban',
 
-        return $return;
+            ];
+            //  return  json_encode($array);
+        }
+        if (preg_match("/white|modera/", $attrname)) {
+            $array = [
+                'selectorClass' => ".sim_id_" . $id,
+                'toggleClass' => 'row-checked-stars',
+
+            ];
+        }
+        return json_encode(array_merge($array, ['return' => $return]));
 
 
     }

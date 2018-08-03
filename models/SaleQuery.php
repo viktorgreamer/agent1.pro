@@ -24,6 +24,7 @@ class SaleQuery extends ActiveQuery
         $modelClass = Sale::className();
         parent::__construct($modelClass);
     }
+
     public function searchSimilar($id_similar)
     {
         $this->from(['s' => Sale::tableName()]);
@@ -125,9 +126,9 @@ class SaleQuery extends ActiveQuery
         if (!empty($this->salefilter->id_sources)) $this->andFilterWhere(['in', 's.id_sources', $this->salefilter->id_sources]);
 
         // неактивные ресурсы
-      //  info("disactive_id_sources = ".$this->salefilter->disactive_id_sources);
+        //  info("disactive_id_sources = ".$this->salefilter->disactive_id_sources);
         if (!empty($this->salefilter->disactive_id_sources)) {
-               foreach ($this->salefilter->disactive_id_sources as $disactive_id_source) {
+            foreach ($this->salefilter->disactive_id_sources as $disactive_id_source) {
                 $this->andFilterWhere(['not like', 'sim.id_sources', $disactive_id_source]);
             }
 
@@ -143,7 +144,6 @@ class SaleQuery extends ActiveQuery
         if ($this->salefilter->floor_up) $this->andFilterWhere(['<=', 's.floor', $this->salefilter->floor_up]);
         if ($this->salefilter->floorcount_down) $this->andFilterWhere(['>=', 's.floorcount', $this->salefilter->floorcount_down]);
         if ($this->salefilter->floorcount_up) $this->andFilterWhere(['<=', 's.floorcount', $this->salefilter->floorcount_up]);
-
 
 
         if ($this->salefilter->text_like != '') $this->andFilterWhere(['or',
@@ -206,24 +206,8 @@ class SaleQuery extends ActiveQuery
     // уникализация
     protected function uniqueness()
     {
-    //    info("UNIQUNSS = ".$this->salefilter->uniqueness);
-        switch ($this->salefilter->uniqueness) {
-            case SaleFilters::UNIQUE_MAIN :
-                $this->groupBy('s.id');
-                break;
-
-            case SaleFilters::UNIQUE_ROW:
-
-                $this->groupBy('s.id,s.id_similar,s.phone1');
-                break;
-
-            case SaleFilters::UNIQUE_OBJECT:
-
-                $this->groupBy('s.id,s.id_similar');
-                break;
-
-        }
-
+        if ($this->salefilter->uniqueness) $this->groupBy('s.id_similar');
+        else $this->groupBy('s.id');
     }
 
     protected function sorting()
@@ -377,9 +361,6 @@ class SaleQuery extends ActiveQuery
         return array_group_by($new_tags, 'type');
 
     }
-
-
-
 
 
 }

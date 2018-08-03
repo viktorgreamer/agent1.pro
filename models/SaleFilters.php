@@ -263,13 +263,15 @@ class SaleFilters extends \yii\db\ActiveRecord
         return $tags;
     }
 
+
     public function load($data, $formName = null)
     {
         parent::load($data, $formName);
 
-        $booleans = ['not_last_floor', 'vk_inform', 'sms_inform', 'mail_inform'];
+        $booleans = ['not_last_floor', 'vk_inform', 'sms_inform', 'mail_inform','uniqueness'];
         foreach ($booleans as $property) {
-            if ($this[$property] === 'on') {
+            if (($this[$property] === 'on') OR ($this->$property === 1) OR ($this->$property === '1')) {
+
                 // info("PRELOAD PROPERTY ".$property." value =".$this[$property]);
                 $this[$property] = 1;
 
@@ -287,10 +289,13 @@ class SaleFilters extends \yii\db\ActiveRecord
 
     public function beforeValidate()
     {
-        $booleans = ['not_last_floor', 'vk_inform', 'sms_inform', 'mail_inform'];
+        $booleans = ['not_last_floor', 'vk_inform', 'sms_inform', 'mail_inform','uniqueness'];
         foreach ($booleans as $property) {
-            if ($this[$property] == 'on') $this[$property] = 1; else $this[$property] = 0;
+            if (($this[$property] === 'on') OR ($this->$property === 1) OR ($this->$property === '1')) {
+                // info("PRELOAD PROPERTY ".$property." value =".$this[$property]);
+                $this[$property] = 1;
 
+            } else $this[$property] = 0;
         }
 
 
