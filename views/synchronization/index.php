@@ -27,8 +27,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             //['class' => 'yii\grid\SerialColumn'],
 
-            'id',
+
             [
+                'label' => 'ID',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return Html::a($model->id,['synchronization/view','id' => $model->id],['target' => '_blank']);
+                }
+            ], [
                 'label' => 'Источник',
                 'format' => 'raw',
                 'value' => function ($model) {

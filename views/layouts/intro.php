@@ -30,7 +30,7 @@ use app\components\NavWidget;
 
     </head>
     <body>
-    <div class="container-fluid">
+    <div class="container-fluid m-0 p-0">
         <?php $this->beginBody() ?>
         <?php  echo \app\widgets\MdbNavBar::widget(); ?>
         <?php if (Yii::$app->user->can('admin')) {

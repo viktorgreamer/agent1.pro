@@ -5,7 +5,7 @@
 use app\models\ParsingExtractionMethods;
 use app\models\Tags;
 use app\components\TagsWidgets;
-
+use app\models\Actions;
 if (!empty($model->rooms_count)) $body = " Куплю " . \app\models\RenderSalefilters::RoomsCount($model->rooms_count);
 
 if ($model->price_up) $body .= ", цена до <b>" . $model->price_up . " </b>";
@@ -19,11 +19,19 @@ $phone = ParsingExtractionMethods::findPhone($model->hidden_comment);
 
 <div class="card">
     <div class="card-header primary-color white-text">
-        <?php echo yii\helpers\Html::a(\app\components\Mdb::Fa('search text-white'), ['sale/search-by-filter', 'id' => $model->id], ['target' => '_blank']); ?>
+        <?php echo yii\helpers\Html::a(\app\components\Mdb::Fa('search fa-fw text-white'), ['sale/search-by-filter', 'id' => $model->id], ['target' => '_blank']); ?>
         &nbsp
 
-        <?php echo \yii\helpers\Html::a(ICON_EDIT_WHITE, ['sale/index2', 'id' => $model->id], ['target' => '_blank']); ?>
-        &nbsp&nbsp&nbsp
+        <?php if ($model->status != \app\models\SaleFilters::STATUS_DISABLED) echo Actions::renderChangeStatus($model->id,Actions::SALEFILTER,Actions::SALEFILTER_STATUS, \app\models\SaleFilters::STATUS_DISABLED,\app\components\Mdb::Fa('pause  fa-fw text-warning')); ?>
+        &nbsp
+        <?php if ($model->status != \app\models\SaleFilters::STATUS_DELETED) echo Actions::renderChangeStatus($model->id,Actions::SALEFILTER,Actions::SALEFILTER_STATUS, \app\models\SaleFilters::STATUS_DELETED,\app\components\Mdb::Fa('trash fa-fw  text-danger')); ?>
+        &nbsp
+        <?php if ($model->status != \app\models\SaleFilters::STATUS_ACTIVE) echo Actions::renderChangeStatus($model->id,Actions::SALEFILTER,Actions::SALEFILTER_STATUS, \app\models\SaleFilters::STATUS_ACTIVE,\app\components\Mdb::Fa('play fa-fw  green-text')); ?>
+        &nbsp
+        <?php echo \yii\helpers\Html::a(\app\components\Mdb::Fa('edit fa-fw text-white'), ['sale/index2', 'id' => $model->id], ['target' => '_blank']); ?>
+        &nbsp
+
+        &nbsp&nbsp
 
         <?php echo $model->name; ?>
 

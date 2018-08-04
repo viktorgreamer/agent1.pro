@@ -14,27 +14,29 @@ $session = Yii::$app->session;
     <div class="col-md-4 col-lg-3 col-sm-6 col-6 ">
         <?php echo Mdb::Select('type_of_show', 'Тип показа', SaleFilters::TYPE_OF_SHOW_ARRAY); ?>
     </div>
-    <div class="row">
-        <div class="col-lg-1 m-0 p-0"></div>
-        <div class="col-md-4 col-sm-2 col-2 col-lg-2  m-0 p-0">
-            <?= Html::img('/web/icons/s2.png', ['height' => '32px', 'title' => 'Уникальные']); ?>
-
-        </div>
-        <div class="col-md-4 col-sm-5 col-5 col-lg-3 m-0 p-0">
-            <div class="md-form form-sm p-0 m-0">
-                <?= Mdb::ActiveTextInput($salefilter, 'grossarea_down', ['label' => 'от']); ?>
+    <div class="col-lg-3 col align-self-center">
+        <div class="row">
+            <div class="switch  col-lg-6 primary-switch col">
+                <label class="m-0 p-0 text-primary">
+                    <?= Html::img('/web/icons/list.png', ['height' => '25px', 'title' => 'Список']); ?>
+                    <?php echo Html::checkbox('view', $_GET['view']); ?>
+                    <span class="lever m-1"></span>
+                    <?= Html::img('/web/icons/map.png', ['height' => '25px', 'title' => 'Карта']); ?>
+                </label>
             </div>
-        </div>
-        <div class="col-lg-1 m-0 p-0"></div>
+            <div class="switch col-lg-6 primary-switch col">
+                <label class="m-0 p-0 text-primary">
+                    <?= Html::img('/web/icons/copy.png', ['height' => '25px', 'title' => 'Все']); ?>
+                    <?php echo Html::checkbox('uniqueness', $salefilter->uniqueness); ?>
 
-        <div class="col-md-4 col-sm-5 col-5 col-lg-3 m-0 p-0">
-            <div class="md-form form-sm p-0 m-0">
-                <?= Mdb::ActiveTextInput($salefilter, 'grossarea_up', ['label' => 'до']); ?>
+                    <span class="lever m-1"></span>
+                    <?= Html::img('/web/icons/unique.png', ['height' => '25px', 'title' => 'Уникальные']); ?>
+                </label>
             </div>
         </div>
     </div>
     <?php echo Html::hiddenInput('id', $salefilter->id); ?>
-    <div class="col-md-4 col-lg-2 col-sm-6 col-6">
+    <div class="col-md-4 col-lg-1 col-sm-6 col-6">
         <?php echo Mdb::ActiveSelect($salefilter, 'sort_by', SaleFilters::TYPE_OF_SORTING_ARRAY, ['label' => 'Сортировка']); ?>
     </div>
     <div class="col-md-4 col-lg-2 col-sm-6 col-6">
@@ -52,10 +54,8 @@ $session = Yii::$app->session;
         --><? /* } */ ?>
     <div class="col-md-4 col-lg-2 col-sm-6 col-6 no-margin-botton">
         <div class="form-group">
-            <?= Html::submitButton(Mdb::Fa('refresh'), ['class' => 'btn btn-rounded btn-sm btn-success']) ?>
+            <?= Html::submitButton(ICON_SEARCH,['class' => CLASS_BUTTON]) ?>
             <?php echo Html::a(ICON_EDIT2, Url::to(['sale/index2', 'id' => $salefilter->id]), ['class' => CLASS_BUTTON, 'target' => '_blank']); ?>
-
-
         </div>
 
     </div>

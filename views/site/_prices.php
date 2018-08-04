@@ -35,7 +35,7 @@
                             <p><i class="fa fa-times red-text pr-2"></i>Нельзя сохранить поиск</p>
                         </li>
                         <li>
-                            <p><i class="fa fa-times red-text pr-2"></i>На 24 часа</p>
+                            <p><i class="fa fa-times red-text pr-2"></i>На 3 дня</p>
                         </li>
                     </ul>
                     <button class="btn btn-blue">Попробывать</button>
@@ -130,9 +130,6 @@
         </div>
         <!-- Grid column -->
 
-        <!-- Grid column -->
-
-        <!-- Grid column -->
 
     </div>
     <br>
@@ -286,4 +283,3 @@
     <!-- Grid row -->
 
 </section>
-<!-- Section: Pricing v.1 -->

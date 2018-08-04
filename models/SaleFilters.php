@@ -74,6 +74,19 @@ class SaleFilters extends \yii\db\ActiveRecord
 
     const ORDER_BY = [0 => 'id', 2 => 'цена', 1 => 'время', 3 => 'адресам'];
 
+    const STATUS_ACTIVE = 1;
+    const STATUS_DISABLED = 2;
+    const STATUS_DELETED = 3;
+
+    public static function mapStatuses()
+    {
+        return [
+            self::STATUS_ACTIVE => "АКТИВНЫЙ",
+            self::STATUS_DISABLED => "АРХИВ",
+            self::STATUS_DELETED => "УДАЛЕН"
+        ];
+    }
+
     const DEFAULT_PERIODS_ARRAY = [
         0 => 'Любой',
         1 => '1д',
@@ -85,6 +98,8 @@ class SaleFilters extends \yii\db\ActiveRecord
         90 => '3м'
 
     ];
+
+
     const TYPE_OF_OBJECTS_ARRAY = [
         0 => 'Любой',
         1 => '1к',
@@ -268,7 +283,7 @@ class SaleFilters extends \yii\db\ActiveRecord
     {
         parent::load($data, $formName);
 
-        $booleans = ['not_last_floor', 'vk_inform', 'sms_inform', 'mail_inform','uniqueness'];
+        $booleans = ['not_last_floor', 'vk_inform', 'sms_inform', 'mail_inform', 'uniqueness'];
         foreach ($booleans as $property) {
             if (($this[$property] === 'on') OR ($this->$property === 1) OR ($this->$property === '1')) {
 
@@ -289,7 +304,7 @@ class SaleFilters extends \yii\db\ActiveRecord
 
     public function beforeValidate()
     {
-        $booleans = ['not_last_floor', 'vk_inform', 'sms_inform', 'mail_inform','uniqueness'];
+        $booleans = ['not_last_floor', 'vk_inform', 'sms_inform', 'mail_inform', 'uniqueness'];
         foreach ($booleans as $property) {
             if (($this[$property] === 'on') OR ($this->$property === 1) OR ($this->$property === '1')) {
                 // info("PRELOAD PROPERTY ".$property." value =".$this[$property]);
@@ -413,6 +428,7 @@ class SaleFilters extends \yii\db\ActiveRecord
             'id' => 'ID',
             'user_id' => 'Агент',
             'period_ads' => 'Период',
+            'status' => 'Статус',
             'type' => 'Тип',
             'name' => 'Название',
             'rooms_count' => 'Кол-во комнат',

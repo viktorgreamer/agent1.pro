@@ -4,7 +4,7 @@
     <section class="text-center my-5">
 
         <!-- Section heading -->
-        <h2 class="display-1 animated slideInLeft"><?php echo \yii\helpers\Html::img(\yii\helpers\Url::to('web/lp/icons/synchronization.png'), ['width' => 128]); ?>
+        <h2 class="display-3 animated slideInLeft"><?php echo \yii\helpers\Html::img(\yii\helpers\Url::to('web/lp/icons/synchronization.png'), ['width' => 128]); ?>
             MIRS.pro</h2>
         <!-- Section description -->
         <p class="lead animated slideInRight w-responsive mx-auto mb-5">Умная база недвижимости в Великом

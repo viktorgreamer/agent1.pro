@@ -55,6 +55,7 @@ class Actions
     const SALEFILTER_RELEVANTED_IDS = 7;
     const DISACTIVE_ID_SOURCES = 8;
     const PROCESSED_IDS = 9;
+    const SALEFILTER_STATUS = 10;
 
     // SaleSimilar
     const SALESIMILAR_SIMILAR_IDS_ALL = 1;
@@ -120,6 +121,7 @@ class Actions
                 Actions::SALEFILTER_RELEVANTED_IDS => 'relevanted_ids',
                 Actions::DISACTIVE_ID_SOURCES => 'disactive_id_sources',
                 Actions::SALEFILTER_PROCESSED_IDS => 'processed_ids',
+                Actions::SALEFILTER_STATUS => 'status',
             ],
             Actions::SALESIMILAR => [
                 Actions::SALESIMILAR_SIMILAR_IDS_ALL => 'similar_ids_all',

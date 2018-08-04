@@ -116,7 +116,7 @@ $session->set('minus_tags_id_to_search_sale', $salefilter->minus_tags);
                                 <div class="row">
                                     <div class="col-lg-1 m-0 p-0"></div>
                                     <div class="col-md-4 col-sm-2 col-2 col-lg-2  m-0 p-0">
-                                        <?= Html::img('/web/icons/s2.png',['height' => '32px','title' => 'Уникальные']); ?>
+                                        <?= Html::img('/web/icons/s2.png',['height' => '32px']); ?>
 
                                     </div>
                                     <div class="col-md-4 col-sm-5 col-5 col-lg-3 m-0 p-0">

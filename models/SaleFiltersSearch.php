@@ -12,13 +12,15 @@ use app\models\SaleFilters;
  */
 class SaleFiltersSearch extends SaleFilters
 {
+
+    public $status;
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id', 'user_id', 'period_ads', 'house_type', 'price_down', 'price_up', 'grossarea_down', 'grossarea_up', 'status_blacklist2', 'agents', 'housekeepers', 'date_of_ads', 'floor_down', 'floor_up', 'floorcount_down', 'floorcount_up', 'not_last_floor', 'sort_by', 'mail_inform', 'sms_inform', 'is_super_filter', 'discount', 'date_start', 'date_finish', 'year_up', 'year_down', 'type'], 'integer'],
+            [['id', 'user_id','status', 'period_ads', 'house_type', 'price_down', 'price_up', 'grossarea_down', 'grossarea_up', 'status_blacklist2', 'agents', 'housekeepers', 'date_of_ads', 'floor_down', 'floor_up', 'floorcount_down', 'floorcount_up', 'not_last_floor', 'sort_by', 'mail_inform', 'sms_inform', 'is_super_filter', 'discount', 'date_start', 'date_finish', 'year_up', 'year_down', 'type'], 'integer'],
             [['name', 'rooms_count', 'locality', 'district', 'text_like', 'polygon_text', 'black_list_id', 'white_list_id', 'phone', 'id_sources', 'id_address', 'komment', 'tags_id'], 'safe'],
         ];
     }
@@ -66,6 +68,7 @@ class SaleFiltersSearch extends SaleFilters
 
         ]);
         if ($this->rooms_count)  $query->andFilterWhere(['like', 'rooms_count', $this->rooms_count]);
+        if ($this->status)  $query->andFilterWhere(['status' => $this->status]);
 
         $query->andFilterWhere(['like', 'name', $this->name]);
 
