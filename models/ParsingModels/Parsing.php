@@ -3,6 +3,7 @@
 namespace app\models\ParsingModels;
 
 
+use app\models\Geocodetion;
 use Yii;
 use phpQuery;
 use app\models\Selectors;
@@ -651,13 +652,16 @@ class Parsing extends ParsingSync
         if (($this->disactive != 1) and ($this->address != '')) {
             // если пришел новый  адрес  и непустой
             // геокодирования и аналитики
+            info("SALE_ADDRESS=".$sale->address." PARSING ADDRESS=".$this->address,DANGER);
             if (trim($sale->address) != trim($this->address)) {
-                // $session->setFlash('address', "<h2>!!!ADDRESS WAS CHANGED!!!</h2>");
+
                 $sale->address = trim($this->address);
                 $sale->id_address = 0;
-                $sale->geocodated = 8;
+
                 $sale->load_analized = 0;
             } else  info(" ADDRESS IS THE SAME",SUCCESS);
+
+            $sale->geocodated = Geocodetion::READY;
 
         }
 

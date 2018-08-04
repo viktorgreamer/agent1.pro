@@ -187,7 +187,7 @@ class Control extends \yii\db\ActiveRecord
                     }
 
                     if ($agentpro->status_detailed_parsing) {
-                        if ($module->DetaledParsing(50) !== false) continue;
+                        if ($module->DetaledParsing(20) !== false) continue;
                     }
 
                     if ($agentpro->status_parsingsync) {

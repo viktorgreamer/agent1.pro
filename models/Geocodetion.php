@@ -44,6 +44,9 @@ class Geocodetion extends Model
     public $geocodated;
     public $id_address;
     public $log;
+
+
+    const READY = 8;
     const ERROR = 9;
 
     const STOP = 5;
