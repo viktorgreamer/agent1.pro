@@ -238,10 +238,11 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function setDefaultSettings()
     {
         $this->auth_date = time();
-        $this->test_date = time() + self::TEST_PERIOD * 24 * 60 * 60;
+        $this->test_date = time() + self::TEST_PERIOD * 72 * 60 * 60;
         $this->status = self::STATUS_ACTIVE;
         $this->city_modules = 'Velikiy_Novgorod';
         $this->city= "Великий Новгород";
+        Notifications::VKMessage(" ЗАРЕГИСТРИРОВАЛСЯ USER ".$this->email);
     }
 
     public function setDefaultRoles()

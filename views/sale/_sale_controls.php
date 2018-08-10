@@ -42,8 +42,10 @@ $moderate_list[] = "<a id=\"#AddmanualAddress" . $sale->id . "\" type=\"button\"
 // ставим что SIMILAR MODERATED
 $moderate_list[] = Actions::renderChangeStatus($sale->id, Actions::SALE, Actions::SALE_GEOCODATED, Geocodetion::ERROR,
     Actions::getIcons(Actions::SALE, Actions::SALE_GEOCODATION_ERROR));
-
-$moderate_list[] = Actions::renderChangeStatus($sale->id_similar, Actions::SALESIMILAR, Actions::SALESIMILAR_STATUS, Sale::MAN_SOLD,
+if ($sale->similar->status == SaleSimilar::SOLD)  {
+    $moderate_list[] = Actions::renderChangeStatus($sale->id_similar, Actions::SALESIMILAR, Actions::SALESIMILAR_STATUS, SaleSimilar::ACTIVE,
+        Actions::getIcons(Actions::SALESIMILAR, Actions::SALESIMILAR_STATUS_ACTIVE));
+} else $moderate_list[] = Actions::renderChangeStatus($sale->id_similar, Actions::SALESIMILAR, Actions::SALESIMILAR_STATUS, Sale::MAN_SOLD,
     Actions::getIcons(Actions::SALESIMILAR, Actions::SALESIMILAR_STATUS_SOLD));
 
 if ($sale->agent->person_type == \app\models\Agents::PERSON_TYPE_HOUSEKEEPER) $moderate_list[] = Actions::renderChangeStatus($sale->agent->id, Actions::AGENT, Actions::AGENT_PERSON_TYPE,

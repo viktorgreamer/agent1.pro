@@ -62,7 +62,7 @@
                             'rows' => 5]);  ?>
                         <label for="materialRegisterFormPhone">Номера телефонов</label>
                         <small id="materialRegisterFormPhoneHelpBlock" class="form-text text-muted mb-4">
-                            Укажите номера всех телефонов через запятую. <br>(88162565656,89116755564)
+                            Укажите номера всех ваших телефонов через запятую. <br>(88162565656,89116755564)
                         </small>
                     </div>
 
@@ -80,8 +80,8 @@
                     <hr>
 
                     <!-- Terms of service -->
-                    <p> Регистрируясь вы подтверждаете согласие с
-                        <a href="" target="_blank">условиями пользования сервисом</a>. </p>
+                    <p> Регистрируясь вы подтверждаете <a href="" data-toggle="modal" data-target="#useragreementModal" > согласие на  обработку персональных данных </a>
+                         и <a href=""  data-toggle="modal" data-target="#userrulesModal" >согласие с правилами пользования сервисом</a>. </p>
 
                 </form>
                 <!-- Form -->
@@ -92,4 +92,8 @@
     </div>
 </div>
 
-<!-- Material form register -->
+<?= $this->render('_user_agreement'); ?>
+<?= $this->render('_user_rules'); ?>
+
+
+

@@ -490,7 +490,7 @@ class Sale extends \yii\db\ActiveRecord
             case "PARSED" :
                 // info("провели парсинг", 'info');
                 $this->parsed = 3;
-                $this->geocodated = 8;
+                $this->geocodated = Geocodetion::READY;
                 $this->setProccessingLog(self::PARSED);
                 return 'PARSED';
             // если геокодирование прошло, то готовимся в анализу и обработке если статус не равен 9, если нет то ставим стутус невозможности анализа

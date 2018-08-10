@@ -31,10 +31,7 @@
 
 
                     <li>
-                        <a href="mailto:an.viktory@gmail.com">email: an.viktory@gmail.com</a>
-                    </li>
-                    <li>
-                        <a href="#">Skype: an.viktory </a>
+                        <a href="mailto:info@mirs.pro">email: info@mirs.pro</a>
                     </li>
                     <li>
                        <a href="https://vk.com/mirs_pro" type="button" class="btn-floating btn-sm btn-vk"><i class="fa fa-vk"></i></a>

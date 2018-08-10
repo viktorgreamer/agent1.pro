@@ -160,3 +160,7 @@ table#user_detail_view th {
 .row-checked {
     background-color: white;
 }
+
+.information p {
+    text-indent: 20px;
+}

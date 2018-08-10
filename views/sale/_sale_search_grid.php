@@ -29,7 +29,7 @@ $session->set('minus_tags_id_to_search_sale', $salefilter->minus_tags);
 <div class="sale-index">
     <form method="get" id="w0">
         <div class="row" style="height: 55px;">
-            <div class="searching_tags_div col-md-8 col-lg-9 col-sm-10 col-10 pr-0 mr-0 "></div>
+            <div class="searching_tags_div col-md-8 col-lg-9 col-sm-10 col-10 pr-0 mr-0"></div>
             <div class="col-md-2 col-lg-2 col-sm-2 col-2 m-0 p-0">
                 <div class="row">
                     <div class=" col-lg-8 m-0 p-0">
@@ -59,7 +59,6 @@ $session->set('minus_tags_id_to_search_sale', $salefilter->minus_tags);
                         ]); ?>
                     </div>
                 </div>
-
             </div>
 
             <div class="col-md-2 col-lg-1 col-sm-2 col-2">

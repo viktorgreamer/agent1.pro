@@ -56,6 +56,7 @@ class Actions
     const DISACTIVE_ID_SOURCES = 8;
     const PROCESSED_IDS = 9;
     const SALEFILTER_STATUS = 10;
+    const SALEFILTER_IMAGE = 11;
 
     // SaleSimilar
     const SALESIMILAR_SIMILAR_IDS_ALL = 1;
@@ -65,6 +66,7 @@ class Actions
     const SALESIMILAR_MODERATION_ONCALL = 5;
     const SALESIMILAR_STATUS = 6;
     const SALESIMILAR_STATUS_SOLD = 7;
+    const SALESIMILAR_STATUS_ACTIVE = 8;
 
     // Sale
     const  SALE_DISACTIVE = 1;
@@ -122,6 +124,7 @@ class Actions
                 Actions::DISACTIVE_ID_SOURCES => 'disactive_id_sources',
                 Actions::SALEFILTER_PROCESSED_IDS => 'processed_ids',
                 Actions::SALEFILTER_STATUS => 'status',
+                Actions::SALEFILTER_IMAGE => 'image',
             ],
             Actions::SALESIMILAR => [
                 Actions::SALESIMILAR_SIMILAR_IDS_ALL => 'similar_ids_all',
@@ -216,6 +219,7 @@ class Actions
                 Actions::SALESIMILAR_MODERATION_ONCALL => Mdb::Fa("phone fa-fw " . $color . " fa-2x", ['title' => "Модерация по звонку"]),
                 Actions::SALESIMILAR_STATUS => 'status',
                 Actions::SALESIMILAR_STATUS_SOLD => "<i class=\"fa fa-trash fa-fw fa-2x\" aria-hidden=\"true\" title=\"Продано\"></i>",
+                Actions::SALESIMILAR_STATUS_ACTIVE => "<i class=\"fa fa-play fa-fw fa-2x\" aria-hidden=\"true\" title=\"Не продан\"></i>",
             ],
             Actions::PARSING_CONFIGURATION => [
                 Actions::PARSING_CONFIGURATION_ACTIVE_ACTIVATE => Mdb::Fa("play fa-fw " . $color . " fa-2x", ['title' => "Запустить "]),
@@ -350,7 +354,7 @@ class Actions
             $attrWas = $model[$attrname];
             $model->$attrname = $id_status;
             $return = " Успешно изменили " . $id_model . ":" . $id_attr . " c " . $attrWas . " на " . $model[$attrname];
-            my_var_dump($model);
+          //  my_var_dump($model);
             if (!$model->save(false)) my_var_dump($model->errors);
         } else {
 

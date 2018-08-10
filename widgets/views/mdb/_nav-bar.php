@@ -101,23 +101,23 @@ $user = Yii::$app->user->identity;
                     'options' => ['class' => 'nav-item dropdown'],
                     'template' => '<a href="{url}" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{label}</a>',
                     'items' => [
-                        [
+                       /* [
                             'label' => 'Ваши объявления',
                             'url' => ['sales/my'],
                             'options' => [
                                 'class' => 'dropdown-item',
                                 'style' => 'padding-top: 4px;padding-bottom: 4px;'],
-                        ],
+                        ],*/
                         [
                             'label' => 'Настройки',
-                            'url' => ['/user/profile'],
+                            'url' => ['/user/view'],
                             'options' => [
                                 'class' => 'dropdown-item',
                                 'style' => 'padding-top: 4px;padding-bottom: 4px;'],
                         ],
                         [
                             'label' => "Тариф: ".Yii::$app->user->identity->tarif,
-                            'url' => ['/user/profile'],
+                            'url' => ['/user/view'],
                             'options' => [
                                 'class' => 'dropdown-item',
                                 'style' => 'padding-top: 4px;padding-bottom: 4px;'],

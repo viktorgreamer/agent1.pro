@@ -17,7 +17,7 @@ class YandexController extends \yii\web\Controller
     public function actionTestSyncPage()
     {
 
-        $pageSource = file_get_contents('yandexru/yandexpage_1.html');
+        $pageSource = file_get_contents('yandexru/test_category3.html');
         $id_source = YANDEX_ID_SOURCE;
         $pq_page = \phpQuery::newDocument($pageSource);
         Selectors::loadTableClasses($pageSource, $id_source);

@@ -31,6 +31,8 @@ $phone = ParsingExtractionMethods::findPhone($model->hidden_comment);
         <?php echo \yii\helpers\Html::a(\app\components\Mdb::Fa('edit fa-fw text-white'), ['sale/index2', 'id' => $model->id], ['target' => '_blank']); ?>
         &nbsp
 
+        <?php if (Yii::$app->user->can('admin')) echo \app\widgets\SaleFilterImage::widget(['id' => $model->id]); ?>
+
         &nbsp&nbsp
 
         <?php echo $model->name; ?>

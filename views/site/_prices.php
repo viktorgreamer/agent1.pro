@@ -1,7 +1,7 @@
 <?php
 ?>
 <!-- Section: Pricing v.1 -->
-<section class="my-5">
+<section class="my-5 container">
 
     <!-- Section heading -->
     <h2 class="h1-responsive font-weight-bold text-center my-5">Тарифы</h2>
@@ -165,7 +165,7 @@
                         </li>
                         <li>
                             <p><i class="fa fa-check green-text pr-2">
-                                </i>Доступ к статике</p>
+                                </i>Доступ к статиcтике</p>
                         </li>
                         <li>
                             <p><i class="fa fa-times red-text pr-2"></i>Публичные прайс-листы</p>

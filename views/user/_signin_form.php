@@ -17,10 +17,13 @@
                     <form class="text-center" style="color: #757575;" method="post"
                           action="<?= \yii\helpers\Url::to('/user/sign-in'); ?>">
                         <input type="hidden" name="_csrf" value="<?= Yii::$app->request->getCsrfToken() ?>"/>
+                        <?php if (Yii::$app->session->getFlash('JUST_REGESTERED'))  { ?>
+                        <h1 class="text-success">Теперь вы можете войти.</h1>
+                        <?php } ?>
 
                         <!-- Email -->
                         <div class="md-form mt-0">
-                                                        <?php echo \yii\helpers\Html::activeInput('email', $model, 'email', ['id' => 'materialRegisterFormEmail',
+                            <?php echo \yii\helpers\Html::activeInput('email', $model, 'email', ['id' => 'materialRegisterFormEmail',
                                 'class' => "form-control", 'label' => '']); ?>
                             <label for="materialRegisterFormEmail">E-mail</label>
                         </div>

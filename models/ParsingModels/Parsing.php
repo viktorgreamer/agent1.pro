@@ -656,11 +656,11 @@ class Parsing extends ParsingSync
             if (trim($sale->address) != trim($this->address)) {
 
                 $sale->address = trim($this->address);
-                $sale->id_address = 0;
+
 
                 $sale->load_analized = 0;
             } else  info(" ADDRESS IS THE SAME",SUCCESS);
-
+            $sale->id_address = 0;
             $sale->geocodated = Geocodetion::READY;
 
         }

@@ -290,7 +290,7 @@ class Control extends \yii\db\ActiveRecord
 
                 //  break;
             }
-            ControlParsing::updating($id_parsingController,['LOST' => $totalCountLost,'DIE' => $totalCountDie]);
+            ControlParsing::updating($id_parsingController,2,['LOST' => $totalCountLost,'DIE' => $totalCountDie]);
         }
 
     }
@@ -326,9 +326,9 @@ class Control extends \yii\db\ActiveRecord
             if ($agentpro->status_analizing) $module->load_sale_statistic(50);
             if ($agentpro->status_sync) $module->Synchronisation(500);
 
-            if ($module->time_lost < time()) {
+            if ($module->last_check_of_lost < time()) {
                 $module->checkLost();
-                $module->time_lost = time() + 24 * 3600;
+                $module->last_check_of_lost = time() + 24 * 3600;
             }
             $module->save();
 
@@ -1651,6 +1651,8 @@ class Control extends \yii\db\ActiveRecord
                 $sale->date_of_check = time();
                 //  echo " <hr>";
                 if (!$sale->save()) my_var_dump($sale->getErrors());
+
+                info(" SALE GEOCODATION =".$sale->geocodated);
                 ControlParsing::updatingTime($id_parsingController);
 
             }
@@ -2031,6 +2033,7 @@ class Control extends \yii\db\ActiveRecord
         $sales = $this->getREADY($type, 20);
         if (!$sales) return false;
         $id_parsingController = ControlParsing::create($type, $sales);
+        $counts_array = [];
 
 
         // $sales = [];
@@ -2090,6 +2093,7 @@ class Control extends \yii\db\ActiveRecord
 
 
             } else {
+
                 $error = Errors::findOne(AVITO_CANNOT_FIND_PHONEBUTTON_DIV_CLASS);
                 if (!$response) $response = "THE RESPONSE IS EMPTY";
                 AgentPro::throwError($error, $response);
@@ -2097,6 +2101,13 @@ class Control extends \yii\db\ActiveRecord
                 info(" DELETING THE ITEM", DANGER);
                 $sale->disactive = Sale::BROKEN_AVITO_PHONES;
                 $sale->save();
+
+                if (preg_match("/Сохранить\sпоиск/iu",$response)) {
+                    info(" ITEM IS DELETED",DANGER);
+                    $sale->delete();
+                    $deleted_items = $counts_array['DELETED_ITEMS'];
+                    $counts_array = ['DETELED_ITEMS' => $deleted_items + 1];
+                }
                 continue;
 
             }

@@ -10,9 +10,9 @@ use app\models\SaleFilters;
 /* @var $searchModel app\models\SaleSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Sales');
+$this->title = Yii::t('app', 'Поиск продажа');
 $this->params['breadcrumbs'][] = $this->title;
-if (Yii::$app->controller->action->id == 'search-by-filter') $this->title = "Поиск по фильру " . $salefilter->name;   ?>
+if (Yii::$app->controller->action->id == 'search-by-filter') $this->title = "Поиск по фильтру " . $salefilter->name;   ?>
 
 
 <div class="sale-index">

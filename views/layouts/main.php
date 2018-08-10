@@ -19,6 +19,20 @@ use app\components\NavWidget;
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123480613-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-123480613-1');
+    </script>
+    <!-- Yandex.Metrika counter -->
+
+    <!-- /Yandex.Metrika counter -->
+
+
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="Cache-control" content="no-cache">
     <link rel="shortcut icon" href="<?= Yii::getAlias("@web")."/web/icon.png"; ?>" type="image/png">
@@ -29,6 +43,8 @@ use app\components\NavWidget;
 
 </head>
 <body>
+
+
 <div id="preloader"></div>
 <div class="container-fluid m-0 p-0">
     <?php $this->beginBody() ?>

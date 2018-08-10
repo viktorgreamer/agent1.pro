@@ -2,6 +2,7 @@
 
 namespace app\modules\programmer\controllers;
 
+use app\components\SaleFilterWidgets;
 use app\models\Notifications;
 use app\models\Renders;
 use app\models\Sale;
@@ -9,6 +10,7 @@ use app\models\Tags;
 use app\models\SaleFilters;
 use app\models\SaleQuery;
 use app\models\SaleSearch;
+use app\widgets\SaleFilterImage;
 use Codeception\Command\SelfUpdate;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
@@ -19,7 +21,7 @@ class SaleFilterController extends \yii\web\Controller
     public function init()
     {
 
-        $this->layout = "@app/modules/admin/views/layouts/main.php";
+        $this->layout = "@app/modules/programmer/views/layouts/main.php";
         parent::init();
 
         // custom initialization code goes here
@@ -27,6 +29,22 @@ class SaleFilterController extends \yii\web\Controller
 
     public function actionIndex()
     {
+        return $this->render('index');
+    }
+    public function actionImages()
+    {
+
+        echo SaleFilterImage::widget(['id' => 162]);
+        return $this->render('index');
+    }
+    public function actionReset()
+    {
+
+        $salefilters = SaleFilters::find()->all();
+        foreach ($salefilters as $salefilter) {
+            $salefilter->reset();
+          if (!$salefilter->save(false)) my_var_dump($salefilter->errors);
+        }
         return $this->render('index');
     }
 

@@ -148,7 +148,7 @@ class UserController extends Controller
             $model->setDefaultSettings();
             $model->setDefaultRoles();
             $model->save();
-
+Yii::$app->session->setFlash('JUST_REGESTERED',true);
             return $this->redirect(['sign-in']);
         } else {
             return $this->render('_registration', [
