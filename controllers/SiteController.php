@@ -4,6 +4,7 @@ namespace app\controllers;
 
 
 use app\models\Renders;
+use Curl\Curl;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -31,6 +32,45 @@ class SiteController extends Controller
                 ],
             ],
         ];
+    }
+
+
+
+    public function actionCheckoxy(){
+
+
+        if (($_POST['proxy'])&& ($_POST['url'])) {
+            $curl = new Curl();
+            $proxy = preg_split("/:/", $_POST['proxy']);
+                $curl->setOpt(CURLOPT_FOLLOWLOCATION, true);
+                $curl->setOpt(CURLOPT_HTTPPROXYTUNNEL, 1);
+                $curl->setOpt(CURLOPT_PROXY, $proxy[0].":".$proxy[1]);
+                $curl->setOpt(CURLOPT_PROXYUSERPWD, $proxy[2] . ":" . $proxy[3]);
+            $headers = [
+                'Upgrade-Insecure-Requests' => '1',
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
+                'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+                'DNT' => '1',
+                'Accept-Encoding' => 'gzip, deflate, br',
+                'Accept-Language' => 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,es;q=0.6',
+                'Pragma' => 'akamai-x-cache-on, akamai-x-cache-remote-on, akamai-x-check-cacheable, akamai-x-get-cache-key, akamai-x-get-extracted-values, akamai-x-get-ssl-client-session-id, akamai-x-get-true-cache-key, akamai-x-serial-no, akamai-x-get-request-id,akamai-x-get-nonces,akamai-x-get-client-ip,akamai-x-feo-trace'
+            ];
+            $curl->setHeaders($headers);
+                $curl->get($_POST['url']);
+            if ($curl->error) {
+                $message =  'Error: ' . $curl->errorCode . ': ' . $curl->errorMessage . "\n";
+            } else {
+              //  echo 'Response:' . "\n";
+                $response = gzdecode($curl->response);
+                $message = "УСПЕШНО";
+            }
+
+
+
+        }
+
+        return $this->render('proxy',compact('message','response'));
+
     }
     public function actionScreenSize() {
       if ($_POST['screen']) {
@@ -70,7 +110,7 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex($status = 0)
+    public function actionIndex($show = '')
 
     {
 
@@ -92,7 +132,16 @@ class SiteController extends Controller
         }
 */
 
-        return $this->render('index');
+        return $this->render('index',compact('show'));
+    }
+    public function actionTwoComissions()
+
+    {
+
+        $this->layout = 'intro';
+
+
+        return $this->render('_two_comissions');
     }
 
     public function actionLogOut()

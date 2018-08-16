@@ -4,6 +4,7 @@ namespace app\modules\programmer\controllers;
 
 use Codeception\Module\DumbHelper;
 use yii\helpers\VarDumper;
+use app\models\Notifications;
 
 class VkController extends \yii\web\Controller
 {
@@ -35,6 +36,28 @@ class VkController extends \yii\web\Controller
        my_var_dump($response);
         return $this->render('index');
     }
+
+    public function actionButtons()
+    {
+        $kbd = [
+            'one_time' => false,
+            'buttons' => [
+                [Notifications::getBtn("Покажи мой ID", Notifications::COLOR_DEFAULT, Notifications::CMD_ID)],
+                [Notifications::getBtn("Далее", Notifications::COLOR_PRIMARY, Notifications::CMD_NEXT)],
+            ]
+        ];
+
+
+
+       $response = Notifications::vkApi_messagesSend(self::VIKTOR_ID, ' i am vk-bot!', $kbd
+           );
+       my_var_dump($response);
+        return $this->render('index');
+    }
+
+
+
+
 
 
 

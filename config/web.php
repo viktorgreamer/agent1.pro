@@ -20,6 +20,9 @@ $config = [
             'siteKey' => 'your siteKey',
             'secret' => 'your secret key',
         ],
+        'telegram' => [
+            'class' => 'aki\telegram\Telegram',
+            'botToken' => '614663187:AAF908gcb2M-P65SJiWsF0h3QzAGVxaLMHo'],
 
         'settings' => [
             'class' => '\app\components\Settings'
@@ -105,9 +108,9 @@ $config = [
 //                'username' => 'a0086640_pr',
 //                'password' => 'WindU160',
 //            'charset' => 'utf8',
-            'schemaCache' => 'cache',
+           /* 'schemaCache' => 'cache',
             'schemaCacheDuration' => '3600',
-            'enableSchemaCache' => true
+            'enableSchemaCache' => true*/
 ]
         ,
 
@@ -130,6 +133,7 @@ $config = [
         'class' => 'mdm\admin\components\AccessControl',
         'allowActions' => [
             'site/*',
+            'site/two-comissions',
               'admin/*',
             "*",
 //          //  'some-controller/some-action',

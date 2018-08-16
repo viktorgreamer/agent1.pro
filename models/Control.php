@@ -56,7 +56,7 @@ class Control extends \yii\db\ActiveRecord
     const SIMILAR = 8;
     const DOWN_SYNC = 9;
     const UP_SYNC = 10;
-    const  CHECK_LOST =11;
+    const  CHECK_LOST = 11;
 
     public static function mapTypesControls()
     {
@@ -183,7 +183,7 @@ class Control extends \yii\db\ActiveRecord
                 if (!$module->parsing_status) {
                     info("PARSING IS NOT STOPPED");
                     if ($agentpro->status_parsing_avito_phones) {
-                        if ($module->ParsingAvitoPhones1() !== false) continue;
+                        if ($module->ParsingAvitoPhones1(2) !== false) continue;
                     }
 
                     if ($agentpro->status_detailed_parsing) {
@@ -214,7 +214,6 @@ class Control extends \yii\db\ActiveRecord
         $id_parsingController = ControlParsing::create($type);
 
 
-
         $agentpro = \Yii::$app->params['agentpro'];
         if (!$agentpro->period_check) {
             $agentpro = new AgentPro();
@@ -227,7 +226,7 @@ class Control extends \yii\db\ActiveRecord
                 $time_check = $parsingConfiguration->last_timestamp;
 
                 info(" ParsingCongiguration Name =" . $parsingConfiguration->name . " WAS CHECKED " . \Yii::$app->formatter->asRelativeTime($time_check));
-                $datetime_of_lost = ($time_check - $agentpro->period_check  * 60 * 60);
+                $datetime_of_lost = ($time_check - $agentpro->period_check * 60 * 60);
                 info(" DATE TO UNDERSTAND OF LOOSING =" . \Yii::$app->formatter->asDatetime($datetime_of_lost));
                 $datetime_of_die = ($time_check - $agentpro->period_check * 2 * 60 * 60);
                 info(" DATE TO UNDERSTAND OF DIE =" . \Yii::$app->formatter->asDatetime($datetime_of_die));
@@ -240,7 +239,7 @@ class Control extends \yii\db\ActiveRecord
 
                 $countToUpdateDie = Synchronization::find()->where(['id_category' => $parsingConfiguration->id])
                     ->andWhere(['<', 'date_of_check', $datetime_of_die])
-                    ->andWhere( ['disactive' => 2])
+                    ->andWhere(['disactive' => 2])
                     ->count();
 
 
@@ -267,7 +266,7 @@ class Control extends \yii\db\ActiveRecord
                 }
 
 
-                $countDieSale =  Sale::updateAll(['disactive' => 1, 'date_of_die' => time()],
+                $countDieSale = Sale::updateAll(['disactive' => 1, 'date_of_die' => time()],
                     ['AND',
                         ['<', 'date_of_check', $datetime_of_die],
                         ['disactive' => 2],
@@ -276,7 +275,7 @@ class Control extends \yii\db\ActiveRecord
                 );
                 if ($countDieSale) my_var_dump($countDieSale);
 
-                $countDieSync =  Synchronization::updateAll(['disactive' => 1,'date_of_die' => time()],
+                $countDieSync = Synchronization::updateAll(['disactive' => 1, 'date_of_die' => time()],
                     ['AND',
                         ['<', 'date_of_check', $datetime_of_die],
                         ['disactive' => 2],
@@ -290,7 +289,7 @@ class Control extends \yii\db\ActiveRecord
 
                 //  break;
             }
-            ControlParsing::updating($id_parsingController,2,['LOST' => $totalCountLost,'DIE' => $totalCountDie]);
+            ControlParsing::updating($id_parsingController, 2, ['LOST' => $totalCountLost, 'DIE' => $totalCountDie]);
         }
 
     }
@@ -1652,7 +1651,7 @@ class Control extends \yii\db\ActiveRecord
                 //  echo " <hr>";
                 if (!$sale->save()) my_var_dump($sale->getErrors());
 
-                info(" SALE GEOCODATION =".$sale->geocodated);
+                info(" SALE GEOCODATION =" . $sale->geocodated);
                 ControlParsing::updatingTime($id_parsingController);
 
             }
@@ -2030,7 +2029,7 @@ class Control extends \yii\db\ActiveRecord
         $type = self::P_APHONES;
         $time_start = time();
         // берем объекты
-        $sales = $this->getREADY($type, 20);
+        $sales = $this->getREADY($type, $limit);
         if (!$sales) return false;
         $id_parsingController = ControlParsing::create($type, $sales);
         $counts_array = [];
@@ -2080,77 +2079,82 @@ class Control extends \yii\db\ActiveRecord
             $curl->close();
 
             $response = str_get_html($response);
-            if (preg_match_all("/(action-show-number|amw-test-number-click)/", $response, $output_array)) {
-                my_var_dump($output_array);
-                $selector = $output_array[0][0];
-                //  $selector = "action-show-number";
-                info(" SELECTOR = " . $selector, SUCCESS);
-                $hash = $response->find("." . $selector, 0)->href;
-                if (!$hash) {
 
-                }
-                echo span("HASH IS " . $hash);
-
-
+            if (preg_match("/tel:(\+\d{7,11})\"\sdata-marker/", $response, $output_array)) {
+                $phone = $output_array[1];
+                info(" PHONE IS IN PAGE", SUCCESS);
             } else {
 
-                $error = Errors::findOne(AVITO_CANNOT_FIND_PHONEBUTTON_DIV_CLASS);
-                if (!$response) $response = "THE RESPONSE IS EMPTY";
-                AgentPro::throwError($error, $response);
-                $counterERROR++;
-                info(" DELETING THE ITEM", DANGER);
-                $sale->disactive = Sale::BROKEN_AVITO_PHONES;
-                $sale->save();
+                if (preg_match_all("/(action-show-number|amw-test-number-click)/", $response, $output_array)) {
+                    my_var_dump($output_array);
+                    $selector = $output_array[0][0];
+                    //  $selector = "action-show-number";
+                    info(" SELECTOR = " . $selector, SUCCESS);
+                    $hash = $response->find("." . $selector, 0)->href;
 
-                if (preg_match("/Сохранить\sпоиск/iu",$response)) {
-                    info(" ITEM IS DELETED",DANGER);
-                    $sale->delete();
-                    $deleted_items = $counts_array['DELETED_ITEMS'];
-                    $counts_array = ['DETELED_ITEMS' => $deleted_items + 1];
+                    echo span("HASH IS " . $hash);
+
+
+                } else {
+
+                    $error = Errors::findOne(AVITO_CANNOT_FIND_PHONEBUTTON_DIV_CLASS);
+                    if (!$response) $response = "THE RESPONSE IS EMPTY";
+                    AgentPro::throwError($error, $response);
+                    $counterERROR++;
+                    info(" DELETING THE ITEM", DANGER);
+                    $sale->disactive = Sale::BROKEN_AVITO_PHONES;
+                    $sale->save();
+
+                    if (preg_match("/Сохранить\sпоиск/iu", $response)) {
+                        info(" ITEM IS DELETED", DANGER);
+                        $sale->delete();
+                        $deleted_items = $counts_array['DELETED_ITEMS'];
+                        $counts_array = ['DETELED_ITEMS' => $deleted_items + 1];
+                    }
+                    continue;
+
                 }
-                continue;
 
+
+                $hash = $response->find("." . $selector, 0)->href;
+
+
+                $url_phone = "https://m.avito.ru/" . $hash . "?async";
+
+
+                $headers = [
+                    'Accept' => 'application/json',
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
+                    'DNT' => '1',
+                    'Referer' => $url,
+                    'Accept-Encoding' => 'gzip, deflate, br',
+                    'Accept-Language' => 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,es;q=0.6',
+                ];
+                // info("URL =".$url_phone);
+                // my_var_dump($headers);
+                $curl = new MyCurl();
+                if ($proxy) {
+                    $curl->ipPort = $proxy->fulladdress;
+                    $curl->setOpt(CURLOPT_HTTPPROXYTUNNEL, 1);
+                    $curl->setOpt(CURLOPT_PROXY, $curl->ipPort);
+                    $curl->setOpt(CURLOPT_PROXYUSERPWD, $proxy->login . ":" . $proxy->password);
+
+                }
+                $curl->setHeaders($headers);
+                $curl->getUrlWithCookies($url_phone);
+                if ($curl->responseHeaders['content-encoding'] == 'gzip') $response = gzdecode($curl->response);
+                else $response = $curl->response;
+
+                $response = json_decode($response);
+                //  my_var_dump($response);
+                $curl->close();
+
+
+                info(" TELEPHONE = " . $response->phone);
+                $phone = $response->phone;
             }
-
-
-            $hash = $response->find("." . $selector, 0)->href;
-
-
-            $url_phone = "https://m.avito.ru/" . $hash . "?async";
-
-
-            $headers = [
-                'Accept' => 'application/json',
-                'X-Requested-With' => 'XMLHttpRequest',
-                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
-                'DNT' => '1',
-                'Referer' => $url,
-                'Accept-Encoding' => 'gzip, deflate, br',
-                'Accept-Language' => 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,es;q=0.6',
-            ];
-            // info("URL =".$url_phone);
-            // my_var_dump($headers);
-            $curl = new MyCurl();
-            if ($proxy) {
-                $curl->ipPort = $proxy->fulladdress;
-                $curl->setOpt(CURLOPT_HTTPPROXYTUNNEL, 1);
-                $curl->setOpt(CURLOPT_PROXY, $curl->ipPort);
-                $curl->setOpt(CURLOPT_PROXYUSERPWD, $proxy->login . ":" . $proxy->password);
-
-            }
-            $curl->setHeaders($headers);
-            $curl->getUrlWithCookies($url_phone);
-            if ($curl->responseHeaders['content-encoding'] == 'gzip') $response = gzdecode($curl->response);
-            else $response = $curl->response;
-
-            $response = json_decode($response);
-            //  my_var_dump($response);
-            $curl->close();
-
-
-            info(" TELEPHONE = " . $response->phone);
-
-            $phone = preg_replace("/\A7/", "8", preg_replace("/\D/", "", $response->phone));
+            $phone = preg_replace("/\A7/", "8", preg_replace("/\D/", "", $phone));
 
             $sale->phone1 = $phone;
             if (preg_match("/\d{9,11}/", $sale->phone1)) {
@@ -2172,6 +2176,7 @@ class Control extends \yii\db\ActiveRecord
             'AVITO_PHONES_SUCCESS' => $counterSUCCESS,
 
         ];
+        my_var_dump($counts_array);
         ControlParsing::updating($id_parsingController, 2, serialize($counts_array));
         //  $driver->quit();
         if (count($sales) < 15) return false; else return true;

@@ -20,6 +20,10 @@ $config = [
                 ],
             ],
         ],
+        'telegram' => [
+            'class' => 'aki\telegram\Telegram',
+            'botToken' => '614663187:AAF908gcb2M-P65SJiWsF0h3QzAGVxaLMHo'],
+
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
             // 'viewPath' => '@webroot/mail',

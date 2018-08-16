@@ -5,7 +5,7 @@
 
 <?php
 
-$sections = ['tests', 'views','ftp', 'vk','cian','yandex','avito','irr','processing','webdriver','sale-filter','tags','users','stats'];
+$sections = ['tests', 'views','ftp', 'vk','cian','yandex','avito','irr','processing','webdriver','sale-filter','tags','users','stats','telegram'];
 ?>
 
 <div class="tabs-wrapper">

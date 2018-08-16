@@ -21,6 +21,31 @@ class Notifications
     const VK_API_VERSION = '5.50'; //Используемая версия API
     const VK_API_ENDPOINT = "https://api.vk.com/method/";
 
+
+    const COLOR_NEGATIVE = 'negative';
+    const COLOR_POSITIVE = 'positive';
+    const COLOR_DEFAULT = 'default';
+    const COLOR_PRIMARY = 'primary';
+    const CMD_ID = 'ID';
+    const CMD_NEXT = 'NEXT';
+    const CMD_TYPING = 'TYPING';
+
+    public static function getBtn($label, $color, $payload = '') {
+        return [
+            'action' => [
+                'type' => 'text',
+                "payload" => json_encode($payload, JSON_UNESCAPED_UNICODE),
+                'label' => $label
+            ],
+            'color' => $color
+        ];
+    }
+
+
+
+
+
+
 //Функция для вызова произвольного метода API
     public static function _vkApi_call($method, $params = array())
     {
@@ -39,11 +64,12 @@ class Notifications
     }
 
 //Функция для вызова messages.send
-    public static function vkApi_messagesSend($peer_id, $message, $attachments = array())
+    public static function vkApi_messagesSend($peer_id, $message, $keybords = [], $attachments = array())
     {
         return self::_vkApi_call('messages.send', array(
             'peer_id' => $peer_id,
             'message' => $message,
+            'keyboard' => json_encode($keybords, JSON_UNESCAPED_UNICODE),
             'attachment' => implode(',', $attachments)
         ));
     }
@@ -65,6 +91,8 @@ class Notifications
         }
 
     }
+
+
 
 
 }

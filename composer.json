@@ -29,7 +29,8 @@
     "php-curl-class/php-curl-class": "^8.0",
     "mdmsoft/yii2-admin": "~2.0",
     "himiklab/yii2-recaptcha-widget": "*",
-    "yii2mod/yii2-ftp": "*"
+    "yii2mod/yii2-ftp": "*",
+    "aki/yii2-bot-telegram": "^1.5"
   },
   "repositories": [
     {
