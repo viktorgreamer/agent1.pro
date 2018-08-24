@@ -183,7 +183,7 @@ class Control extends \yii\db\ActiveRecord
                 if (!$module->parsing_status) {
                     info("PARSING IS NOT STOPPED");
                     if ($agentpro->status_parsing_avito_phones) {
-                        if ($module->ParsingAvitoPhones1(2) !== false) continue;
+                        if ($module->ParsingAvitoPhones1(10) !== false) continue;
                     }
 
                     if ($agentpro->status_detailed_parsing) {
